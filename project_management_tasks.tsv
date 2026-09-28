@@ -14,3 +14,6 @@ TASK-12	CLI Tool	Build kilikoro terminal runner (kilikoro test & kilikoro submit
 TASK-13	Documentation	Write comprehensive GitHub README with architecture and setup guide		Pending	Medium	Clear documentation for repository
 TASK-14	QA & Testing	Run full end-to-end integration test (deposit -> code -> pass -> card update)		Pending	Critical	Verify zero crashes on localhost
 TASK-15	Presentation	Record 2-minute offline backup screen recording of working app		Pending	Critical	Essential safeguard against stage Wi-Fi drops
+TASK-16	Growth & Traction	Acquire 150+ student/developer waitlist users with 50%+ willingness to pay		Pending	Critical	Target NACOS WhatsApp groups and campus dev hubs
+TASK-17	Market Research	Conduct user research interviews and survey to document exact pain points		Pending	High	Focus on unpaid gigs AI resume rejection and FX fees
+
