@@ -1,325 +1,407 @@
 <!DOCTYPE html>
-<html lang="en" data-color-mode="dark" data-dark-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub Kilikoro Protocol · Proof-of-Competence & BMONI Escrow</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Kilikoro Protocol — Proof-of-Competence & BMONI Escrow</title>
+  <link rel="stylesheet" href="css/claude-theme.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23D97757'/><text x='50%' y='68%' font-size='60' text-anchor='middle' fill='%23FAF9F5' font-family='serif' font-weight='bold'>K</text></svg>">
 </head>
-<body class="github-theme">
+<body>
 
-  <!-- GitHub Header Bar -->
-  <header class="gh-header">
-    <div class="gh-header-left">
-      <svg class="octicon octicon-mark-github" height="32" viewBox="0 0 16 16" width="32" fill="currentColor">
-        <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
-      </svg>
-      <span class="gh-header-title">
-        <span class="repo-owner">WaliMedugu</span> / <span class="repo-name">BuildX-Crown-Chasers</span>
-      </span>
-      <span class="gh-badge gh-badge-public">Public</span>
-      <span class="gh-badge gh-badge-track">BuildX 2026 · NACOS National</span>
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="brand-group">
+      <a href="#" class="brand-logo" id="brandLogo">
+        <div class="brand-icon">K</div>
+        <span class="brand-name">Kilikoro</span>
+      </a>
+      <span class="brand-pill">BuildX 2026</span>
     </div>
-    <div class="gh-header-right">
-      <div class="bmoni-status-pill">
-        <span class="pulse-dot"></span>
-        <span class="bmoni-label">BMONI Rails: <strong>Connected (Testnet)</strong></span>
+
+    <!-- Portal Switcher Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-tab-btn active" data-view="student-view" id="tabStudent">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        Student Workspace
+      </button>
+      <button class="nav-tab-btn" data-view="employer-view" id="tabEmployer">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        Employer Cockpit
+      </button>
+      <button class="nav-tab-btn" data-view="verifier-view" id="tabVerifier">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        Public Verifier
+      </button>
+    </nav>
+
+    <!-- Right Profile / Status -->
+    <div class="nav-actions">
+      <div class="network-badge" title="Connected to BMONI Stablecoin Settlement Rail">
+        <span class="status-dot"></span>
+        <span>BMONI Testnet • 14ms</span>
       </div>
-      <div class="nacos-badge-pill">
-        <span class="nacos-icon">🎓</span>
-        <span id="headerNacosId">NACOS/UNILAG/2026/0482</span>
+      <div class="student-badge-pill" title="NACOS National Verified Member">
+        <span class="nacos-crest">🇳🇬</span>
+        <span>UNILAG-CS-0482</span>
       </div>
     </div>
   </header>
 
-  <!-- Navigation Sub-header Tabs -->
-  <nav class="gh-subnav">
-    <button class="subnav-tab active" data-tab="student-portal">
-      <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-        <path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM7.25 8a.75.75 0 0 1-.22.53l-2.25 2.25a.75.75 0 1 1-1.06-1.06L5.44 8 3.72 6.28a.75.75 0 1 1 1.06-1.06l2.25 2.25c.141.14.22.331.22.53Zm1.5 3.25a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75Z"></path>
-      </svg>
-      Student Dev Terminal & Code Sandbox
-    </button>
-    <button class="subnav-tab" data-tab="employer-cockpit">
-      <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-        <path d="M1.5 2.5a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1Zm2 2a.75.75 0 0 0 0 1.5h7a.75.75 0 0 0 0-1.5Zm0 3a.75.75 0 0 0 0 1.5h4a.75.75 0 0 0 0-1.5Z"></path>
-      </svg>
-      Employer Escrow Cockpit
-    </button>
-    <button class="subnav-tab" data-tab="terminal-cli">
-      <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-        <path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25ZM1.75 2.5a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25Z"></path>
-      </svg>
-      Interactive `kilikoro` CLI Emulator
-    </button>
-    <button class="subnav-tab" data-tab="public-verifier">
-      <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-        <path d="m11.28 6.78-4.5 4.5a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 1 1 1.06-1.06L6.25 9.69l3.97-3.97a.75.75 0 1 1 1.06 1.06Z"></path>
-        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0Zm-1.5 0a6.5 6.5 0 1 0-13 0 6.5 6.5 0 0 0 13 0Z"></path>
-      </svg>
-      Public NACOS Proof-of-Skill Verifier
-    </button>
-  </nav>
+  <!-- Main Application Body -->
+  <main class="app-container">
 
-  <!-- Main App Container -->
-  <main class="gh-main-container">
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: STUDENT WORKSPACE                                                -->
+    <!-- ========================================================================= -->
+    <section class="view-section active" id="student-view">
+      <div class="workspace-grid">
 
-    <!-- ======================================================== -->
-    <!-- TAB 1: STUDENT DEV TERMINAL & CODE SANDBOX               -->
-    <!-- ======================================================== -->
-    <section id="student-portal" class="tab-pane active">
-      <div class="grid-2col">
-
-        <!-- Left Column: Problem Spec & Code Editor -->
-        <div class="panel code-panel">
+        <!-- Column 1: Task Specifications -->
+        <aside class="task-spec-panel">
           <div class="panel-header">
-            <div class="task-meta">
-              <span class="status-indicator live"></span>
-              <strong>Milestone Bounty #402:</strong>
-              <span class="task-title">High-Throughput LRU Cache with $O(1)$ Eviction</span>
+            <span class="panel-title">Active Milestone Specification</span>
+            <span class="constraint-pill">Task #104</span>
+          </div>
+          <div class="panel-body">
+            <h1 class="task-headline">High-Throughput Cache Expiry Resolver</h1>
+            
+            <div class="reward-card">
+              <div>
+                <div class="reward-label">Funded Escrow Reward</div>
+                <div class="reward-amount">$150.00 USDC</div>
+                <div class="reward-naira">≈ ₦240,000 cNGN</div>
+              </div>
+              <span class="brand-pill">BMONI Locked</span>
             </div>
-            <div class="bounty-reward-pill">
-              <span class="escrow-lock-icon">🔒</span> Escrow Locked: <strong>$150.00 USDC</strong> (₦240,000)
+
+            <div class="constraint-pills">
+              <span class="constraint-pill">Asymptotic: O(N log N)</span>
+              <span class="constraint-pill">Max Time: 50ms</span>
+              <span class="constraint-pill">Max Memory: 64MB</span>
+            </div>
+
+            <p class="spec-text">
+              Write a high-performance function <code>cacheResolver(entries, threshold)</code> that purges stale cache nodes and sorts valid entries by priority in ascending order.
+            </p>
+
+            <div class="form-group">
+              <span class="form-label">Sample Input:</span>
+              <div class="code-snippet-box">entries = [{id: 10, ttl: 40}, {id: 2, ttl: 15}]<br>threshold = 20</div>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Expected Output:</span>
+              <div class="code-snippet-box">[{id: 10, ttl: 40}]</div>
+            </div>
+
+            <div class="spec-text" style="font-size: 0.8rem; color: var(--text-muted);">
+              Notice: The AST engine tests your code against dynamic input sizes (N=10 to 10,000). Brute-force O(N²) quadratic loops will fail complexity validation!
+            </div>
+          </div>
+        </aside>
+
+        <!-- Column 2: Code Editor & Console -->
+        <section class="editor-panel">
+          <div class="editor-toolbar">
+            <div class="editor-actions-left">
+              <select class="select-input" id="languageSelect">
+                <option value="javascript">JavaScript (V8 Sandbox)</option>
+                <option value="typescript">TypeScript (Transpiled)</option>
+              </select>
+              <button class="btn-secondary" id="btnLoadSample" title="Load Authentic Solution">
+                Authentic Code
+              </button>
+              <button class="btn-secondary" id="btnLoadChatGPT" title="Load AI Generated Boilerplate">
+                AI Boilerplate Trap
+              </button>
+            </div>
+            <div class="editor-actions-right">
+              <button class="btn-secondary" id="btnRunTests" title="Run Local AST & Assertions (Ctrl+Enter)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Run Tests
+              </button>
+              <button class="btn-primary btn-submit" id="btnSubmitSolution" title="Submit & Release BMONI Escrow Payout">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Submit & Claim
+              </button>
             </div>
           </div>
 
-          <div class="task-instructions">
-            <p><strong>Requirement:</strong> Implement an <code>LRUCache</code> class with <code>get(key)</code> and <code>put(key, value)</code> operating in $O(1)$ time complexity without memory leaks. The solution must pass behavior assertions and AST structural validation.</p>
-            <div class="preset-buttons">
-              <button id="loadHumanCodeBtn" class="btn btn-sm btn-outline">Load Valid Human Solution</button>
-              <button id="loadAiCodeBtn" class="btn btn-sm btn-danger-outline">Load AI / Boilerplate Trap</button>
-              <button id="resetCodeBtn" class="btn btn-sm btn-secondary">Reset</button>
+          <!-- Code Editor Body -->
+          <div class="code-editor-wrapper">
+            <div class="line-numbers" id="lineNumbers">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12</div>
+            <textarea class="code-textarea" id="codeEditor" spellcheck="false" placeholder="// Write your solution here..."></textarea>
+          </div>
+
+          <!-- Bottom Console Drawer -->
+          <div class="console-drawer">
+            <div class="console-header">
+              <div class="console-tabs">
+                <span class="console-tab active" data-console-tab="output">Execution Console</span>
+                <span class="console-tab" data-console-tab="ast">AST Syntax Inspector</span>
+              </div>
+              <span id="consoleStatusText">Ready • Idle</span>
+            </div>
+            <div class="console-body" id="consoleOutput">
+              <div class="console-line info">[Kilikoro Core] Sandbox initialized. Write code and hit "Run Tests" or Ctrl+Enter.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Column 3: BMONI Card & Assertion Progress -->
+        <aside class="side-card-panel">
+
+          <!-- 3D BMONI Virtual Mastercard -->
+          <div class="bmoni-card-container">
+            <div class="bmoni-card" id="bmoniCard">
+              <!-- Front Face -->
+              <div class="bmoni-card-face bmoni-card-front">
+                <div class="card-top">
+                  <div class="card-chip"></div>
+                  <div class="card-brand-logo">bmoni</div>
+                </div>
+                <div class="card-balance-block">
+                  <div class="card-balance-label">Available Stablecoin Balance</div>
+                  <div class="card-balance-val" id="cardBalanceDisplay">$0.00 USDC</div>
+                  <div class="card-balance-label" id="cardBalanceNaira">₦0.00 cNGN</div>
+                </div>
+                <div class="card-bottom">
+                  <div>
+                    <div class="card-holder-name">CHIDI OKONKWO</div>
+                    <div class="card-number">5399 •••• •••• 4892</div>
+                  </div>
+                  <div class="mastercard-circles">
+                    <div class="circle-red"></div>
+                    <div class="circle-yellow"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Back Face -->
+              <div class="bmoni-card-face bmoni-card-back">
+                <div class="card-magstripe"></div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-align: right; margin-bottom: 0.2rem;">AUTHORIZED SIGNATURE</div>
+                <div class="card-cvv-strip">CVV: 834</div>
+                <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 1rem; line-height: 1.3;">
+                  Issued in partnership with Mastercard & NACOS National. Valid for domestic POS and global online payments.
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="editor-wrapper">
-            <div class="editor-header">
-              <span>solution.js</span>
-              <span class="editor-lang">JavaScript (ES6+)</span>
-            </div>
-            <textarea id="codeEditor" spellcheck="false"></textarea>
+          <!-- Card Controls -->
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-secondary" id="btnFlipCard" style="flex: 1; justify-content: center;">
+              Flip Card (CVV)
+            </button>
+            <button class="btn-secondary" id="btnFreezeCard" style="flex: 1; justify-content: center;">
+              Freeze Card
+            </button>
           </div>
 
-          <div class="editor-footer">
-            <div class="hint-text">Deterministic Sandbox: Checks syntax entropy, Big-O scaling, and assertions.</div>
-            <button id="runSandboxBtn" class="btn btn-primary btn-run">
-              <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-                <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.441a.25.25 0 0 1 .379-.214Z"></path>
-              </svg>
-              Run AST Sandbox & Claim Payout
+          <!-- Test Assertions Progress Card -->
+          <div class="test-suite-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="panel-title">Test Assertions</span>
+              <span id="testSummaryPill" class="constraint-pill">0 / 3 Passed</span>
+            </div>
+
+            <!-- Test 1 -->
+            <div class="assertion-item">
+              <div class="assertion-label-row">
+                <span>1. Basic Filter & Threshold Validation</span>
+                <span id="test1Status">—</span>
+              </div>
+              <div class="assertion-bar-bg"><div class="assertion-bar-fill" id="test1Bar"></div></div>
+            </div>
+
+            <!-- Test 2 -->
+            <div class="assertion-item">
+              <div class="assertion-label-row">
+                <span>2. Boundary Conditions & Null Checks</span>
+                <span id="test2Status">—</span>
+              </div>
+              <div class="assertion-bar-bg"><div class="assertion-bar-fill" id="test2Bar"></div></div>
+            </div>
+
+            <!-- Test 3 -->
+            <div class="assertion-item">
+              <div class="assertion-label-row">
+                <span>3. Dynamic Stress Input (N=5,000)</span>
+                <span id="test3Status">—</span>
+              </div>
+              <div class="assertion-bar-bg"><div class="assertion-bar-fill" id="test3Bar"></div></div>
+            </div>
+          </div>
+
+          <!-- AST Metrics Card -->
+          <div class="ast-card">
+            <div class="ast-badge-row">
+              <span class="panel-title">Code X-Ray (AST)</span>
+              <span class="complexity-pill" id="bigOBadge">Awaiting Execution</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary);">
+              <span>Cyclomatic Complexity: <b id="valCyclomatic" style="color: var(--text-primary);">-</b></span>
+              <span>AI Pattern Score: <b id="valAiScore" style="color: var(--text-primary);">-</b></span>
+            </div>
+            <div class="ast-tree-box" id="astTreeDisplay">// AST syntax tree hierarchy will appear here after execution...</div>
+          </div>
+
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: EMPLOYER COCKPIT                                                 -->
+    <!-- ========================================================================= -->
+    <section class="view-section" id="employer-view">
+      <div class="employer-container">
+
+        <!-- Employer Post Task Form -->
+        <div class="task-spec-panel" style="height: fit-content;">
+          <div class="panel-header">
+            <span class="panel-title">Create Funded Milestone Task</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Task Title</label>
+              <input type="text" class="form-input" id="empTaskTitle" value="Distributed Memory Ring Buffer Implementation">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select class="form-input" id="empCategory">
+                <option>Systems & Distributed Computing</option>
+                <option>FinTech / Payment Core</option>
+                <option>Algorithm Optimization</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Reward Amount (USDC)</label>
+              <input type="number" class="form-input" id="empRewardAmount" value="250">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Acceptance Complexity Threshold</label>
+              <input type="text" class="form-input" id="empComplexity" value="O(N) or O(N log N)">
+            </div>
+
+            <div class="reward-card" style="margin: 0.5rem 0;">
+              <div>
+                <div class="reward-label">Total Escrow Deposit</div>
+                <div class="reward-amount" id="empTotalDeposit">$256.25 USDC</div>
+                <div class="reward-naira">Includes 2.5% Protocol Fee ($6.25)</div>
+              </div>
+            </div>
+
+            <button class="btn-primary" id="btnDepositEscrow" style="padding: 0.75rem; justify-content: center; font-size: 0.95rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              Lock Funds in BMONI Escrow Vault
             </button>
           </div>
         </div>
 
-        <!-- Right Column: Verification Results, AST Graph & BMONI Card -->
-        <div class="panel results-panel">
-          
-          <!-- BMONI Virtual Mastercard Component -->
-          <div class="bmoni-card-container">
-            <div class="bmoni-card" id="bmoniVirtualCard">
-              <div class="card-chip"></div>
-              <div class="card-logo">BMONI</div>
-              <div class="card-balance-section">
-                <span class="balance-label">SPENDABLE STABLECOIN BALANCE</span>
-                <div class="card-balance" id="cardBalanceDisplay">$0.00 USDC</div>
-                <div class="card-naira" id="cardNairaDisplay">≈ ₦0.00 cNGN</div>
-              </div>
-              <div class="card-bottom">
-                <div class="card-holder">
-                  <span class="holder-title">CARDHOLDER</span>
-                  <span class="holder-name" id="cardHolderName">CHIDI O. (UNILAG CHAPTER)</span>
-                </div>
-                <div class="card-number">•••• •••• •••• 4892</div>
-                <div class="mastercard-circles">
-                  <span class="circle circle-red"></span>
-                  <span class="circle circle-orange"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Evaluation Progress & Status -->
-          <div class="sandbox-results-card" id="resultsBox">
-            <div class="results-header">
-              <strong>Execution & AST Diagnostic Stream</strong>
-              <span id="diagnosticBadge" class="badge badge-idle">Ready to Run</span>
-            </div>
-
-            <div class="results-progress-bar">
-              <div id="progressBarFill" class="progress-fill"></div>
-            </div>
-
-            <div class="diagnostic-grid">
-              <div class="diag-item">
-                <span class="diag-label">Test Assertions</span>
-                <span class="diag-val" id="valAssertions">- / 4 Passed</span>
-              </div>
-              <div class="diag-item">
-                <span class="diag-label">AST Cyclomatic Entropy</span>
-                <span class="diag-val" id="valEntropy">Unchecked</span>
-              </div>
-              <div class="diag-item">
-                <span class="diag-label">Asymptotic Complexity</span>
-                <span class="diag-val" id="valComplexity">Pending</span>
-              </div>
-              <div class="diag-item">
-                <span class="diag-label">Settlement Latency</span>
-                <span class="diag-val" id="valLatency">-- ms</span>
-              </div>
-            </div>
-
-            <div class="console-output" id="sandboxConsole">
-              <div class="console-line info">> Kilikoro AST sandboxing engine initialized.</div>
-              <div class="console-line info">> BMONI smart escrow oracle listening on milestone #402.</div>
-              <div class="console-line muted">> Click "Run AST Sandbox" to evaluate code.</div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ======================================================== -->
-    <!-- TAB 2: EMPLOYER ESCROW COCKPIT                           -->
-    <!-- ======================================================== -->
-    <section id="employer-cockpit" class="tab-pane">
-      <div class="grid-2col">
-        <div class="panel">
+        <!-- Candidate Submissions Ledger -->
+        <div class="editor-panel">
           <div class="panel-header">
-            <strong>Create Funded Milestone Escrow</strong>
-            <span class="gh-badge">Programmable Escrow</span>
+            <span class="panel-title">Candidate Verified Submissions Ledger</span>
+            <span class="brand-pill">Real-Time Oracle Feed</span>
           </div>
-          <form id="escrowForm" class="escrow-form">
-            <div class="form-group">
-              <label>Milestone Title / Issue Name</label>
-              <input type="text" id="milestoneTitle" class="form-control" value="High-Throughput LRU Cache with O(1) Eviction">
-            </div>
-            <div class="form-group">
-              <label>Bounty Amount (USDC Stablecoin)</label>
-              <div class="input-with-symbol">
-                <span>$</span>
-                <input type="number" id="milestoneAmount" class="form-control" value="150">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Target Tertiary Institution / NACOS Node</label>
-              <select class="form-control" id="targetChapter">
-                <option value="ALL">All 36 States (National Open Bounty)</option>
-                <option value="UNILAG">University of Lagos (UNILAG Chapter)</option>
-                <option value="FUTA">Federal University of Technology Akure (FUTA)</option>
-                <option value="ABU">Ahmadu Bello University (ABU Zaria)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Escrow Release Condition</label>
-              <input type="text" class="form-control" value="100% Behavioral Assertions + AST Human Entropy > 70%" readonly>
-            </div>
-            <button type="button" id="fundEscrowBtn" class="btn btn-primary btn-block">Lock $150.00 USDC in BMONI Escrow</button>
-          </form>
+          <div style="padding: 1.25rem; overflow-x: auto;">
+            <table class="candidate-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>NACOS Chapter</th>
+                  <th>AST Originality</th>
+                  <th>Complexity</th>
+                  <th>Settlement Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="candidateTableBody">
+                <tr>
+                  <td>Chidi Okonkwo</td>
+                  <td>UNILAG (Node #04)</td>
+                  <td><span style="color: var(--status-emerald); font-weight: 600;">98.4% (Authentic)</span></td>
+                  <td><code>O(N log N)</code></td>
+                  <td><span class="brand-pill" style="background: var(--status-emerald-subtle); color: var(--status-emerald);">SETTLED • $150.00</span></td>
+                  <td><button class="btn-secondary" onclick="app.viewCertificate('ATTEST-90218')">Audit</button></td>
+                </tr>
+                <tr>
+                  <td>Amina Bello</td>
+                  <td>ABU Zaria (Node #01)</td>
+                  <td><span style="color: var(--status-emerald); font-weight: 600;">96.8% (Authentic)</span></td>
+                  <td><code>O(N)</code></td>
+                  <td><span class="brand-pill" style="background: var(--status-emerald-subtle); color: var(--status-emerald);">SETTLED • $200.00</span></td>
+                  <td><button class="btn-secondary" onclick="app.viewCertificate('ATTEST-90114')">Audit</button></td>
+                </tr>
+                <tr>
+                  <td>Tunde Adeyemi</td>
+                  <td>FUTA (Node #09)</td>
+                  <td><span style="color: var(--status-ruby); font-weight: 600;">24.1% (Flagged AI)</span></td>
+                  <td><code>O(N²) - Too Slow</code></td>
+                  <td><span class="constraint-pill" style="color: var(--status-ruby);">REJECTED</span></td>
+                  <td><button class="btn-secondary" disabled style="opacity: 0.4;">Audit</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="panel">
-          <div class="panel-header">
-            <strong>Active Escrow Pool Status</strong>
-            <span class="badge badge-success">Pool Active</span>
-          </div>
-          <div class="escrow-stats-grid">
-            <div class="stat-card">
-              <span class="stat-title">LOCKED IN ESCROW</span>
-              <span class="stat-number" id="poolLockedAmount">$150.00 USDC</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-title">AUTOMATIC SETTLEMENTS</span>
-              <span class="stat-number" id="poolSettledCount">0 Completed</span>
-            </div>
-          </div>
-          <div class="escrow-log-box">
-            <div class="log-title">Escrow Oracle Event Audit Log</div>
-            <div id="escrowAuditLogs" class="audit-log-list">
-              <div class="log-entry">
-                <span class="log-time">[22:30:12]</span>
-                <span class="log-text">Escrow initialized: $150.00 USDC locked by Client (FinTech Global Ltd).</span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- ======================================================== -->
-    <!-- TAB 3: INTERACTIVE KILIKORO CLI EMULATOR                 -->
-    <!-- ======================================================== -->
-    <section id="terminal-cli" class="tab-pane">
-      <div class="terminal-container">
-        <div class="terminal-bar">
-          <div class="terminal-dots">
-            <span class="t-dot t-red"></span>
-            <span class="t-dot t-yellow"></span>
-            <span class="t-dot t-green"></span>
-          </div>
-          <div class="terminal-title">bash — kilikoro-cli v1.0.4 (BuildX Edition)</div>
+    <!-- ========================================================================= -->
+    <!-- VIEW 3: PUBLIC VERIFIER                                                  -->
+    <!-- ========================================================================= -->
+    <section class="view-section" id="verifier-view">
+      <div style="max-width: 680px; margin: 0 auto; width: 100%;">
+        <div class="panel-header" style="border-radius: 12px 12px 0 0; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-bottom: none;">
+          <span class="panel-title">NACOS Cryptographic Skill Verifier</span>
         </div>
-        <div class="terminal-body" id="terminalBody">
-          <div class="t-line t-info">Welcome to Kilikoro Protocol Developer Terminal CLI.</div>
-          <div class="t-line t-info">Type <code>kilikoro help</code> to see available commands.</div>
-          <div class="t-line t-muted">Try: <code>kilikoro test --profile</code> or <code>kilikoro submit</code></div>
-          <div class="t-prompt-row">
-            <span class="t-prompt">nacos@crown-chasers:~/buildx$</span>
-            <input type="text" id="terminalInput" class="t-input" autocomplete="off" autofocus>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================== -->
-    <!-- TAB 4: PUBLIC NACOS PROOF-OF-SKILL VERIFIER              -->
-    <!-- ======================================================== -->
-    <section id="public-verifier" class="tab-pane">
-      <div class="panel">
-        <div class="panel-header">
-          <strong>Public NACOS Cryptographic Proof-of-Skill Explorer</strong>
-          <span class="gh-badge">Verifiable Credential</span>
-        </div>
-        <div class="verifier-search-bar">
-          <input type="text" id="verifierSearchInput" class="form-control" value="NACOS/UNILAG/2026/0482" placeholder="Enter NACOS Student ID or Attestation Hash">
-          <button id="searchVerifierBtn" class="btn btn-primary">Verify On-Chain Credential</button>
+        <div style="background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 0 0 12px 12px; padding: 1.5rem; display: flex; gap: 0.75rem;">
+          <input type="text" class="form-input" id="searchVerifierInput" value="UNILAG-CS-2026-0482" placeholder="Enter NACOS Student ID or Attestation Hash..." style="flex: 1;">
+          <button class="btn-primary" id="btnSearchVerifier">Verify Credential</button>
         </div>
 
-        <div class="credential-card" id="credentialDisplay">
-          <div class="cred-header">
-            <div class="cred-avatar">🎓</div>
+        <!-- Certificate Card -->
+        <div class="cert-card" id="certDisplayCard">
+          <div class="cert-header">
+            <div class="cert-badge-icon">✓</div>
+            <h2 class="cert-title">Verified Proof-of-Competence</h2>
+            <div class="brand-pill">NACOS National Certified Execution</div>
+          </div>
+
+          <div class="cert-grid">
             <div>
-              <h3>Chidi Okonkwo</h3>
-              <p class="cred-inst">University of Lagos · Department of Computer Science (300L)</p>
+              <div class="cert-metric-label">Developer</div>
+              <div class="cert-metric-val">Chidi Okonkwo</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">UNILAG CS Class of 2026</div>
             </div>
-            <div class="cred-badge-verified">
-              <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-                <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
-              </svg>
-              NACOS Verified
+            <div>
+              <div class="cert-metric-label">Verified Skill</div>
+              <div class="cert-metric-val">Algorithms & Systems</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Tier 3 • High-Throughput</div>
+            </div>
+            <div>
+              <div class="cert-metric-label">AST Authenticity</div>
+              <div class="cert-metric-val" style="color: var(--status-emerald);">98.4% (Human)</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Zero AI templates detected</div>
+            </div>
+            <div>
+              <div class="cert-metric-label">Total Verified Payouts</div>
+              <div class="cert-metric-val">$450.00 USDC</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Settled via BMONI Rails</div>
             </div>
           </div>
-          <div class="cred-details">
-            <div class="cred-item">
-              <span class="label">Verified Skill:</span>
-              <strong>Distributed Algorithms & LRU Memory Caching</strong>
-            </div>
-            <div class="cred-item">
-              <span class="label">AST Entropy Score:</span>
-              <strong class="text-green">94.8% (Authentic Human Engineering)</strong>
-            </div>
-            <div class="cred-item">
-              <span class="label">Total BMONI Escrow Earned:</span>
-              <strong class="text-cyan">$650.00 USDC (₦1,040,000)</strong>
-            </div>
-            <div class="cred-item">
-              <span class="label">Cryptographic Attestation Hash:</span>
-              <code class="hash-code">0x7f9a2b8c4d1e3f60a8e52c710cd83b235131d8e4</code>
-            </div>
+
+          <div style="text-align: left;">
+            <div class="cert-metric-label">Cryptographic Signature Receipt:</div>
+            <div class="cert-hash">0x4b9f8a02c819d44e7eccee9b4b989741f2f123954aed22b87ad585f892b1a0</div>
           </div>
         </div>
       </div>
@@ -327,6 +409,12 @@
 
   </main>
 
-  <script src="app.js"></script>
+  <!-- Confetti Canvas -->
+  <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+
+  <!-- Scripts -->
+  <script src="js/ast-engine.js"></script>
+  <script src="js/escrow-simulator.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
