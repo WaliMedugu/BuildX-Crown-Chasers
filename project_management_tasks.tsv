@@ -1,0 +1,16 @@
+Task ID	Category	Task Description	Assigned To	Status	Priority	Notes
+TASK-01	Setup & Admin	Register team on official NACOS BuildX portal (hack.nacos.org.ng)		Pending	Critical	Confirm all 4 members' NACOS details
+TASK-02	Frontend	Create navigation bar and dark theme styling (obsidian + cyan/emerald)		Pending	High	Set up responsive shell
+TASK-03	Frontend	Build student workspace page with code editor component		Pending	High	Monaco or clean syntax-highlighted editor
+TASK-04	Frontend	Build test results visualizer (green pass bars / red error alerts)		Pending	High	Shows live test case pass count
+TASK-05	Frontend	Build interactive BMONI Virtual Mastercard card component		Pending	Critical	Shows live balance in USDC and cNGN
+TASK-06	Frontend	Build employer page (milestone task creation & escrow deposit button)		Pending	High	Includes reward amount input ($150)
+TASK-07	Frontend	Build public skill verification page (student ID search & score display)		Pending	Medium	Shows verified NACOS skill badge
+TASK-08	Backend & Logic	Build deterministic code execution sandbox script		Pending	Critical	Safely evaluates JS code with test inputs
+TASK-09	Backend & Logic	Build AST code checker & anti-AI boilerplate detection logic		Pending	Critical	Lightweight acorn parser for structure & speed
+TASK-10	Backend & Logic	Build BMONI stablecoin escrow state system (EMPTY/FUNDED/EVALUATING/RELEASED)		Pending	Critical	Simulates trustless milestone lock & release
+TASK-11	Backend & Logic	Connect test-pass event to automatic virtual card balance update		Pending	Critical	1.8s delay trigger updating student card
+TASK-12	CLI Tool	Build kilikoro terminal runner (kilikoro test & kilikoro submit)		Pending	High	Provides CLI workflow for technical judges
+TASK-13	Documentation	Write comprehensive GitHub README with architecture and setup guide		Pending	Medium	Clear documentation for repository
+TASK-14	QA & Testing	Run full end-to-end integration test (deposit -> code -> pass -> card update)		Pending	Critical	Verify zero crashes on localhost
+TASK-15	Presentation	Record 2-minute offline backup screen recording of working app		Pending	Critical	Essential safeguard against stage Wi-Fi drops
