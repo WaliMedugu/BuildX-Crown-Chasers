@@ -935,6 +935,15 @@ DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
 - Configured in `.env` and `js/local-config.js` with fail-safe local sandbox fallback.
 - Commit SHA: 523ae6f
 - Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
+8. BMONI SANDBOX API TEST SUITE:
+- Created verification script: `scripts/test-bmoni.js`.
+- Tests 3 key lifecycle stages:
+  1. Nigerian Banking Rails (`GET /banks?country=NG`).
+  2. Milestone Escrow Vault Lock (`POST /escrow/lock`).
+  3. NACOS Virtual Mastercard Issuance (`POST /cards/issue`).
+- Verified execution: zero crashes, automatic dual-mode fallback handling.
+- Commit SHA: b269458
+- Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
 ================================================================================
 
 
