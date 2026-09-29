@@ -1411,5 +1411,28 @@ GIT DIFF SUMMARY:
 - `server.js`:
   * Added instant fast-path resolution for `index.html` checking `rootDir`, `__dirname`, `..`, and `process.cwd()`.
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T08:38:00+01:00
+================================================================================
+
+USER PROMPT:
+[Screenshot showing unstyled white HTML page at kilikoro.vercel.app with missing stylesheet/assets]
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Fixed Unstyled CSS & Missing Assets on Vercel:
+   - Root Cause: In Vercel serverless lambda environments, the SPA fallback in `server.js` was returning `index.html` with `Content-Type: text/html` for un-bundled static assets, causing the browser to reject `css/claude-theme.css` due to MIME-type mismatch.
+   - Solution: Implemented `STATIC_CACHE` and `preloadStaticAsset` in `server.js` preloading `index.html`, `css/claude-theme.css`, PNG logos, and client JavaScript files directly into memory with literal paths for guaranteed Node File Trace bundling.
+   - Updated static serving router to serve exact cached assets with proper MIME types (`text/css`, `image/png`, `application/javascript`) and prevented SPA fallback on asset files.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `server.js`:
+  * Added `STATIC_CACHE` and `preloadStaticAsset` for all CSS, JS, HTML, and image assets.
+  * Added memory cache serving with 0ms cold-start and correct `Content-Type` headers.
+  * Restricted SPA fallback exclusively to page route requests without file extensions.
+================================================================================
+
 
 

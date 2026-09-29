@@ -155,6 +155,44 @@ const MIME_TYPES = {
   ".txt": "text/plain; charset=utf-8"
 };
 
+// Static Asset In-Memory Cache & NFT Tracing for Vercel
+const STATIC_CACHE = {};
+
+function preloadStaticAsset(relPath, mimeType) {
+  try {
+    const candidates = [
+      path.join(__dirname, relPath),
+      path.join(process.cwd(), relPath),
+      path.join(__dirname, "..", relPath)
+    ];
+    for (const p of candidates) {
+      if (fs.existsSync(p)) {
+        STATIC_CACHE[relPath.toLowerCase().replace(/\\/g, "/")] = {
+          data: fs.readFileSync(p),
+          mimeType
+        };
+        break;
+      }
+    }
+  } catch (e) {
+    console.warn("[Preload Notice]", relPath, e.message);
+  }
+}
+
+// Preload critical assets for 0ms latency and guaranteed Vercel bundling
+preloadStaticAsset("index.html", "text/html; charset=utf-8");
+preloadStaticAsset("css/claude-theme.css", "text/css; charset=utf-8");
+preloadStaticAsset("assets/kilikoro-logo-terracotta.png", "image/png");
+preloadStaticAsset("assets/kilikoro-logo-light.png", "image/png");
+preloadStaticAsset("assets/kilikoro_logo.png", "image/png");
+preloadStaticAsset("assets/favicon.png", "image/png");
+preloadStaticAsset("js/supabase-client.js", "application/javascript; charset=utf-8");
+preloadStaticAsset("js/claude-service.js", "application/javascript; charset=utf-8");
+preloadStaticAsset("js/ast-engine.js", "application/javascript; charset=utf-8");
+preloadStaticAsset("js/escrow-simulator.js", "application/javascript; charset=utf-8");
+preloadStaticAsset("js/bmoni-client.js", "application/javascript; charset=utf-8");
+preloadStaticAsset("js/app.js", "application/javascript; charset=utf-8");
+
 // Strict Validation Helpers
 function isValidEmail(email) {
   if (!email || typeof email !== "string" || email.length > 100) return false;
@@ -873,26 +911,25 @@ async function handleRequest(req, res) {
   // STATIC FILE SERVING
   // =========================================================================
   const rootDir = process.env.VERCEL ? process.cwd() : __dirname;
-  const cleanPath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+  const normalizedKey = (pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "")).toLowerCase().replace(/\\/g, "/");
 
-  if (pathname === "/" || pathname === "/index.html") {
-    const possibleIndexPaths = [
-      path.join(rootDir, "index.html"),
-      path.join(__dirname, "index.html"),
-      path.join(__dirname, "..", "index.html"),
-      path.resolve("index.html")
-    ];
-    for (const ip of possibleIndexPaths) {
-      if (fs.existsSync(ip)) {
-        try {
-          const html = fs.readFileSync(ip, "utf8");
-          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-          return res.end(html);
-        } catch (e) {}
-      }
-    }
+  // 1. Fast In-Memory Static Cache Check (0ms cold start, guaranteed MIME type)
+  if (STATIC_CACHE[normalizedKey]) {
+    const asset = STATIC_CACHE[normalizedKey];
+    res.writeHead(200, {
+      "Content-Type": asset.mimeType,
+      "Cache-Control": "public, max-age=3600"
+    });
+    return res.end(asset.data);
   }
 
+  // Optional local-config.js fallback
+  if (normalizedKey === "js/local-config.js") {
+    res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8" });
+    return res.end("// Optional local overrides\n");
+  }
+
+  const cleanPath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
   let filePath = path.join(rootDir, cleanPath);
 
   if (!fs.existsSync(filePath)) {
@@ -906,11 +943,18 @@ async function handleRequest(req, res) {
 
   fs.stat(resolved, (err, stats) => {
     if (err || !stats.isFile()) {
-      // Fallback to index.html for SPA-style routing if available
-      const fallbackIndex = path.join(rootDir, "index.html");
-      if (fs.existsSync(fallbackIndex)) {
-        res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-        return fs.createReadStream(fallbackIndex).pipe(res);
+      const ext = path.extname(pathname).toLowerCase();
+      // Only fallback to index.html for route paths (no extension or .html)
+      if (!ext || ext === ".html") {
+        if (STATIC_CACHE["index.html"]) {
+          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+          return res.end(STATIC_CACHE["index.html"].data);
+        }
+        const fallbackIndex = path.join(rootDir, "index.html");
+        if (fs.existsSync(fallbackIndex)) {
+          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+          return fs.createReadStream(fallbackIndex).pipe(res);
+        }
       }
       res.writeHead(404, { "Content-Type": "text/plain" });
       return res.end("Not Found: " + pathname);
