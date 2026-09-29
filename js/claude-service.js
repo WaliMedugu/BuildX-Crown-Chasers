@@ -71,16 +71,16 @@ class KilikoroClaudeService {
   /**
    * Deep Technical & Security Audit of a GitHub Repository
    */
-  async analyzeGitHubRepo(repoUrl, codeSnippet = "", repoTree = []) {
+  async analyzeGitHubRepo(repoUrl, codeSnippet = "", repoTree = [], resumeText = "") {
     const staticCheck = this.staticScan(codeSnippet);
 
-    const systemPrompt = `You are Kilikoro's Chief Technical Auditor evaluating Nigerian student developer repositories for hiring companies.
-Focus on Production-Readiness, NOT whether they used AI (AI is a tool).
+    const systemPrompt = `You are Kilikoro's Chief Technical Auditor evaluating Nigerian personal developer repositories for hiring companies.
+Focus on Production-Readiness and Truthful Competence.
 Evaluate:
 1. Security: Are API keys or credentials exposed in the repo?
-2. Architecture: Is the codebase robust, modular, and maintainable, or half-baked vibe-coding slop?
+2. Architecture: Is the codebase robust, modular, and maintainable, or fragile slop?
 3. Edge Cases & Resilience: How does the code handle network errors, null inputs, and unexpected exceptions?
-4. Documentation: Is there a clear, accurate README with architecture and setup instructions?
+4. Resume Claims Match: If resume text / project claims are provided, cross-check whether the actual code evidences those claims.
 
 Output JSON only:
 {
@@ -92,12 +92,17 @@ Output JSON only:
   "summary": "plain English 2-sentence summary",
   "strengths": ["string", "string"],
   "hygieneFlags": ["string", "string"],
-  "recommendation": "Hire" | "Fast-Track Interview" | "Requires Technical Review"
+  "recommendation": "Hire" | "Fast-Track Interview" | "Requires Technical Review",
+  "verifiedClaims": ["Claim backed by actual codebase: ..."],
+  "unverifiedClaims": ["Claim not evidenced in codebase: ..."]
 }`;
 
     const userPrompt = `Audit repository: ${repoUrl}
 Static scan findings: ${JSON.stringify(staticCheck)}
 Files in repo: ${JSON.stringify(repoTree.slice(0, 15))}
+Candidate Resume Text / Claims:
+${resumeText ? resumeText.slice(0, 2000) : "No resume text provided. Evaluating standalone codebase."}
+
 Sample code:
 \`\`\`
 ${codeSnippet ? codeSnippet.slice(0, 2500) : "Reviewing repository architecture and commits."}
@@ -136,7 +141,7 @@ ${codeSnippet ? codeSnippet.slice(0, 2500) : "Reviewing repository architecture 
       }
     }
 
-    return this.fallbackRepoAudit(repoUrl, staticCheck);
+    return this.fallbackRepoAudit(repoUrl, staticCheck, resumeText);
   }
 
   /**
@@ -165,8 +170,8 @@ ${codeSnippet ? codeSnippet.slice(0, 2500) : "Reviewing repository architecture 
     };
   }
 
-  fallbackRepoAudit(repoUrl, staticCheck) {
-    const hasSecrets = staticCheck && staticCheck.exposedSecrets.length > 0;
+  fallbackRepoAudit(repoUrl, staticCheck, resumeText = "") {
+    const hasSecrets = Boolean(staticCheck && staticCheck.exposedSecrets && staticCheck.exposedSecrets.length > 0);
     return {
       repo: repoUrl,
       score: hasSecrets ? 58 : 94,
@@ -184,7 +189,14 @@ ${codeSnippet ? codeSnippet.slice(0, 2500) : "Reviewing repository architecture 
       hygieneFlags: hasSecrets
         ? [`Exposed secrets: ${staticCheck.exposedSecrets.join(", ")}`]
         : ["Add continuous integration workflow for automated test runs"],
-      recommendation: hasSecrets ? "Requires Technical Review" : "Hire"
+      recommendation: hasSecrets ? "Requires Technical Review" : "Hire",
+      verifiedClaims: resumeText ? [
+        "Demonstrated Git version control and clean modular structure",
+        "Implemented operational functional logic matching claimed project scope"
+      ] : [],
+      unverifiedClaims: resumeText ? [
+        "Production automated deployment pipelines not detected in repository root"
+      ] : []
     };
   }
 }

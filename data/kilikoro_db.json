@@ -167,5 +167,41 @@
       "timestamp": "2026-09-29T06:45:30.300Z",
       "id": "cc145882-e913-4813-8b8a-048b50d3d4ed"
     }
+  ],
+  "certificates": [
+    {
+      "id": "NACOS-CERT-2026-4FABCBFB",
+      "candidateName": "Wali Medugu",
+      "nacosId": "NACOS-VERIFIED-MEMBER",
+      "repoUrl": "https://github.com/WaliMedugu/kilikoro-core",
+      "score": 98,
+      "securityStatus": "Clean - Zero Secrets Exposed",
+      "errorHandlingRating": "Robust Guards",
+      "complexity": "O(N log N) Scalability",
+      "sha256Hash": "SHA256: 4fabcbfb367170c5e954729b",
+      "fullHash": "4fabcbfb367170c5e954729bffc9a558abdbaf33f352eb126cd5b7cd26f004d4",
+      "engineModel": "Claude Haiku 4.5 + Kilikoro AST",
+      "issuedAt": "2026-09-29T16:05:15.446Z",
+      "verified": true,
+      "verificationUrl": "https://kilikoro.vercel.app/?cert=NACOS-CERT-2026-4FABCBFB",
+      "badgeUrl": "https://kilikoro.vercel.app/api/badge/NACOS-CERT-2026-4FABCBFB"
+    },
+    {
+      "id": "NACOS-CERT-2026-10F660F2",
+      "candidateName": "Wali Medugu",
+      "nacosId": "NACOS-VERIFIED-MEMBER",
+      "repoUrl": "https://github.com/WaliMedugu/kilikoro-core",
+      "score": 98,
+      "securityStatus": "Clean - Zero Secrets Exposed",
+      "errorHandlingRating": "Robust Guards",
+      "complexity": "O(N log N) Scalability",
+      "sha256Hash": "SHA256: 10f660f2eaea55af85a2e70f",
+      "fullHash": "10f660f2eaea55af85a2e70f11a744eba569591fc3d388607dfbc1dd9ded87de",
+      "engineModel": "Claude Haiku 4.5 + Kilikoro AST",
+      "issuedAt": "2026-09-29T16:02:52.668Z",
+      "verified": true,
+      "verificationUrl": "https://kilikoro.vercel.app/?cert=NACOS-CERT-2026-10F660F2",
+      "badgeUrl": "https://kilikoro.vercel.app/api/badge/NACOS-CERT-2026-10F660F2"
+    }
   ]
 }
