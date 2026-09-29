@@ -192,6 +192,7 @@ preloadStaticAsset("js/ast-engine.js", "application/javascript; charset=utf-8");
 preloadStaticAsset("js/escrow-simulator.js", "application/javascript; charset=utf-8");
 preloadStaticAsset("js/bmoni-client.js", "application/javascript; charset=utf-8");
 preloadStaticAsset("js/app.js", "application/javascript; charset=utf-8");
+preloadStaticAsset("logo_candidates.html", "text/html; charset=utf-8");
 
 // Strict Validation Helpers
 function isValidEmail(email) {

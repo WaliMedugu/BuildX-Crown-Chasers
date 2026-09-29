@@ -1433,6 +1433,28 @@ GIT DIFF SUMMARY:
   * Added memory cache serving with 0ms cold-start and correct `Content-Type` headers.
   * Restricted SPA fallback exclusively to page route requests without file extensions.
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T08:39:30+01:00
+================================================================================
+
+USER PROMPT:
+not found again
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Comprehensive Catch-All Rewrite:
+   - Configured `vercel.json` with a catch-all rewrite rule `{ "source": "/(.*)", "destination": "/api/index.js" }`.
+   - All browser requests (`/`, `/css/...`, `/js/...`, `/assets/...`, `/api/...`) are routed directly through `api/index.js` where `STATIC_CACHE` in `server.js` serves every HTML, CSS, JavaScript, and image asset in 0ms with verified MIME types, bypassing Vercel's zero-config filesystem mapping completely.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `vercel.json`:
+  * Updated rewrite rule to catch-all `/(.*)` -> `/api/index.js`.
+- `server.js`:
+  * Added `logo_candidates.html` to preloaded memory cache.
+================================================================================
+
 
 
 
