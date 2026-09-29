@@ -7,9 +7,9 @@
 
 class BmoniClient {
   constructor(config = {}) {
-    // Configurable endpoint (sandbox or production BMONI gateway)
-    this.baseUrl = config.baseUrl || "https://api.bmoni.io/v1";
-    this.apiKey = config.apiKey || (typeof process !== "undefined" && process.env?.BMONI_API_KEY) || "bmoni_live_buildx_crownchasers_2026";
+    // Official BMONI Embedded Sandbox & Development Gateway
+    this.baseUrl = config.baseUrl || (typeof process !== "undefined" && process.env?.BMONI_BASE_URL) || "https://embedded-dev.bmoni.com";
+    this.apiKey = config.apiKey || (typeof process !== "undefined" && process.env?.BMONI_API_KEY) || "pk_a025cacbf33a_76fb864113f3540909de5b1da39cc146906e35b1c6d4d1e4";
     this.exchangeRate = 1600; // 1 USDC = ₦1,600 cNGN
   }
 
@@ -20,7 +20,7 @@ class BmoniClient {
     try {
       const headers = {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.apiKey}`,
+        "x-api-key": this.apiKey,
         "X-Protocol-Client": "Kilikoro-NACOS/1.0"
       };
 
