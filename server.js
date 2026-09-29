@@ -248,26 +248,16 @@ async function handleRequest(req, res) {
 
   const parsedUrl = new URL(req.url, `http://${req.headers.host || "localhost:3000"}`);
   let pathname = parsedUrl.pathname;
-  if (req.query && req.query.path) {
-    pathname = req.query.path.split("?")[0];
-  } else if (parsedUrl.searchParams.get("path")) {
-    pathname = parsedUrl.searchParams.get("path").split("?")[0];
-  } else if (req.headers["x-matched-path"] && !req.headers["x-matched-path"].includes("[")) {
+  const pathParam = (req.query && req.query.path) || parsedUrl.searchParams.get("path");
+  if (pathParam) {
+    pathname = (pathParam.startsWith("/") ? pathParam : "/" + pathParam).split("?")[0];
+  } else if (req.headers["x-matched-path"] && !req.headers["x-matched-path"].includes("api/index.js")) {
     pathname = req.headers["x-matched-path"].split("?")[0];
   }
 
   // =========================================================================
   // API ROUTING
   // =========================================================================
-
-  if (pathname === "/api/debug" || req.url.includes("debug") || pathname === "/api/index.js") {
-    return sendJson(res, 200, {
-      url: req.url,
-      pathname,
-      headers: req.headers,
-      query: req.query
-    });
-  }
 
   // 1. SIGN UP (SUPABASE AUTH + PERSISTENT DB)
   if (pathname === "/api/auth/signup" && req.method === "POST") {

@@ -1551,6 +1551,29 @@ GIT DIFF SUMMARY:
 - `server.js`:
   * Cleaned up pathname extraction prioritizing direct URL paths while supporting fallback query and Vercel headers.
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T08:58:00+01:00
+================================================================================
+
+USER PROMPT:
+[Live Verification & Rewrite Loop Fix]
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Prevented Vercel Rewrite Loop:
+   - Root Cause: Multiple rewrite rules caused Vercel to iteratively rewrite `/api/...` to `/api/index.js` and then re-write `/api/index.js` to `?path=/api/index.js`.
+   - Solution: Configured `vercel.json` with a single atomic negative lookahead regex `/((?!api/index\\.js).*)` -> `/api/index.js?path=/$1`.
+   - Updated `server.js` pathname resolution to parse `pathParam` (`req.query.path` or `searchParams.get("path")`), guaranteeing exact routing to API endpoints and embedded in-memory static assets.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `vercel.json`:
+  * Configured non-looping negative lookahead rewrite rule.
+- `server.js`:
+  * Updated `pathParam` resolution and removed temporary debug route.
+================================================================================
+
 
 
 
