@@ -155,44 +155,13 @@ const MIME_TYPES = {
   ".txt": "text/plain; charset=utf-8"
 };
 
-// Static Asset In-Memory Cache & NFT Tracing for Vercel
-const STATIC_CACHE = {};
-
-function preloadStaticAsset(relPath, mimeType) {
-  try {
-    const candidates = [
-      path.join(__dirname, relPath),
-      path.join(process.cwd(), relPath),
-      path.join(__dirname, "..", relPath)
-    ];
-    for (const p of candidates) {
-      if (fs.existsSync(p)) {
-        STATIC_CACHE[relPath.toLowerCase().replace(/\\/g, "/")] = {
-          data: fs.readFileSync(p),
-          mimeType
-        };
-        break;
-      }
-    }
-  } catch (e) {
-    console.warn("[Preload Notice]", relPath, e.message);
-  }
+// Embedded In-Memory Static Bundle (Guaranteed 0ms response, zero filesystem dependency)
+let BUNDLE = {};
+try {
+  BUNDLE = require("./static-assets-bundle.js");
+} catch (e) {
+  console.warn("[Bundle Load Notice]", e.message);
 }
-
-// Preload critical assets for 0ms latency and guaranteed Vercel bundling
-preloadStaticAsset("index.html", "text/html; charset=utf-8");
-preloadStaticAsset("css/claude-theme.css", "text/css; charset=utf-8");
-preloadStaticAsset("assets/kilikoro-logo-terracotta.png", "image/png");
-preloadStaticAsset("assets/kilikoro-logo-light.png", "image/png");
-preloadStaticAsset("assets/kilikoro_logo.png", "image/png");
-preloadStaticAsset("assets/favicon.png", "image/png");
-preloadStaticAsset("js/supabase-client.js", "application/javascript; charset=utf-8");
-preloadStaticAsset("js/claude-service.js", "application/javascript; charset=utf-8");
-preloadStaticAsset("js/ast-engine.js", "application/javascript; charset=utf-8");
-preloadStaticAsset("js/escrow-simulator.js", "application/javascript; charset=utf-8");
-preloadStaticAsset("js/bmoni-client.js", "application/javascript; charset=utf-8");
-preloadStaticAsset("js/app.js", "application/javascript; charset=utf-8");
-preloadStaticAsset("logo_candidates.html", "text/html; charset=utf-8");
 
 // Strict Validation Helpers
 function isValidEmail(email) {
@@ -909,64 +878,40 @@ async function handleRequest(req, res) {
   }
 
   // =========================================================================
-  // STATIC FILE SERVING
+  // STATIC FILE SERVING (100% EMBEDDED MEMORY BUNDLE)
   // =========================================================================
-  const rootDir = process.env.VERCEL ? process.cwd() : __dirname;
-  const normalizedKey = (pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "")).toLowerCase().replace(/\\/g, "/");
+  const cleanKey = (pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "")).toLowerCase().replace(/\\/g, "/");
 
-  // 1. Fast In-Memory Static Cache Check (0ms cold start, guaranteed MIME type)
-  if (STATIC_CACHE[normalizedKey]) {
-    const asset = STATIC_CACHE[normalizedKey];
+  // 1. Direct In-Memory Bundle Match
+  const asset = BUNDLE[cleanKey] || BUNDLE[`public/${cleanKey}`] || (cleanKey === "index.html" ? (BUNDLE["index.html"] || BUNDLE["public/index.html"]) : null);
+
+  if (asset) {
     res.writeHead(200, {
       "Content-Type": asset.mimeType,
       "Cache-Control": "public, max-age=3600"
     });
-    return res.end(asset.data);
+    const payload = asset.isBinary ? Buffer.from(asset.content, "base64") : asset.content;
+    return res.end(payload);
   }
 
-  // Optional local-config.js fallback
-  if (normalizedKey === "js/local-config.js") {
+  // Safe fallback for local config
+  if (cleanKey === "js/local-config.js") {
     res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8" });
     return res.end("// Optional local overrides\n");
   }
 
-  const cleanPath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
-  let filePath = path.join(rootDir, cleanPath);
-
-  if (!fs.existsSync(filePath)) {
-    filePath = path.join(__dirname, cleanPath);
-  }
-  if (!fs.existsSync(filePath)) {
-    filePath = path.join(__dirname, "..", cleanPath);
-  }
-
-  const resolved = path.resolve(filePath);
-
-  fs.stat(resolved, (err, stats) => {
-    if (err || !stats.isFile()) {
-      const ext = path.extname(pathname).toLowerCase();
-      // Only fallback to index.html for route paths (no extension or .html)
-      if (!ext || ext === ".html") {
-        if (STATIC_CACHE["index.html"]) {
-          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-          return res.end(STATIC_CACHE["index.html"].data);
-        }
-        const fallbackIndex = path.join(rootDir, "index.html");
-        if (fs.existsSync(fallbackIndex)) {
-          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-          return fs.createReadStream(fallbackIndex).pipe(res);
-        }
-      }
-      res.writeHead(404, { "Content-Type": "text/plain" });
-      return res.end("Not Found: " + pathname);
+  // Fallback to index.html for page routes (SPA)
+  const ext = path.extname(cleanKey).toLowerCase();
+  if (!ext || ext === ".html") {
+    const indexAsset = BUNDLE["index.html"] || BUNDLE["public/index.html"];
+    if (indexAsset) {
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      return res.end(indexAsset.content);
     }
+  }
 
-    const ext = path.extname(resolved).toLowerCase();
-    const contentType = MIME_TYPES[ext] || "application/octet-stream";
-
-    res.writeHead(200, { "Content-Type": contentType });
-    fs.createReadStream(resolved).pipe(res);
-  });
+  res.writeHead(404, { "Content-Type": "text/plain" });
+  return res.end("Not Found: " + pathname);
 }
 
 const server = http.createServer(handleRequest);
