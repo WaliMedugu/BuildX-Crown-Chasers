@@ -64,7 +64,7 @@
           <span>BMONI Testnet • 12ms</span>
         </div>
 
-        <div class="user-profile-badge" id="userProfileBadge" onclick="app.openOnboardingModal()" title="Click to view/edit your profile" style="cursor: pointer;">
+        <div class="user-profile-badge" id="userProfileBadge" onclick="app.handleAuthClick()" title="Click to view/edit your profile" style="cursor: pointer;">
           <div class="user-avatar" id="sidebarAvatar">WM</div>
           <div class="user-info">
             <span class="user-name" id="sidebarUserName">Wali Medugu</span>
@@ -126,18 +126,23 @@
           <div class="submission-card" style="margin-bottom: 1.5rem;">
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
               <div>
-                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Repository URL</label>
-                <input type="text" id="verifierRepoUrl" placeholder="https://github.com/username/repository" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.9rem;">
+                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Repository URL <span style="color: var(--status-ruby);">*</span></label>
+                <input type="url" id="verifierRepoUrl" maxlength="150" placeholder="https://github.com/username/repository" required style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.9rem;">
+                <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Must be a valid public GitHub URL (e.g. https://github.com/user/repo)</span>
               </div>
               <div>
                 <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID (Optional)</label>
-                <input type="text" id="verifierNacosId" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.9rem;">
+                <input type="text" id="verifierNacosId" maxlength="30" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.9rem;">
+                <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">4-30 characters alphanumeric matric ID</span>
               </div>
             </div>
 
             <div style="margin-top: 1rem;">
-              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Resume / Project Claims (Paste text or extract from CV)</label>
-              <textarea id="verifierResumeText" rows="3" placeholder="Paste candidate resume text or project claims here to fact-check against real code..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.85rem; font-family: var(--font-sans); resize: vertical;"></textarea>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Resume / Project Claims (Paste text or extract from CV)</label>
+                <span style="font-size: 0.72rem; color: var(--text-muted);" id="resumeCharCount">Max 5,000 chars</span>
+              </div>
+              <textarea id="verifierResumeText" rows="3" maxlength="5000" placeholder="Paste candidate resume text or project claims here to fact-check against real code..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.85rem; font-family: var(--font-sans); resize: vertical;"></textarea>
             </div>
 
             <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
@@ -560,18 +565,27 @@ threshold = 20</pre>
         </div>
 
         <div id="modalRecipientGroup">
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Assigned Student NACOS ID</label>
-          <input type="text" id="modalStudentId" value="" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Assigned Student NACOS ID <span style="color: var(--accent-terracotta);">*</span></label>
+          <input type="text" id="modalStudentId" maxlength="30" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Required for private 1-on-1 contracts (4-30 chars)</span>
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title / Deliverable</label>
-          <input type="text" id="modalContractTitle" value="" placeholder="e.g. Build payment webhook deduplicator" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title / Deliverable <span style="color: var(--status-ruby);">*</span></label>
+          <input type="text" id="modalContractTitle" maxlength="120" minlength="5" required placeholder="e.g. Build payment webhook deduplicator" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">5 - 120 characters</span>
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Reward Amount (USDC)</label>
-          <input type="number" id="modalContractAmount" value="" placeholder="e.g. 150" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Deliverable Scope & Instructions (Optional)</label>
+          <textarea id="modalContractDesc" maxlength="1000" rows="2" placeholder="Describe the technical requirements, test cases, and delivery expectations..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem; font-family: var(--font-sans); resize: vertical;"></textarea>
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Max 1,000 characters</span>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Reward Amount (USDC) <span style="color: var(--status-ruby);">*</span></label>
+          <input type="number" id="modalContractAmount" min="10" max="50000" step="1" required placeholder="e.g. 150 (Min $10 - Max $50,000)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Numeric value between $10 and $50,000 USDC</span>
         </div>
 
         <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.82rem;">
@@ -591,7 +605,7 @@ threshold = 20</pre>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
           <button class="btn btn-secondary" onclick="app.closeNewContractModal()">Cancel</button>
-          <button class="btn btn-primary" onclick="app.submitNewContract()">Deposit & Lock Escrow</button>
+          <button class="btn btn-primary" id="btnSubmitContract" onclick="app.submitNewContract()">Deposit & Lock Escrow</button>
         </div>
       </div>
     </div>
@@ -623,13 +637,13 @@ threshold = 20</pre>
       <!-- Form 1: Sign In -->
       <div id="authSignInSection" style="display: flex; flex-direction: column; gap: 1rem;">
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email Address or NACOS ID</label>
-          <input type="text" id="loginIdentifier" placeholder="e.g. candidate@domain.com or UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email Address or NACOS ID <span style="color: var(--status-ruby);">*</span></label>
+          <input type="text" id="loginIdentifier" maxlength="100" minlength="3" required placeholder="e.g. candidate@domain.com or UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Password</label>
-          <input type="password" id="loginPassword" placeholder="••••••••••••" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Password <span style="color: var(--status-ruby);">*</span></label>
+          <input type="password" id="loginPassword" minlength="6" maxlength="64" required placeholder="••••••••••••" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
@@ -653,53 +667,53 @@ threshold = 20</pre>
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Full Legal Name</label>
-          <input type="text" id="onboardName" placeholder="e.g. Adewale Adeleke" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Full Legal Name <span style="color: var(--status-ruby);">*</span></label>
+          <input type="text" id="onboardName" minlength="2" maxlength="100" required placeholder="e.g. Adewale Adeleke" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email Address</label>
-          <input type="email" id="onboardEmail" placeholder="e.g. adewale@domain.com" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email Address <span style="color: var(--status-ruby);">*</span></label>
+          <input type="email" id="onboardEmail" maxlength="100" required placeholder="e.g. adewale@domain.com" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Password</label>
-          <input type="password" id="onboardPassword" placeholder="Create password (min 6 characters)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Password <span style="color: var(--status-ruby);">*</span> (min 6 characters)</label>
+          <input type="password" id="onboardPassword" minlength="6" maxlength="64" required placeholder="Create password (min 6 characters)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <!-- Student Specific Fields -->
         <div id="onboardStudentFields">
           <div style="margin-bottom: 0.85rem;">
-            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & Chapter</label>
-            <input type="text" id="onboardUniv" placeholder="e.g. University of Lagos (UNILAG)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & Chapter <span style="color: var(--status-ruby);">*</span></label>
+            <input type="text" id="onboardUniv" minlength="2" maxlength="100" required placeholder="e.g. University of Lagos (UNILAG)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
           </div>
 
           <div style="margin-bottom: 0.85rem;">
-            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number</label>
-            <input type="text" id="onboardNacosId" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number <span style="color: var(--status-ruby);">*</span></label>
+            <input type="text" id="onboardNacosId" minlength="3" maxlength="40" required placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
           </div>
 
           <div>
-            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL</label>
-            <input type="text" id="onboardGithub" placeholder="e.g. adewale-dev" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL (Optional)</label>
+            <input type="text" id="onboardGithub" maxlength="100" placeholder="e.g. adewale-dev" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
           </div>
         </div>
 
         <!-- Employer Specific Fields -->
         <div id="onboardEmployerFields" style="display: none;">
           <div style="margin-bottom: 0.85rem;">
-            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Company / Organization Name</label>
-            <input type="text" id="onboardCompany" placeholder="e.g. Paystack Labs, Helix AI" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Company / Organization Name <span style="color: var(--status-ruby);">*</span></label>
+            <input type="text" id="onboardCompany" minlength="2" maxlength="100" placeholder="e.g. Paystack Labs, Helix AI" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
           </div>
 
           <div style="margin-bottom: 0.85rem;">
-            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Business Registration / RC Number / Tax ID</label>
-            <input type="text" id="onboardRegNumber" placeholder="e.g. RC-1849204" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Business Registration / RC Number (Optional)</label>
+            <input type="text" id="onboardRegNumber" maxlength="50" placeholder="e.g. RC-1849204" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
           </div>
 
           <div>
-            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Hiring Department / Project Role</label>
-            <input type="text" id="onboardDept" placeholder="e.g. Engineering & Autonomous Systems" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Hiring Department / Project Role (Optional)</label>
+            <input type="text" id="onboardDept" maxlength="100" placeholder="e.g. Engineering & Autonomous Systems" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
           </div>
         </div>
 
@@ -709,8 +723,8 @@ threshold = 20</pre>
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">BMONI Mobile Account (Optional)</span>
             <span class="status-badge" style="background: var(--accent-terracotta-subtle); color: var(--accent-terracotta); font-size: 0.7rem;">Sponsor Referral: NACOS</span>
           </div>
-          <input type="text" id="onboardBmoniPhone" placeholder="e.g. +234 810 123 4567 or username.bmoni" style="width: 100%; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--text-primary); font-size: 0.85rem;">
-          <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">Enables instant 3-second stablecoin settlements & Nigerian bank off-ramps.</span>
+          <input type="text" id="onboardBmoniPhone" maxlength="35" placeholder="e.g. 08012345678, +2348012345678, or tag.bmoni" style="width: 100%; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--text-primary); font-size: 0.85rem;">
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">Supports Nigerian mobile number (11 digits: 080... or +234...) or BMONI tag.</span>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
@@ -847,32 +861,32 @@ threshold = 20</pre>
       <!-- Form for Employer Upgrade -->
       <div id="upgradeEmployerFields" style="display: flex; flex-direction: column; gap: 0.85rem;">
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Company / Organization Name</label>
-          <input type="text" id="upgradeCompany" placeholder="e.g. Paystack Labs, Helix AI" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Company / Organization Name <span style="color: var(--status-ruby);">*</span></label>
+          <input type="text" id="upgradeCompany" minlength="2" maxlength="100" required placeholder="e.g. Paystack Labs, Helix AI" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Business Registration / RC Number / Tax ID</label>
-          <input type="text" id="upgradeRegNumber" placeholder="e.g. RC-1849204" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Business Registration / RC Number (Optional)</label>
+          <input type="text" id="upgradeRegNumber" maxlength="50" placeholder="e.g. RC-1849204" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Hiring Department / Project Role</label>
-          <input type="text" id="upgradeDept" placeholder="e.g. Engineering & Procurement" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Hiring Department / Project Role (Optional)</label>
+          <input type="text" id="upgradeDept" maxlength="100" placeholder="e.g. Engineering & Procurement" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
       </div>
 
       <!-- Form for Student Upgrade -->
       <div id="upgradeStudentFields" style="display: none; flex-direction: column; gap: 0.85rem;">
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & Chapter</label>
-          <input type="text" id="upgradeUniv" placeholder="e.g. University of Lagos (UNILAG)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & Chapter <span style="color: var(--status-ruby);">*</span></label>
+          <input type="text" id="upgradeUniv" minlength="2" maxlength="100" required placeholder="e.g. University of Lagos (UNILAG)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number</label>
-          <input type="text" id="upgradeNacosId" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number <span style="color: var(--status-ruby);">*</span></label>
+          <input type="text" id="upgradeNacosId" minlength="3" maxlength="40" required placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL</label>
-          <input type="text" id="upgradeGithub" placeholder="e.g. octocat" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL (Optional)</label>
+          <input type="text" id="upgradeGithub" maxlength="100" placeholder="e.g. octocat" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
       </div>
 
@@ -930,13 +944,14 @@ threshold = 20</pre>
 
         <!-- Account Number + Resolve Button -->
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">10-Digit NUBAN Account Number</label>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">10-Digit NUBAN Account Number <span style="color: var(--status-ruby);">*</span></label>
           <div style="display: flex; gap: 0.5rem;">
-            <input type="text" id="bankAccountNumber" maxlength="10" placeholder="0123456789" style="flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.95rem;">
+            <input type="text" id="bankAccountNumber" inputmode="numeric" maxlength="10" minlength="10" pattern="[0-9]{10}" required placeholder="0123456789 (Exact 10 digits)" style="flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.95rem;">
             <button class="btn btn-secondary" onclick="app.resolveBankAccount()" style="font-size: 0.82rem; white-space: nowrap;">
               Resolve Name
             </button>
           </div>
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Must be exactly 10 digits</span>
         </div>
 
         <!-- Resolved Account Banner -->
@@ -947,10 +962,11 @@ threshold = 20</pre>
         <!-- Withdrawal Amount -->
         <div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
-            <label style="font-size: 0.8rem; color: var(--text-muted);">Amount to Withdraw (USDC)</label>
+            <label style="font-size: 0.8rem; color: var(--text-muted);">Amount to Withdraw (USDC) <span style="color: var(--status-ruby);">*</span></label>
             <span style="font-size: 0.78rem; color: var(--text-muted);" id="bankAvailableBalanceLabel">Available: $0.00 USDC</span>
           </div>
-          <input type="number" id="bankWithdrawAmount" placeholder="e.g. 50" oninput="app.updateWithdrawalCalculations()" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="number" id="bankWithdrawAmount" min="1" step="0.01" required placeholder="e.g. 50 (Min $1.00 USDC)" oninput="app.updateWithdrawalCalculations()" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Minimum withdrawal: $1.00 USDC</span>
         </div>
 
         <!-- Summary & Exchange Rate -->

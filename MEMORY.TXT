@@ -1174,6 +1174,48 @@ DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
 - Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers.git
 - Local Web Server: http://localhost:3000
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T07:35:00+01:00
+================================================================================
+
+USER PROMPT:
+all fields in all inputs in the app must have rules for what kind of data is allowed, if one can continue without filling it, macx characters, exact num of characters like in bmoni mobile account, etc....
+also i dont see any tables in the database, but the user sign uo was recorded succesfully
+[3. Interactive Account Details Modal & BMONI Connection
+Account Sheet (#userAccountModal): Clicking your account badge in the header or sidebar opens a dedicated account modal displaying:
+Full Legal Name, Email, User UUID, and active role status badge.
+Verified role credentials (Company/RC for employers; Chapter/NACOS ID for students).
+Virtual BMONI Mastercard (5399 •••• •••• 4892) and live USDC/cNGN balance.
+BMONI Account Linking:
+Users can input their BMONI Mobile Phone Number / Tag directly at signup or in their account settings.
+Automatically linked with the official hackathon Sponsor Referral: NACOS benefit for instant 3s stablecoin settlements and commercial bank off-ramps.] this did not happen, clicking on my profile in the bottom left didnt open this
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Fixed Bottom-Left Profile Badge Trigger: Updated `#userProfileBadge` onclick in `index.html` from `openOnboardingModal()` to `app.handleAuthClick()`. When signed in, clicking on your profile badge in the bottom-left sidebar or top-right header instantly opens the `#userAccountModal` with your full name, email, credentials, virtual card, live balance, role switcher, and BMONI account connection.
+2. Implemented Comprehensive Input Validation Across Entire App:
+   - Onboarding / Sign In: Identifier (min 3, max 100 chars), Password (min 6, max 64 chars).
+   - Onboarding / Sign Up: Full Legal Name (min 2, max 100 chars), Email (strict RFC regex, max 100 chars), Password (6-64 chars), Student University (2-100 chars), NACOS ID (3-40 chars), Employer Company (2-100 chars), BMONI Account (validates Nigerian 11-digit numbers `080...`/`+234...` or 3-30 char tags).
+   - Candidate Verifier: GitHub Repository URL (`type="url" maxlength="150" required`), NACOS Student ID (`maxlength="40"`), Resume/Cover Text (`maxlength="5000"`).
+   - Contract Creation: Title (3-120 chars), Amount ($10 to $50,000 USDC), Student ID (3-50 chars).
+   - Nigerian Bank Off-Ramp: Exact 10-digit NUBAN (`/^\d{10}$/`, `inputmode="numeric" maxlength="10" minlength="10"`), Withdrawal Amount (> 0 and <= available balance).
+3. Database Architecture & Table Explanation:
+   - User signups are registered directly into Supabase Auth (`auth.users`), which is why the signup succeeded immediately in Supabase.
+   - For custom application tables (`public.profiles`, `public.contracts`, `public.candidate_audits`, `public.settlement_records`), Supabase disallows remote DDL creation via API for security. A 1-click SQL schema file `setup-db.sql` is provided in the repository to create the tables in the Supabase SQL Editor.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `index.html`:
+  * Updated `#userProfileBadge` `onclick="app.handleAuthClick()"`
+  * Added `minlength`, `maxlength`, `required`, `pattern`, `type` across `#loginIdentifier`, `#loginPassword`, `#onboardName`, `#onboardEmail`, `#onboardPassword`, `#onboardUniv`, `#onboardNacosId`, `#onboardCompany`, `#onboardBmoniPhone`, `#verifierRepoUrl`, `#verifierNacosId`, `#verifierResumeText`, `#modalContractTitle`, `#modalContractAmount`, `#modalContractDesc`, `#upgradeCompany`, `#upgradeUniv`, `#upgradeNacosId`, `#bankAccountNumber`, and `#bankWithdrawAmount`.
+- `js/app.js`:
+  * Added validation helpers `isValidEmail()`, `isValidBmoniAccount()`, `isValidNuban()`, `isValidRepoUrl()`.
+  * Updated `submitSignIn()`, `submitSignUp()`, `submitRoleUpgrade()`, `submitConnectBmoni()`, `submitNewContract()`, `resolveBankAccount()`, and `submitBankWithdrawal()` with pre-flight boundary and format checks.
+- `server.js`:
+  * Added server-side validation helpers and input sanitization for `/api/auth/signup`, `/api/user/upgrade-role`, `/api/user/connect-bmoni`, and `/api/contracts`.
+
+================================================================================
 
 
 

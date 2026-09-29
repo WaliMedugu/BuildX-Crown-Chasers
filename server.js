@@ -135,6 +135,47 @@ const MIME_TYPES = {
   ".txt": "text/plain; charset=utf-8"
 };
 
+// Strict Validation Helpers
+function isValidEmail(email) {
+  if (!email || typeof email !== "string" || email.length > 100) return false;
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.trim());
+}
+
+function isValidName(name) {
+  if (!name || typeof name !== "string") return false;
+  const trimmed = name.trim();
+  return trimmed.length >= 2 && trimmed.length <= 60 && /^[a-zA-Z\s\-'.]+$/.test(trimmed);
+}
+
+function isValidBmoniAccount(acc) {
+  if (!acc || typeof acc !== "string") return false;
+  const clean = acc.trim();
+  // 1. Nigerian Phone: 080... / 070... / 090... / 081... / 091... (11 digits)
+  if (/^0[789][01]\d{8}$/.test(clean)) return true;
+  // 2. International Nigerian Phone: +23480... or +23470...
+  if (/^\+234[789][01]\d{8}$/.test(clean)) return true;
+  if (/^234[789][01]\d{8}$/.test(clean)) return true;
+  // 3. BMONI Tag / Handle: 3-30 chars
+  if (/^[a-zA-Z0-9._]{3,30}(\.bmoni)?$/i.test(clean)) return true;
+  return false;
+}
+
+function formatBmoniAccount(acc) {
+  if (!acc) return null;
+  const clean = acc.trim();
+  if (/^0[789][01]\d{8}$/.test(clean)) {
+    return `+234 ${clean.slice(1, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
+  }
+  if (/^\+234[789][01]\d{8}$/.test(clean)) {
+    return `+234 ${clean.slice(4, 7)} ${clean.slice(7, 10)} ${clean.slice(10)}`;
+  }
+  return clean.toLowerCase().endsWith(".bmoni") ? clean.toLowerCase() : `${clean.toLowerCase()}.bmoni`;
+}
+
+function isValidNuban(nuban) {
+  return /^\d{10}$/.test(String(nuban || "").trim());
+}
+
 function parseJsonBody(req) {
   return new Promise((resolve, reject) => {
     let body = "";
@@ -190,16 +231,43 @@ const server = http.createServer(async (req, res) => {
       const payload = await parseJsonBody(req);
       const { name, email, password, role, university, nacosId, github, company, regNumber, department, bmoniPhone } = payload;
 
-      if (!name || !email || !password || !role) {
-        return sendJson(res, 400, { error: "Name, email, password, and role are required." });
+      if (!name || !isValidName(name)) {
+        return sendJson(res, 400, { error: "Please enter a valid full legal name (2-60 characters, letters only)." });
       }
 
-      if (password.length < 6) {
-        return sendJson(res, 400, { error: "Password must be at least 6 characters." });
+      if (!email || !isValidEmail(email)) {
+        return sendJson(res, 400, { error: "Please enter a valid email address (e.g. user@domain.com)." });
+      }
+
+      if (!password || typeof password !== "string" || password.length < 6 || password.length > 64) {
+        return sendJson(res, 400, { error: "Password must be between 6 and 64 characters." });
+      }
+
+      if (role !== "student" && role !== "employer") {
+        return sendJson(res, 400, { error: "Role must be either 'student' or 'employer'." });
+      }
+
+      if (role === "student") {
+        if (!university || university.trim().length < 2 || university.trim().length > 100) {
+          return sendJson(res, 400, { error: "University/Chapter must be between 2 and 100 characters." });
+        }
+        if (!nacosId || nacosId.trim().length < 3 || nacosId.trim().length > 30) {
+          return sendJson(res, 400, { error: "NACOS Student ID must be between 3 and 30 characters (e.g. UNILAG-CS-2026-0482)." });
+        }
+      } else {
+        if (!company || company.trim().length < 2 || company.trim().length > 100) {
+          return sendJson(res, 400, { error: "Company/Organization name must be between 2 and 100 characters." });
+        }
+      }
+
+      if (bmoniPhone && !isValidBmoniAccount(bmoniPhone)) {
+        return sendJson(res, 400, {
+          error: "Invalid BMONI Account: Please provide a valid 11-digit Nigerian mobile number (e.g. 08012345678), international format (+2348012345678), or a BMONI handle (e.g. handle.bmoni)."
+        });
       }
 
       const db = readDb();
-      const existing = db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      const existing = db.users.find(u => u.email.toLowerCase() === email.trim().toLowerCase());
       if (existing) {
         return sendJson(res, 400, { error: "An account with this email already exists. Please sign in." });
       }
@@ -210,34 +278,36 @@ const server = http.createServer(async (req, res) => {
       const cardCvv = String(Math.floor(100 + Math.random() * 900));
 
       const isStudent = role === "student";
+      const formattedBmoni = bmoniPhone ? formatBmoniAccount(bmoniPhone) : null;
+
       const profile = {
         id: crypto.randomUUID(),
-        name,
-        email,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
         role,
         hasStudentProfile: isStudent,
         hasEmployerProfile: !isStudent,
         studentCredentials: isStudent ? {
-          university: university || "NACOS Chapter",
-          nacosId: nacosId || `NACOS-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-          github: github || ""
+          university: university.trim(),
+          nacosId: nacosId.trim(),
+          github: (github || "").trim()
         } : null,
         employerCredentials: !isStudent ? {
-          company: company || "Independent Client",
-          regNumber: regNumber || "RC-" + Math.floor(100000 + Math.random() * 900000),
-          department: department || "Engineering & Procurement"
+          company: company.trim(),
+          regNumber: (regNumber || "RC-" + Math.floor(100000 + Math.random() * 900000)).trim(),
+          department: (department || "Engineering & Procurement").trim()
         } : null,
-        university: isStudent ? (university || "NACOS Chapter") : (company || "Independent Client"),
-        nacosId: isStudent ? (nacosId || `NACOS-2026-${Math.floor(1000 + Math.random() * 9000)}`) : null,
-        github: github || "",
-        company: !isStudent ? company : null,
+        university: isStudent ? university.trim() : company.trim(),
+        nacosId: isStudent ? nacosId.trim() : null,
+        github: (github || "").trim(),
+        company: !isStudent ? company.trim() : null,
         walletAddress,
         cardNumber,
         cardCvv,
         balanceUsdc: 0.00,
-        bmoniConnected: Boolean(bmoniPhone),
-        bmoniPhone: bmoniPhone || null,
-        bmoniTag: bmoniPhone ? `${name.toLowerCase().replace(/\s+/g, "")}.bmoni` : null,
+        bmoniConnected: Boolean(formattedBmoni),
+        bmoniPhone: formattedBmoni,
+        bmoniTag: formattedBmoni && formattedBmoni.includes(".bmoni") ? formattedBmoni : `${name.toLowerCase().replace(/[^a-z0-9]/g, "")}.bmoni`,
         createdAt: new Date().toISOString()
       };
 
@@ -504,26 +574,29 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (targetRole === "employer") {
-        if (!credentials.company) {
-          return sendJson(res, 400, { error: "Company or Organization name is required for Employer verification." });
+        if (!credentials.company || typeof credentials.company !== "string" || credentials.company.trim().length < 2 || credentials.company.trim().length > 100) {
+          return sendJson(res, 400, { error: "Company name must be between 2 and 100 characters." });
         }
         user.hasEmployerProfile = true;
         user.employerCredentials = {
-          company: credentials.company,
-          regNumber: credentials.regNumber || "RC-" + Math.floor(100000 + Math.random() * 900000),
-          department: credentials.department || "Engineering & Procurement",
-          location: credentials.location || "Nigeria / Remote"
+          company: credentials.company.trim(),
+          regNumber: (credentials.regNumber && typeof credentials.regNumber === "string") ? credentials.regNumber.trim().slice(0, 50) : "RC-" + Math.floor(100000 + Math.random() * 900000),
+          department: (credentials.department && typeof credentials.department === "string") ? credentials.department.trim().slice(0, 100) : "Engineering & Procurement",
+          location: (credentials.location && typeof credentials.location === "string") ? credentials.location.trim().slice(0, 100) : "Nigeria / Remote"
         };
         user.role = "employer";
       } else if (targetRole === "student") {
-        if (!credentials.university || !credentials.nacosId) {
-          return sendJson(res, 400, { error: "University and NACOS Student ID are required for Student verification." });
+        if (!credentials.university || typeof credentials.university !== "string" || credentials.university.trim().length < 2 || credentials.university.trim().length > 100) {
+          return sendJson(res, 400, { error: "University name must be between 2 and 100 characters." });
+        }
+        if (!credentials.nacosId || typeof credentials.nacosId !== "string" || credentials.nacosId.trim().length < 3 || credentials.nacosId.trim().length > 40) {
+          return sendJson(res, 400, { error: "NACOS Student ID must be between 3 and 40 characters." });
         }
         user.hasStudentProfile = true;
         user.studentCredentials = {
-          university: credentials.university,
-          nacosId: credentials.nacosId,
-          github: credentials.github || ""
+          university: credentials.university.trim(),
+          nacosId: credentials.nacosId.trim(),
+          github: (credentials.github && typeof credentials.github === "string") ? credentials.github.trim().slice(0, 100) : ""
         };
         user.role = "student";
       }
@@ -569,6 +642,11 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 400, { error: "Email and BMONI Phone/Tag required." });
       }
 
+      const rawAccount = (bmoniPhone || bmoniTag || "").trim();
+      if (!isValidBmoniAccount(rawAccount)) {
+        return sendJson(res, 400, { error: "Invalid BMONI account. Enter a valid Nigerian phone number (080... / +234...) or BMONI tag (3-30 chars)." });
+      }
+
       const db = readDb();
       const user = db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
       if (!user) {
@@ -576,8 +654,8 @@ const server = http.createServer(async (req, res) => {
       }
 
       user.bmoniConnected = true;
-      user.bmoniPhone = bmoniPhone || "+234 810 " + Math.floor(1000000 + Math.random() * 9000000);
-      user.bmoniTag = bmoniTag || `${user.name.toLowerCase().replace(/\s+/g, "")}.bmoni`;
+      user.bmoniPhone = formatBmoniAccount(rawAccount);
+      user.bmoniTag = rawAccount.toLowerCase().includes("@") || rawAccount.startsWith("+") || rawAccount.startsWith("0") ? `${user.name.toLowerCase().replace(/\s+/g, "")}.bmoni` : rawAccount.toLowerCase();
 
       writeDb(db);
 
@@ -617,9 +695,17 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST") {
       try {
         const contract = await parseJsonBody(req);
-        if (!contract.title || !contract.amount) {
-          return sendJson(res, 400, { error: "Contract title and amount required." });
+        if (!contract.title || typeof contract.title !== "string" || contract.title.trim().length < 3 || contract.title.trim().length > 120) {
+          return sendJson(res, 400, { error: "Contract title must be between 3 and 120 characters." });
         }
+        const parsedAmount = parseFloat(contract.amount);
+        if (isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 1000000) {
+          return sendJson(res, 400, { error: "Contract amount must be a positive number up to 1,000,000 USDC." });
+        }
+        contract.title = contract.title.trim();
+        contract.amount = parsedAmount;
+        contract.desc = (contract.desc && typeof contract.desc === "string") ? contract.desc.trim().slice(0, 1000) : "";
+        contract.studentId = (contract.studentId && typeof contract.studentId === "string") ? contract.studentId.trim().slice(0, 50) : null;
         contract.id = contract.id || `TASK-${Date.now().toString().slice(-4)}`;
         contract.createdAt = new Date().toISOString();
         db.contracts.unshift(contract);

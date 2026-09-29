@@ -742,6 +742,42 @@ function cacheResolver(entries, threshold) {
     if (modal) modal.style.display = "none";
   }
 
+  // =========================================================================
+  // INPUT VALIDATION HELPERS
+  // =========================================================================
+
+  isValidEmail(email) {
+    if (!email || typeof email !== "string") return false;
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(email.trim()) && email.trim().length <= 100;
+  }
+
+  isValidBmoniAccount(acc) {
+    if (!acc || typeof acc !== "string") return false;
+    const clean = acc.trim();
+    // 1. Nigerian local phone: 11 digits starting with 070, 080, 090, 081, 091
+    if (/^0[789][01]\d{8}$/.test(clean)) return true;
+    // 2. Nigerian international phone: +234... or 234...
+    if (/^\+?234[789][01]\d{8}$/.test(clean)) return true;
+    // 3. BMONI tag: 3-30 chars alphanumeric + dot/underscore
+    if (/^[a-zA-Z0-9._]{3,30}(\.bmoni)?$/i.test(clean)) return true;
+    return false;
+  }
+
+  isValidNuban(nuban) {
+    return /^\d{10}$/.test(String(nuban || "").trim());
+  }
+
+  isValidRepoUrl(url) {
+    if (!url || typeof url !== "string") return false;
+    try {
+      const u = new URL(url.trim());
+      return (u.protocol === "http:" || u.protocol === "https:") && u.pathname.length > 1;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async submitRoleUpgrade() {
     if (!this.activeProfile) return;
     const currentRole = this.activeProfile.role || "student";
@@ -752,20 +788,32 @@ function cacheResolver(entries, threshold) {
       const company = document.getElementById("upgradeCompany")?.value.trim();
       const reg = document.getElementById("upgradeRegNumber")?.value.trim();
       const dept = document.getElementById("upgradeDept")?.value.trim();
-      if (!company) {
-        this.showToast("Required Field", "Please enter your Company or Organization name.", "error");
+      if (!company || company.length < 2 || company.length > 100) {
+        this.showToast("Company Required", "Company / Organization name must be between 2 and 100 characters.", "error");
         return;
       }
-      credentials = { company, regNumber: reg || "RC-" + Math.floor(100000 + Math.random() * 900000), department: dept || "Engineering & Procurement" };
+      credentials = {
+        company,
+        regNumber: reg ? reg.slice(0, 50) : "RC-" + Math.floor(100000 + Math.random() * 900000),
+        department: dept ? dept.slice(0, 100) : "Engineering & Procurement"
+      };
     } else {
       const univ = document.getElementById("upgradeUniv")?.value.trim();
       const nacosId = document.getElementById("upgradeNacosId")?.value.trim();
       const github = document.getElementById("upgradeGithub")?.value.trim();
-      if (!univ || !nacosId) {
-        this.showToast("Required Fields", "Please enter your University and NACOS Student ID.", "error");
+      if (!univ || univ.length < 2 || univ.length > 100) {
+        this.showToast("University Required", "University / Institution name must be between 2 and 100 characters.", "error");
         return;
       }
-      credentials = { university: univ, nacosId, github: github || "" };
+      if (!nacosId || nacosId.length < 3 || nacosId.length > 40) {
+        this.showToast("NACOS ID Required", "NACOS Student ID / Matric Number must be between 3 and 40 characters.", "error");
+        return;
+      }
+      credentials = {
+        university: univ,
+        nacosId: nacosId,
+        github: github ? github.slice(0, 100) : ""
+      };
     }
 
     try {
@@ -809,14 +857,19 @@ function cacheResolver(entries, threshold) {
       return;
     }
 
+    if (!this.isValidBmoniAccount(input)) {
+      this.showToast("Invalid BMONI Account", "Please enter a valid Nigerian mobile number (11 digits e.g. 080... or +234...) or a 3-30 character BMONI tag.", "error", 5500);
+      return;
+    }
+
     try {
       const res = await fetch("/api/user/connect-bmoni", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: this.activeProfile.email,
-          bmoniPhone: input.startsWith("+") ? input : `+234 ${input}`,
-          bmoniTag: input.includes(".bmoni") ? input : `${this.activeProfile.name.toLowerCase().replace(/\s+/g, "")}.bmoni`
+          bmoniPhone: input,
+          bmoniTag: input.includes(".bmoni") ? input : `${input.toLowerCase().replace(/\s+/g, "")}.bmoni`
         })
       });
       const data = await res.json();
@@ -971,21 +1024,23 @@ function cacheResolver(entries, threshold) {
     const titleInput = document.getElementById("modalContractTitle");
     const amtInput = document.getElementById("modalContractAmount");
     const studentInput = document.getElementById("modalStudentId");
+    const descInput = document.getElementById("modalContractDesc");
 
     const title = (titleInput?.value || "").trim();
     const amount = parseFloat(amtInput?.value || "0");
+    const desc = (descInput?.value || "").trim();
     const studentId = this.modalVisibility === "private" ? (studentInput?.value || "").trim() : null;
 
-    if (!title) {
-      this.showToast("Input Required", "Please enter a contract title or deliverable.", "warning");
+    if (!title || title.length < 3 || title.length > 120) {
+      this.showToast("Title Required", "Contract title must be between 3 and 120 characters.", "warning");
       return;
     }
-    if (amount <= 0) {
-      this.showToast("Input Required", "Please enter a valid reward amount in USDC.", "warning");
+    if (isNaN(amount) || amount < 10 || amount > 50000) {
+      this.showToast("Amount Boundary", "Contract bounty must be between $10 and $50,000 USDC.", "warning");
       return;
     }
-    if (this.modalVisibility === "private" && !studentId) {
-      this.showToast("Candidate ID Required", "Please enter the candidate's NACOS ID for this direct private contract.", "warning");
+    if (this.modalVisibility === "private" && (!studentId || studentId.length < 3 || studentId.length > 50)) {
+      this.showToast("Candidate ID Required", "Please enter a valid candidate NACOS ID (3-50 characters) for this direct private contract.", "warning");
       return;
     }
 
@@ -1007,7 +1062,7 @@ function cacheResolver(entries, threshold) {
       avatar: (this.activeProfile?.name || "C").charAt(0).toUpperCase(),
       avatarColor: "var(--accent-terracotta)",
       title: title,
-      desc: this.modalVisibility === "private" ? `Direct private hire locked for ${studentId}.` : "Open bounty for all verified NACOS students.",
+      desc: desc || (this.modalVisibility === "private" ? `Direct private hire locked for ${studentId}.` : "Open bounty for all verified NACOS students."),
       amount: amount,
       tags: [this.modalVisibility === "private" ? "Private Hire" : "Public Bounty", "Escrow Locked"],
       status: "Escrow Locked",
@@ -1089,8 +1144,8 @@ function cacheResolver(entries, threshold) {
     const bankCode = bankSelect?.value || "058";
     const accountNumber = (acctInput?.value || "").trim();
 
-    if (!accountNumber || accountNumber.length < 10) {
-      this.showToast("Invalid NUBAN", "Please enter a valid 10-digit Nigerian NUBAN account number.", "warning");
+    if (!this.isValidNuban(accountNumber)) {
+      this.showToast("Invalid NUBAN", "Please enter an exact 10-digit Nigerian NUBAN account number.", "warning");
       return;
     }
 
@@ -1123,8 +1178,8 @@ function cacheResolver(entries, threshold) {
     const bankName = bankSelect?.options[bankSelect.selectedIndex]?.text || "Nigerian Bank";
     const available = this.activeProfile?.balanceUsdc || 0;
 
-    if (amount <= 0) {
-      this.showToast("Invalid Amount", "Please enter a valid withdrawal amount.", "warning");
+    if (isNaN(amount) || amount <= 0) {
+      this.showToast("Invalid Amount", "Please enter a valid withdrawal amount in USDC.", "warning");
       return;
     }
 
@@ -1133,8 +1188,8 @@ function cacheResolver(entries, threshold) {
       return;
     }
 
-    if (acct.length < 10) {
-      this.showToast("Verification Required", "Please enter and resolve your 10-digit NUBAN before submitting.", "warning");
+    if (!this.isValidNuban(acct)) {
+      this.showToast("Verification Required", "Please enter a valid exact 10-digit NUBAN before submitting.", "warning");
       return;
     }
 
@@ -1518,8 +1573,13 @@ function cacheResolver(entries, threshold) {
     const ident = (document.getElementById("loginIdentifier")?.value || "").trim();
     const pass = (document.getElementById("loginPassword")?.value || "").trim();
 
-    if (!ident || !pass) {
-      this.showToast("Credentials Required", "Please provide both your Email/ID and password to sign in.", "error");
+    if (!ident || ident.length < 3 || ident.length > 100) {
+      this.showToast("Identifier Required", "Please enter a valid Email Address or NACOS ID (3-100 characters).", "error");
+      return;
+    }
+
+    if (!pass || pass.length < 6 || pass.length > 64) {
+      this.showToast("Password Required", "Password must be between 6 and 64 characters.", "error");
       return;
     }
 
@@ -1566,16 +1626,21 @@ function cacheResolver(entries, threshold) {
     const role = this.onboardingRole || "student";
     const bmoniPhone = document.getElementById("onboardBmoniPhone")?.value.trim();
 
-    if (!name) {
-      this.showToast("Name Required", "Please enter your full legal name.", "error");
+    if (!name || name.length < 2 || name.length > 100) {
+      this.showToast("Name Required", "Full Legal Name must be between 2 and 100 characters.", "error");
       return;
     }
-    if (!email || !email.includes("@")) {
-      this.showToast("Email Required", "Please enter a valid email address.", "error");
+    if (!this.isValidEmail(email)) {
+      this.showToast("Valid Email Required", "Please enter a valid email address (e.g. name@domain.com).", "error");
       return;
     }
-    if (!pass || pass.length < 6) {
-      this.showToast("Security Notice", "Password must be at least 6 characters.", "warning");
+    if (!pass || pass.length < 6 || pass.length > 64) {
+      this.showToast("Security Notice", "Password must be between 6 and 64 characters.", "warning");
+      return;
+    }
+
+    if (bmoniPhone && !this.isValidBmoniAccount(bmoniPhone)) {
+      this.showToast("BMONI Account Notice", "BMONI account must be a valid Nigerian mobile number (11 digits: 080... or +234...) or a 3-30 character tag.", "warning");
       return;
     }
 
@@ -1591,24 +1656,28 @@ function cacheResolver(entries, threshold) {
       const univ = document.getElementById("onboardUniv")?.value.trim();
       const nacosId = document.getElementById("onboardNacosId")?.value.trim();
       const github = document.getElementById("onboardGithub")?.value.trim();
-      if (!univ || !nacosId) {
-        this.showToast("Student Details Required", "Please enter your University and NACOS Student ID.", "warning");
+      if (!univ || univ.length < 2 || univ.length > 100) {
+        this.showToast("University Required", "University / Chapter name must be between 2 and 100 characters.", "warning");
+        return;
+      }
+      if (!nacosId || nacosId.length < 3 || nacosId.length > 40) {
+        this.showToast("NACOS ID Required", "NACOS Student ID / Matric Number must be between 3 and 40 characters.", "warning");
         return;
       }
       payload.university = univ;
       payload.nacosId = nacosId;
-      payload.github = github || "";
+      payload.github = github ? github.slice(0, 100) : "";
     } else {
       const company = document.getElementById("onboardCompany")?.value.trim();
       const regNumber = document.getElementById("onboardRegNumber")?.value.trim();
       const department = document.getElementById("onboardDept")?.value.trim();
-      if (!company) {
-        this.showToast("Company Required", "Please enter your Company or Organization name.", "warning");
+      if (!company || company.length < 2 || company.length > 100) {
+        this.showToast("Company Required", "Company / Organization name must be between 2 and 100 characters.", "warning");
         return;
       }
       payload.company = company;
-      payload.regNumber = regNumber || "RC-" + Math.floor(100000 + Math.random() * 900000);
-      payload.department = department || "Engineering & Procurement";
+      payload.regNumber = regNumber ? regNumber.slice(0, 50) : "RC-" + Math.floor(100000 + Math.random() * 900000);
+      payload.department = department ? department.slice(0, 100) : "Engineering & Procurement";
       payload.university = company;
     }
 

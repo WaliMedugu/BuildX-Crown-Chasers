@@ -1,5 +1,32 @@
 {
-  "users": [],
+  "users": [
+    {
+      "id": "d15ec5e7-1cd4-4fe1-ac3e-a5d4b70a120a",
+      "name": "Wali Medugu",
+      "email": "blueparticlestudios@gmail.com",
+      "role": "student",
+      "hasStudentProfile": true,
+      "hasEmployerProfile": false,
+      "studentCredentials": {
+        "university": "Nile University of Nigeria",
+        "nacosId": "242120036",
+        "github": "https://github.com/WaliMedugu"
+      },
+      "employerCredentials": null,
+      "university": "Nile University of Nigeria",
+      "nacosId": "242120036",
+      "github": "https://github.com/WaliMedugu",
+      "company": null,
+      "walletAddress": "0x5815d72b",
+      "cardNumber": "5399 8830 4317 7140",
+      "cardCvv": "857",
+      "balanceUsdc": 0,
+      "bmoniConnected": true,
+      "bmoniPhone": "+2349061950587",
+      "bmoniTag": "walimedugu.bmoni",
+      "createdAt": "2026-09-29T06:25:21.321Z"
+    }
+  ],
   "contracts": [
     {
       "type": "public",
