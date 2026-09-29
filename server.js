@@ -43,63 +43,10 @@ try {
   console.warn("[Storage Notice] Could not create DATA_DIR:", e.message);
 }
 
-// Initial Database State
+// Initial Database State (Zero Mock Data)
 const INITIAL_DB = {
   users: [],
-  contracts: [
-    {
-      id: "TASK-BMONI-104",
-      type: "public",
-      sponsor: "BMONI Labs",
-      avatar: "B",
-      avatarColor: "var(--status-emerald)",
-      title: "High-Throughput Cache Expiry Resolver",
-      desc: "Implement an asymptotic O(N log N) cache cleanup pipeline for high-concurrency payment auth tokens.",
-      amount: 150.00,
-      tags: ["Public Bounty", "Escrow Locked"],
-      status: "Escrow Locked",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "TASK-HELIX-202",
-      type: "public",
-      sponsor: "Helix AI",
-      avatar: "H",
-      avatarColor: "var(--status-emerald)",
-      title: "Quantized Matrix Dot-Product SIMD Wrapper",
-      desc: "Build an 8-bit quantized integer matrix multiplication kernel for edge neural inference.",
-      amount: 250.00,
-      tags: ["Public Bounty", "Escrow Locked"],
-      status: "Escrow Locked",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "TASK-PAY-303",
-      type: "public",
-      sponsor: "Vivest App",
-      avatar: "V",
-      avatarColor: "var(--status-emerald)",
-      title: "Idempotent Webhook Replay Deduplicator",
-      desc: "Design a sliding-window Bloom Filter deduplication module rejecting duplicate merchant webhooks.",
-      amount: 180.00,
-      tags: ["Public Bounty", "Escrow Locked"],
-      status: "Escrow Locked",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "TASK-NACOS-404",
-      type: "public",
-      sponsor: "NACOS National",
-      avatar: "N",
-      avatarColor: "var(--status-emerald)",
-      title: "Federated Chapter Key Verification Protocol",
-      desc: "Lightweight cryptographic ECDSA signature validator verifying student identities across 36 states.",
-      amount: 120.00,
-      tags: ["Public Bounty", "Escrow Locked"],
-      status: "Escrow Locked",
-      createdAt: new Date().toISOString()
-    }
-  ],
+  contracts: [],
   audits: [],
   settlements: []
 };

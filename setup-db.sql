@@ -86,11 +86,3 @@ CREATE POLICY "Public Update Contracts" ON public.contracts FOR UPDATE USING (tr
 CREATE POLICY "Public Read Settlements" ON public.settlements FOR SELECT USING (true);
 CREATE POLICY "Public Insert Settlements" ON public.settlements FOR INSERT WITH CHECK (true);
 
--- Seed Initial Benchmark Bounties
-INSERT INTO public.contracts (contract_id, type, sponsor, title, description, amount_usdc, student_id, status)
-VALUES
-  ('TASK-BMONI-104', 'public', 'BMONI Labs', 'High-Throughput Cache Expiry Resolver', 'Implement an asymptotic O(N log N) cache cleanup pipeline for high-concurrency payment auth tokens.', 150.00, NULL, 'Escrow Locked'),
-  ('TASK-HELIX-202', 'public', 'Helix AI', 'Quantized Matrix Dot-Product SIMD Wrapper', 'Build an 8-bit quantized integer matrix multiplication kernel for edge neural inference.', 250.00, NULL, 'Escrow Locked'),
-  ('TASK-PAY-303', 'public', 'Vivest App', 'Idempotent Webhook Replay Deduplicator', 'Design a sliding-window Bloom Filter deduplication module rejecting duplicate merchant webhooks.', 180.00, NULL, 'Escrow Locked'),
-  ('TASK-NACOS-404', 'public', 'NACOS National', 'Federated Chapter Key Verification Protocol', 'Lightweight cryptographic ECDSA signature validator verifying student identities across 36 states.', 120.00, NULL, 'Escrow Locked')
-ON CONFLICT (contract_id) DO NOTHING;
