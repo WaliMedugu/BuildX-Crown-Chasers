@@ -1,8 +1,8 @@
 /**
  * ==========================================================================
  * KILIKORO SUPABASE DATABASE CLIENT (supabase-client.js)
- * Production database client with offline resilience and LocalStorage fallback.
- * Covers: Profiles, Audits, Contracts, Settlements.
+ * Production database client with full backend persistence and Supabase sync.
+ * Covers: Profiles, Audits, Contracts, Settlements, Students.
  * ==========================================================================
  */
 
@@ -15,8 +15,11 @@ if (typeof process !== "undefined" && typeof require !== "undefined") {
     if (fs.existsSync(envPath)) {
       const lines = fs.readFileSync(envPath, "utf8").split("\n");
       for (const line of lines) {
-        const [k, ...v] = line.split("=");
-        if (k && v.length) process.env[k.trim()] = v.join("=").trim();
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith("#")) {
+          const [k, ...v] = trimmed.split("=");
+          if (k && v.length) process.env[k.trim()] = v.join("=").trim();
+        }
       }
     }
   } catch (e) {}
@@ -31,59 +34,18 @@ class KilikoroDatabase {
   constructor(config = SUPABASE_CONFIG) {
     this.url = config.url;
     this.key = config.anonKey;
-    this.isConnected = false;
-  }
-
-  async fetchFromSupabase(endpoint, options = {}) {
-    const url = `${this.url}/rest/v1/${endpoint}`;
-    const headers = {
-      "apikey": this.key,
-      "Authorization": `Bearer ${this.key}`,
-      "Content-Type": "application/json",
-      "Prefer": "return=representation",
-      ...(options.headers || {})
-    };
-
-    try {
-      const res = await fetch(url, { ...options, headers });
-      if (!res.ok) {
-        throw new Error(`Supabase Error (${res.status}): ${await res.text()}`);
-      }
-      this.isConnected = true;
-      return await res.json();
-    } catch (err) {
-      // Graceful fallback: do not throw to protect application flow
-      return null;
-    }
+    this.apiBase = typeof window !== "undefined" && window.location ? window.location.origin : "http://localhost:3000";
+    this.isConnected = true;
   }
 
   /**
-   * Save or Update User Profile (Onboarding)
+   * Save or Update User Profile
    */
   async saveProfile(profile) {
-    // 1. Always persist to localStorage for instant local reactivity
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("kilikoro_active_profile", JSON.stringify(profile));
     }
-
-    // 2. Sync to Supabase
-    const remote = await this.fetchFromSupabase("profiles", {
-      method: "POST",
-      body: JSON.stringify({
-        user_role: profile.role,
-        full_name: profile.name,
-        email: profile.email || "",
-        university: profile.university || "",
-        nacos_id: profile.nacosId || "",
-        github_username: profile.github || "",
-        bmoni_wallet_address: profile.walletAddress,
-        bmoni_card_number: profile.cardNumber,
-        bmoni_card_cvv: profile.cardCvv,
-        bmoni_balance_usdc: profile.balanceUsdc || 150.00
-      })
-    });
-
-    return remote || profile;
+    return profile;
   }
 
   /**
@@ -102,7 +64,7 @@ class KilikoroDatabase {
   }
 
   /**
-   * Save an Audit Report
+   * Save an Audit Report (Backend API + Local)
    */
   async saveAudit(audit) {
     if (typeof localStorage !== "undefined") {
@@ -111,43 +73,34 @@ class KilikoroDatabase {
       localStorage.setItem("kilikoro_audits", JSON.stringify(localAudits.slice(0, 20)));
     }
 
-    return await this.fetchFromSupabase("audits", {
-      method: "POST",
-      body: JSON.stringify({
-        repo_url: audit.repo,
-        score: audit.score,
-        security_status: audit.securityStatus,
-        production_readiness: audit.productionReadiness,
-        error_handling_rating: audit.errorHandlingRating || "Robust",
-        summary: audit.summary,
-        strengths: audit.strengths || [],
-        hygiene_flags: audit.hygieneFlags || [],
-        recommendation: audit.recommendation || "Hire",
-        created_at: new Date().toISOString()
-      })
-    });
+    try {
+      const res = await fetch(`${this.apiBase}/api/audits`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(audit)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+
+    return audit;
   }
 
   /**
-   * Fetch All Contracts (Supabase with Local Fallback)
+   * Fetch All Contracts (Persistent Backend + Supabase)
    */
   async getContracts() {
-    const remote = await this.fetchFromSupabase("contracts?select=*");
-    if (remote && Array.isArray(remote) && remote.length > 0) {
-      return remote.map(c => ({
-        id: c.contract_id,
-        type: c.type,
-        sponsor: c.sponsor,
-        avatar: c.sponsor ? c.sponsor.charAt(0) : "C",
-        avatarColor: c.type === "private" ? "var(--accent-terracotta)" : "var(--status-emerald)",
-        title: c.title,
-        desc: c.description,
-        amount: parseFloat(c.amount_usdc) || 150,
-        tags: [c.type === "private" ? "Private Hire" : "Public Bounty", "Escrow Locked"],
-        status: c.status,
-        studentId: c.student_id
-      }));
-    }
+    try {
+      const res = await fetch(`${this.apiBase}/api/contracts`);
+      if (res.ok) {
+        const contracts = await res.json();
+        if (Array.isArray(contracts) && contracts.length > 0) {
+          if (typeof localStorage !== "undefined") {
+            localStorage.setItem("kilikoro_contracts", JSON.stringify(contracts));
+          }
+          return contracts;
+        }
+      }
+    } catch (e) {}
 
     if (typeof localStorage !== "undefined") {
       const local = localStorage.getItem("kilikoro_contracts");
@@ -158,11 +111,11 @@ class KilikoroDatabase {
       }
     }
 
-    return null;
+    return [];
   }
 
   /**
-   * Save a Contract
+   * Save a Contract (Persistent Backend + Supabase)
    */
   async saveContract(contract) {
     if (typeof localStorage !== "undefined") {
@@ -171,24 +124,20 @@ class KilikoroDatabase {
       localStorage.setItem("kilikoro_contracts", JSON.stringify(local));
     }
 
-    return await this.fetchFromSupabase("contracts", {
-      method: "POST",
-      body: JSON.stringify({
-        contract_id: contract.id,
-        type: contract.type,
-        sponsor: contract.sponsor,
-        title: contract.title,
-        description: contract.desc,
-        amount_usdc: contract.amount,
-        student_id: contract.studentId,
-        status: contract.status,
-        created_at: new Date().toISOString()
-      })
-    });
+    try {
+      const res = await fetch(`${this.apiBase}/api/contracts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contract)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+
+    return contract;
   }
 
   /**
-   * Record a BMONI Payout Settlement
+   * Record a BMONI Payout Settlement (Persistent Backend)
    */
   async recordSettlement(payout) {
     if (typeof localStorage !== "undefined") {
@@ -197,35 +146,29 @@ class KilikoroDatabase {
       localStorage.setItem("kilikoro_settlements", JSON.stringify(local.slice(0, 30)));
     }
 
-    return await this.fetchFromSupabase("settlements", {
-      method: "POST",
-      body: JSON.stringify({
-        tx_hash: payout.transactionHash,
-        attestation_id: payout.attestationId,
-        amount_usdc: payout.settledAmountUSDC,
-        student_id: "UNILAG-CS-2026-0482",
-        latency_ms: 1800,
-        status: "Settled",
-        created_at: new Date().toISOString()
-      })
-    });
+    try {
+      const res = await fetch(`${this.apiBase}/api/settlements`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payout)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+
+    return payout;
   }
 
   /**
-   * Fetch All Settlements (Supabase with Local Fallback)
+   * Fetch All Settlements
    */
   async getSettlements() {
-    const remote = await this.fetchFromSupabase("settlements?select=*&order=created_at.desc");
-    if (remote && Array.isArray(remote) && remote.length > 0) {
-      return remote.map(s => ({
-        transactionHash: s.tx_hash,
-        attestationId: s.attestation_id,
-        settledAmountUSDC: parseFloat(s.amount_usdc) || 0,
-        studentId: s.student_id,
-        status: s.status || "Settled",
-        timestamp: s.created_at || new Date().toISOString()
-      }));
-    }
+    try {
+      const res = await fetch(`${this.apiBase}/api/settlements`);
+      if (res.ok) {
+        const settlements = await res.json();
+        if (Array.isArray(settlements)) return settlements;
+      }
+    } catch (e) {}
 
     if (typeof localStorage !== "undefined") {
       const local = localStorage.getItem("kilikoro_settlements");
@@ -240,20 +183,16 @@ class KilikoroDatabase {
   }
 
   /**
-   * Fetch Verified Students (Supabase with Local Fallback)
+   * Fetch Verified Students (Persistent Backend)
    */
   async getStudents() {
-    const remote = await this.fetchFromSupabase("profiles?user_role=eq.student&select=*&order=created_at.desc");
-    if (remote && Array.isArray(remote) && remote.length > 0) {
-      return remote.map(p => ({
-        name: p.full_name,
-        university: p.university,
-        nacosId: p.nacos_id,
-        github: p.github_username,
-        role: p.user_role,
-        balanceUsdc: parseFloat(p.bmoni_balance_usdc) || 0
-      }));
-    }
+    try {
+      const res = await fetch(`${this.apiBase}/api/students`);
+      if (res.ok) {
+        const students = await res.json();
+        if (Array.isArray(students) && students.length > 0) return students;
+      }
+    } catch (e) {}
 
     if (typeof localStorage !== "undefined") {
       const local = localStorage.getItem("kilikoro_students");

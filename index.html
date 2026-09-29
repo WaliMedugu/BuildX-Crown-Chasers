@@ -600,8 +600,8 @@ threshold = 20</pre>
   <!-- ========================================================================= -->
   <!-- MODAL: AUTHENTICATION (SIGN IN & REGISTER)                                -->
   <!-- ========================================================================= -->
-  <div class="modal-overlay" id="onboardingModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
+  <div class="modal-overlay" id="onboardingModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 1.75rem; box-shadow: var(--shadow-lg);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <h2 style="font-family: var(--font-editorial); font-size: 1.5rem;" id="authModalTitle">Account Access</h2>
@@ -623,8 +623,8 @@ threshold = 20</pre>
       <!-- Form 1: Sign In -->
       <div id="authSignInSection" style="display: flex; flex-direction: column; gap: 1rem;">
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email or NACOS ID</label>
-          <input type="text" id="loginIdentifier" placeholder="e.g. candidate@unilag.edu.ng or UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email Address or NACOS ID</label>
+          <input type="text" id="loginIdentifier" placeholder="e.g. candidate@domain.com or UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
@@ -634,7 +634,7 @@ threshold = 20</pre>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
           <button class="btn btn-secondary" onclick="app.closeOnboardingModal()">Cancel</button>
-          <button class="btn btn-primary" onclick="app.submitSignIn()">Sign In</button>
+          <button class="btn btn-primary" id="btnSubmitSignIn" onclick="app.submitSignIn()">Sign In</button>
         </div>
       </div>
 
@@ -653,13 +653,13 @@ threshold = 20</pre>
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Full Name</label>
-          <input type="text" id="onboardName" placeholder="Your full legal name" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Full Legal Name</label>
+          <input type="text" id="onboardName" placeholder="e.g. Adewale Adeleke" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email Address</label>
-          <input type="email" id="onboardEmail" placeholder="e.g. dev@domain.com" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="email" id="onboardEmail" placeholder="e.g. adewale@domain.com" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
@@ -667,29 +667,55 @@ threshold = 20</pre>
           <input type="password" id="onboardPassword" placeholder="Create password (min 6 characters)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
-        <div id="onboardUnivGroup">
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & NACOS Chapter</label>
-          <input type="text" id="onboardUniv" placeholder="e.g. UNILAG, ABU Zaria, FUTA" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        <!-- Student Specific Fields -->
+        <div id="onboardStudentFields">
+          <div style="margin-bottom: 0.85rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & Chapter</label>
+            <input type="text" id="onboardUniv" placeholder="e.g. University of Lagos (UNILAG)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          </div>
+
+          <div style="margin-bottom: 0.85rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number</label>
+            <input type="text" id="onboardNacosId" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          </div>
+
+          <div>
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL</label>
+            <input type="text" id="onboardGithub" placeholder="e.g. adewale-dev" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          </div>
         </div>
 
-        <div id="onboardNacosGroup">
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number</label>
-          <input type="text" id="onboardNacosId" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        <!-- Employer Specific Fields -->
+        <div id="onboardEmployerFields" style="display: none;">
+          <div style="margin-bottom: 0.85rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Company / Organization Name</label>
+            <input type="text" id="onboardCompany" placeholder="e.g. Paystack Labs, Helix AI" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          </div>
+
+          <div style="margin-bottom: 0.85rem;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Business Registration / RC Number / Tax ID</label>
+            <input type="text" id="onboardRegNumber" placeholder="e.g. RC-1849204" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          </div>
+
+          <div>
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Hiring Department / Project Role</label>
+            <input type="text" id="onboardDept" placeholder="e.g. Engineering & Autonomous Systems" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          </div>
         </div>
 
-        <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL</label>
-          <input type="text" id="onboardGithub" placeholder="e.g. octocat" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
-        </div>
-
-        <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
-          <span style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.2rem;">BMONI Virtual Mastercard Rails</span>
-          Account creation registers your credentials and activates a verified BMONI Virtual Mastercard for instant escrow payouts.
+        <!-- BMONI Account Connection -->
+        <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">BMONI Mobile Account (Optional)</span>
+            <span class="status-badge" style="background: var(--accent-terracotta-subtle); color: var(--accent-terracotta); font-size: 0.7rem;">Sponsor Referral: NACOS</span>
+          </div>
+          <input type="text" id="onboardBmoniPhone" placeholder="e.g. +234 810 123 4567 or username.bmoni" style="width: 100%; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--text-primary); font-size: 0.85rem;">
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">Enables instant 3-second stablecoin settlements & Nigerian bank off-ramps.</span>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
           <button class="btn btn-secondary" onclick="app.closeOnboardingModal()">Cancel</button>
-          <button class="btn btn-primary" onclick="app.submitSignUp()">Create Account & Connect</button>
+          <button class="btn btn-primary" id="btnSubmitSignUp" onclick="app.submitSignUp()">Create Account & Connect</button>
         </div>
       </div>
     </div>
@@ -699,7 +725,7 @@ threshold = 20</pre>
   <!-- MODAL: USER ACCOUNT & ROLE MANAGER                                        -->
   <!-- ========================================================================= -->
   <div class="modal-overlay" id="userAccountModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
-    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 520px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
+    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; padding: 1.75rem; box-shadow: var(--shadow-lg);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <div class="user-avatar" id="accountModalAvatar" style="width: 42px; height: 42px; font-size: 1.1rem;">WM</div>
@@ -714,16 +740,16 @@ threshold = 20</pre>
       <!-- Identity Details Card -->
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
-          <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Current Role</span>
+          <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Current Active Role</span>
           <span class="status-badge" id="accountModalRoleBadge" style="background: var(--accent-terracotta-subtle); color: var(--accent-terracotta); font-weight: 600;">Student Developer</span>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.82rem;">
           <div>
-            <span style="color: var(--text-muted); display: block; font-size: 0.72rem;">INSTITUTION / CHAPTER</span>
+            <span style="color: var(--text-muted); display: block; font-size: 0.72rem;" id="accountModalOrgLabel">INSTITUTION / CHAPTER</span>
             <span style="font-weight: 500; color: var(--text-primary);" id="accountModalOrg">UNILAG • NACOS Chapter</span>
           </div>
           <div>
-            <span style="color: var(--text-muted); display: block; font-size: 0.72rem;">NACOS MATRIC ID</span>
+            <span style="color: var(--text-muted); display: block; font-size: 0.72rem;" id="accountModalIdLabel">NACOS MATRIC ID</span>
             <span style="font-family: var(--font-mono); color: var(--text-primary);" id="accountModalNacosId">UNILAG-CS-2026-0482</span>
           </div>
           <div>
@@ -737,12 +763,46 @@ threshold = 20</pre>
         </div>
       </div>
 
-      <!-- Quick Role Toggle Button -->
+      <!-- Role Credential & Perspective Switcher -->
       <div style="margin-bottom: 1.25rem;">
-        <button class="btn btn-secondary" id="btnAccountToggleRole" onclick="app.toggleRole()" style="width: 100%; justify-content: center; padding: 0.7rem; font-size: 0.88rem; gap: 0.5rem;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
-          <span id="accountToggleRoleLabel">Switch to Employer / Client View</span>
-        </button>
+        <div id="roleSwitchUnlockedSection" style="display: block;">
+          <button class="btn btn-secondary" id="btnAccountToggleRole" onclick="app.requestRoleSwitch()" style="width: 100%; justify-content: center; padding: 0.7rem; font-size: 0.88rem; gap: 0.5rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+            <span id="accountToggleRoleLabel">Switch Perspective</span>
+          </button>
+        </div>
+        <div id="roleSwitchLockedSection" style="display: none; background: rgba(217, 119, 87, 0.08); border: 1px dashed var(--accent-terracotta); border-radius: 8px; padding: 0.85rem; text-align: center;">
+          <div style="font-size: 0.82rem; color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem;" id="roleLockedTitle">Employer Role Requires Verified Credentials</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.65rem;" id="roleLockedDesc">To post contracts and lock escrow, file your company and business registration credentials.</div>
+          <button class="btn btn-primary" onclick="app.openRoleUpgradeModal()" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
+            File Credentials to Unlock
+          </button>
+        </div>
+      </div>
+
+      <!-- BMONI Account Connection Card -->
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-primary);">BMONI Connected Account</span>
+            <span class="status-badge" id="bmoniConnectionBadge" style="background: var(--status-emerald-subtle); color: var(--status-emerald); font-size: 0.7rem;">Active</span>
+          </div>
+          <span style="font-size: 0.72rem; color: var(--accent-gold);">Referral: NACOS</span>
+        </div>
+
+        <div id="bmoniConnectedView" style="display: block; font-size: 0.8rem; color: var(--text-muted);">
+          <div>Linked Account: <span id="bmoniLinkedAccountTag" style="font-family: var(--font-mono); color: var(--text-primary); font-weight: 500;">+234 810 ••• 4567</span></div>
+          <div>Settlement Rails: <span style="color: var(--status-emerald); font-weight: 500;">NIP & Virtual Mastercard (Instant &lt;5s)</span></div>
+        </div>
+
+        <div id="bmoniDisconnectedView" style="display: none; margin-top: 0.5rem;">
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="bmoniConnectInput" placeholder="Enter BMONI Phone or Tag (e.g. +234...)" style="flex: 1; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; font-size: 0.82rem; color: var(--text-primary);">
+            <button class="btn btn-primary" onclick="app.submitConnectBmoni()" style="font-size: 0.78rem; white-space: nowrap;">
+              Link Account
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Secondary Actions: Off-Ramp or Sign Out -->
@@ -759,6 +819,82 @@ threshold = 20</pre>
             Done
           </button>
         </div>
+      </div>
+
+      <!-- Account Management / Danger Zone -->
+      <div style="border-top: 1px solid var(--border-subtle); margin-top: 1rem; padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.72rem; color: var(--text-muted);">Account Data Management</span>
+        <button onclick="app.openConfirmDeleteModal()" style="background: none; border: none; color: var(--status-ruby); font-size: 0.75rem; text-decoration: underline; cursor: pointer; opacity: 0.85;">
+          Delete Account & Purge Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: ROLE CREDENTIAL UPGRADE (DUAL-ROLE ACCREDITATION)                  -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="roleUpgradeModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <h2 style="font-family: var(--font-editorial); font-size: 1.35rem; margin: 0;" id="roleUpgradeTitle">File Role Credentials</h2>
+          <span style="font-size: 0.8rem; color: var(--text-muted);" id="roleUpgradeSubtitle">Provide verified credentials to unlock dual-role capabilities</span>
+        </div>
+        <button onclick="app.closeRoleUpgradeModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">✕</button>
+      </div>
+
+      <!-- Form for Employer Upgrade -->
+      <div id="upgradeEmployerFields" style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Company / Organization Name</label>
+          <input type="text" id="upgradeCompany" placeholder="e.g. Paystack Labs, Helix AI" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Business Registration / RC Number / Tax ID</label>
+          <input type="text" id="upgradeRegNumber" placeholder="e.g. RC-1849204" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Hiring Department / Project Role</label>
+          <input type="text" id="upgradeDept" placeholder="e.g. Engineering & Procurement" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+      </div>
+
+      <!-- Form for Student Upgrade -->
+      <div id="upgradeStudentFields" style="display: none; flex-direction: column; gap: 0.85rem;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & Chapter</label>
+          <input type="text" id="upgradeUniv" placeholder="e.g. University of Lagos (UNILAG)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number</label>
+          <input type="text" id="upgradeNacosId" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL</label>
+          <input type="text" id="upgradeGithub" placeholder="e.g. octocat" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem;">
+        <button class="btn btn-secondary" onclick="app.closeRoleUpgradeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="app.submitRoleUpgrade()">Verify & Unlock Role</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: CONFIRM ACCOUNT DELETION                                           -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="confirmDeleteModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: var(--bg-primary); border: 1px solid var(--status-ruby); border-radius: 12px; width: 100%; max-width: 440px; padding: 1.5rem; box-shadow: var(--shadow-lg);">
+      <h3 style="color: var(--status-ruby); font-family: var(--font-editorial); font-size: 1.3rem; margin: 0 0 0.5rem 0;">Permanently Delete Account?</h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45; margin-bottom: 1.25rem;">
+        This action is irreversible. Your profile, credentials, and authentication record will be permanently purged from the Supabase database.
+      </p>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button class="btn btn-secondary" onclick="app.closeConfirmDeleteModal()">Cancel</button>
+        <button class="btn btn-primary" style="background: var(--status-ruby); border-color: var(--status-ruby);" onclick="app.deleteAccount()">Yes, Delete Account</button>
       </div>
     </div>
   </div>

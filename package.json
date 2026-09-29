@@ -16,7 +16,7 @@
     "README.md"
   ],
   "scripts": {
-    "start": "npx serve -l 3000 .",
+    "start": "node server.js",
     "cli": "node kilikoro.js"
   },
   "keywords": [

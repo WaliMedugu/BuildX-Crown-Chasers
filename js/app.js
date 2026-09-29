@@ -589,11 +589,12 @@ function cacheResolver(entries, threshold) {
     const nm = document.getElementById("accountModalName");
     const em = document.getElementById("accountModalEmail");
     const rb = document.getElementById("accountModalRoleBadge");
+    const orgLabel = document.getElementById("accountModalOrgLabel");
     const org = document.getElementById("accountModalOrg");
+    const idLabel = document.getElementById("accountModalIdLabel");
     const nacos = document.getElementById("accountModalNacosId");
     const card = document.getElementById("accountModalCard");
     const bal = document.getElementById("accountModalBalance");
-    const toggleBtn = document.getElementById("accountToggleRoleLabel");
 
     if (av) av.textContent = initials;
     if (nm) nm.textContent = profile.name;
@@ -602,15 +603,72 @@ function cacheResolver(entries, threshold) {
       rb.textContent = profile.role === "employer" ? "Employer / Client" : "Student Developer";
       rb.style.color = profile.role === "employer" ? "var(--accent-terracotta)" : "var(--status-emerald)";
     }
-    if (org) org.textContent = profile.role === "employer" ? (profile.university || "Independent Client / Enterprise") : (profile.university || "UNILAG • NACOS Chapter");
-    if (nacos) nacos.textContent = profile.nacosId || (profile.role === "student" ? "NACOS-2026-VERIFIED" : "CLIENT-VERIFIED");
+
+    if (profile.role === "employer") {
+      if (orgLabel) orgLabel.textContent = "ORGANIZATION / COMPANY";
+      if (org) org.textContent = profile.company || profile.employerCredentials?.company || profile.university || "Independent Client";
+      if (idLabel) idLabel.textContent = "BUSINESS REG / RC NO";
+      if (nacos) nacos.textContent = profile.employerCredentials?.regNumber || "RC-VERIFIED-ENTERPRISE";
+    } else {
+      if (orgLabel) orgLabel.textContent = "INSTITUTION / CHAPTER";
+      if (org) org.textContent = profile.studentCredentials?.university || profile.university || "NACOS Chapter";
+      if (idLabel) idLabel.textContent = "NACOS MATRIC ID";
+      if (nacos) nacos.textContent = profile.studentCredentials?.nacosId || profile.nacosId || "NACOS-2026-VERIFIED";
+    }
+
     if (card) card.textContent = profile.cardNumber || "5399 •••• •••• 4892";
     if (bal) {
       const b = profile.balanceUsdc || 0;
       bal.textContent = `$${b.toFixed(2)} USDC (≈ ₦${Math.round(b * 1600).toLocaleString()} cNGN)`;
     }
-    if (toggleBtn) {
-      toggleBtn.textContent = profile.role === "employer" ? "Switch to Student Developer View" : "Switch to Employer / Client View";
+
+    // Role Switching Credentials Verification
+    const unlockedSec = document.getElementById("roleSwitchUnlockedSection");
+    const lockedSec = document.getElementById("roleSwitchLockedSection");
+    const toggleLabel = document.getElementById("accountToggleRoleLabel");
+    const lockedTitle = document.getElementById("roleLockedTitle");
+    const lockedDesc = document.getElementById("roleLockedDesc");
+
+    const currentRole = profile.role || "student";
+    const targetRole = currentRole === "student" ? "employer" : "student";
+    const hasTargetCredentials = targetRole === "employer" 
+      ? Boolean(profile.hasEmployerProfile || profile.employerCredentials)
+      : Boolean(profile.hasStudentProfile || profile.studentCredentials);
+
+    if (hasTargetCredentials) {
+      if (unlockedSec) unlockedSec.style.display = "block";
+      if (lockedSec) lockedSec.style.display = "none";
+      if (toggleLabel) toggleLabel.textContent = `Switch to ${targetRole === "employer" ? "Employer / Client" : "Student Developer"} Perspective`;
+    } else {
+      if (unlockedSec) unlockedSec.style.display = "none";
+      if (lockedSec) lockedSec.style.display = "block";
+      if (lockedTitle) lockedTitle.textContent = `${targetRole === "employer" ? "Employer" : "Student"} Role Requires Verified Credentials`;
+      if (lockedDesc) lockedDesc.textContent = `To ${targetRole === "employer" ? "post contracts and lock milestone escrow" : "submit tasks and receive student attestations"}, file your ${targetRole === "employer" ? "company organization" : "NACOS chapter"} credentials.`;
+    }
+
+    // BMONI Connected Account View
+    const bmoniConnectedView = document.getElementById("bmoniConnectedView");
+    const bmoniDisconnectedView = document.getElementById("bmoniDisconnectedView");
+    const bmoniBadge = document.getElementById("bmoniConnectionBadge");
+    const bmoniTagEl = document.getElementById("bmoniLinkedAccountTag");
+
+    if (profile.bmoniConnected) {
+      if (bmoniConnectedView) bmoniConnectedView.style.display = "block";
+      if (bmoniDisconnectedView) bmoniDisconnectedView.style.display = "none";
+      if (bmoniBadge) {
+        bmoniBadge.textContent = "Active";
+        bmoniBadge.style.background = "var(--status-emerald-subtle)";
+        bmoniBadge.style.color = "var(--status-emerald)";
+      }
+      if (bmoniTagEl) bmoniTagEl.textContent = profile.bmoniPhone || profile.bmoniTag || "+234 810 ••• 4567";
+    } else {
+      if (bmoniConnectedView) bmoniConnectedView.style.display = "none";
+      if (bmoniDisconnectedView) bmoniDisconnectedView.style.display = "block";
+      if (bmoniBadge) {
+        bmoniBadge.textContent = "Not Linked";
+        bmoniBadge.style.background = "rgba(255,255,255,0.06)";
+        bmoniBadge.style.color = "var(--text-muted)";
+      }
     }
 
     modal.style.display = "flex";
@@ -621,31 +679,202 @@ function cacheResolver(entries, threshold) {
     if (modal) modal.style.display = "none";
   }
 
-  async toggleRole() {
+  async requestRoleSwitch() {
     if (!this.activeProfile || this.activeProfile.isGuest) {
       this.promptAuth("switch identity roles");
       return;
     }
 
     const currentRole = this.activeProfile.role || "student";
-    const newRole = currentRole === "student" ? "employer" : "student";
-    this.activeProfile.role = newRole;
+    const targetRole = currentRole === "student" ? "employer" : "student";
+    const hasTargetCredentials = targetRole === "employer" 
+      ? Boolean(this.activeProfile.hasEmployerProfile || this.activeProfile.employerCredentials)
+      : Boolean(this.activeProfile.hasStudentProfile || this.activeProfile.studentCredentials);
 
+    if (!hasTargetCredentials) {
+      this.openRoleUpgradeModal();
+      return;
+    }
+
+    this.activeProfile.role = targetRole;
     await this.db.saveProfile(this.activeProfile);
     this.applyProfile(this.activeProfile);
     this.renderContracts();
 
-    const roleName = newRole === "employer" ? "Employer / Client" : "Student Developer";
-    this.showToast("Perspective Switched", `Active view updated to: ${roleName}.\nAll views and capabilities adjusted.`, "success");
+    const roleName = targetRole === "employer" ? "Employer / Client" : "Student Developer";
+    this.showToast("Perspective Switched", `Active view updated to: ${roleName}. All views and capabilities adjusted.`, "success");
 
-    // Refresh account modal if open
     const modal = document.getElementById("userAccountModal");
     if (modal && modal.style.display !== "none") {
       this.openUserAccountModal();
     }
   }
 
+  openRoleUpgradeModal() {
+    const modal = document.getElementById("roleUpgradeModal");
+    if (!modal) return;
+
+    const currentRole = this.activeProfile?.role || "student";
+    const targetRole = currentRole === "student" ? "employer" : "student";
+
+    const title = document.getElementById("roleUpgradeTitle");
+    const sub = document.getElementById("roleUpgradeSubtitle");
+    const empFields = document.getElementById("upgradeEmployerFields");
+    const stuFields = document.getElementById("upgradeStudentFields");
+
+    if (targetRole === "employer") {
+      if (title) title.textContent = "File Employer Credentials";
+      if (sub) sub.textContent = "Provide your company and business registration credentials to unlock the Employer perspective.";
+      if (empFields) empFields.style.display = "flex";
+      if (stuFields) stuFields.style.display = "none";
+    } else {
+      if (title) title.textContent = "File Student Credentials";
+      if (sub) sub.textContent = "Provide your institution and NACOS chapter matriculation credentials to unlock the Student perspective.";
+      if (empFields) empFields.style.display = "none";
+      if (stuFields) stuFields.style.display = "flex";
+    }
+
+    modal.style.display = "flex";
+  }
+
+  closeRoleUpgradeModal() {
+    const modal = document.getElementById("roleUpgradeModal");
+    if (modal) modal.style.display = "none";
+  }
+
+  async submitRoleUpgrade() {
+    if (!this.activeProfile) return;
+    const currentRole = this.activeProfile.role || "student";
+    const targetRole = currentRole === "student" ? "employer" : "student";
+
+    let credentials = {};
+    if (targetRole === "employer") {
+      const company = document.getElementById("upgradeCompany")?.value.trim();
+      const reg = document.getElementById("upgradeRegNumber")?.value.trim();
+      const dept = document.getElementById("upgradeDept")?.value.trim();
+      if (!company) {
+        this.showToast("Required Field", "Please enter your Company or Organization name.", "error");
+        return;
+      }
+      credentials = { company, regNumber: reg || "RC-" + Math.floor(100000 + Math.random() * 900000), department: dept || "Engineering & Procurement" };
+    } else {
+      const univ = document.getElementById("upgradeUniv")?.value.trim();
+      const nacosId = document.getElementById("upgradeNacosId")?.value.trim();
+      const github = document.getElementById("upgradeGithub")?.value.trim();
+      if (!univ || !nacosId) {
+        this.showToast("Required Fields", "Please enter your University and NACOS Student ID.", "error");
+        return;
+      }
+      credentials = { university: univ, nacosId, github: github || "" };
+    }
+
+    try {
+      const res = await fetch("/api/user/upgrade-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: this.activeProfile.email,
+          targetRole,
+          credentials
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        this.showToast("Upgrade Notice", data.error || "Failed to upgrade role.", "error");
+        return;
+      }
+
+      this.activeProfile = data.user;
+      await this.db.saveProfile(this.activeProfile);
+      this.applyProfile(this.activeProfile);
+      this.closeRoleUpgradeModal();
+      this.renderContracts();
+      this.showToast("Credentials Verified", `You now hold dual-role status! Active view: ${targetRole === "employer" ? "Employer" : "Student"}.`, "success", 5000);
+
+      const accModal = document.getElementById("userAccountModal");
+      if (accModal && accModal.style.display !== "none") {
+        this.openUserAccountModal();
+      }
+    } catch (e) {
+      this.showToast("Upgrade Error", e.message, "error");
+    }
+  }
+
+  async submitConnectBmoni() {
+    if (!this.activeProfile) return;
+    const input = document.getElementById("bmoniConnectInput")?.value.trim();
+    if (!input) {
+      this.showToast("Input Required", "Please enter your BMONI mobile phone number or account tag.", "warning");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/user/connect-bmoni", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: this.activeProfile.email,
+          bmoniPhone: input.startsWith("+") ? input : `+234 ${input}`,
+          bmoniTag: input.includes(".bmoni") ? input : `${this.activeProfile.name.toLowerCase().replace(/\s+/g, "")}.bmoni`
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        this.showToast("BMONI Link Failed", data.error || "Unable to link account.", "error");
+        return;
+      }
+
+      this.activeProfile = data.user;
+      await this.db.saveProfile(this.activeProfile);
+      this.applyProfile(this.activeProfile);
+      this.openUserAccountModal();
+      this.showToast("BMONI Account Linked", "Connected to BMONI rails with NACOS referral benefit. Virtual Card activated.", "success", 5000);
+    } catch (e) {
+      this.showToast("Connection Error", e.message, "error");
+    }
+  }
+
+  openConfirmDeleteModal() {
+    const modal = document.getElementById("confirmDeleteModal");
+    if (modal) modal.style.display = "flex";
+  }
+
+  closeConfirmDeleteModal() {
+    const modal = document.getElementById("confirmDeleteModal");
+    if (modal) modal.style.display = "none";
+  }
+
+  async deleteAccount() {
+    if (!this.activeProfile) return;
+    try {
+      await fetch("/api/auth/delete-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: this.activeProfile.email,
+          id: this.activeProfile.id
+        })
+      });
+    } catch (e) {}
+
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem("kilikoro_active_profile");
+    }
+    this.closeConfirmDeleteModal();
+    this.closeUserAccountModal();
+    this.applyGuestMode();
+    this.renderTransactions();
+    await this.renderStudents();
+    this.showToast("Account Deleted", "Your account and credentials have been permanently purged from Supabase.", "info", 5000);
+  }
+
+  async toggleRole() {
+    await this.requestRoleSwitch();
+  }
+
   signOut() {
+    fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
     if (typeof localStorage !== "undefined") {
       localStorage.removeItem("kilikoro_active_profile");
     }
@@ -661,6 +890,16 @@ function cacheResolver(entries, threshold) {
       this.promptAuth("create and lock an escrow contract");
       return;
     }
+    if (this.activeProfile?.role !== "employer") {
+      this.showToast("Employer Role Required", "Only verified Employers can create contracts and lock escrow. Please switch to or file Employer credentials.", "warning", 5000);
+      if (this.activeProfile?.hasEmployerProfile) {
+        this.requestRoleSwitch();
+      } else {
+        this.openRoleUpgradeModal();
+      }
+      return;
+    }
+
     const modal = document.getElementById("contractModal");
     if (modal) {
       modal.style.display = "flex";
@@ -1259,124 +1498,154 @@ function cacheResolver(entries, threshold) {
     this.onboardingRole = role;
     const btnStudent = document.getElementById("onboardRoleStudent");
     const btnEmployer = document.getElementById("onboardRoleEmployer");
-    const univGroup = document.getElementById("onboardUnivGroup");
-    const nacosGroup = document.getElementById("onboardNacosGroup");
+    const studentFields = document.getElementById("onboardStudentFields");
+    const employerFields = document.getElementById("onboardEmployerFields");
 
     if (role === "student") {
       if (btnStudent) btnStudent.classList.add("active");
       if (btnEmployer) btnEmployer.classList.remove("active");
-      if (univGroup) univGroup.style.display = "block";
-      if (nacosGroup) nacosGroup.style.display = "block";
+      if (studentFields) studentFields.style.display = "block";
+      if (employerFields) employerFields.style.display = "none";
     } else {
       if (btnEmployer) btnEmployer.classList.add("active");
       if (btnStudent) btnStudent.classList.remove("active");
-      if (univGroup) univGroup.style.display = "none";
-      if (nacosGroup) nacosGroup.style.display = "none";
+      if (studentFields) studentFields.style.display = "none";
+      if (employerFields) employerFields.style.display = "block";
     }
   }
 
   async submitSignIn() {
-    const ident = (document.getElementById("loginIdentifier")?.value || document.getElementById("signInIdentifier")?.value || "").trim();
-    const pass = (document.getElementById("loginPassword")?.value || document.getElementById("signInPassword")?.value || "").trim();
+    const ident = (document.getElementById("loginIdentifier")?.value || "").trim();
+    const pass = (document.getElementById("loginPassword")?.value || "").trim();
 
     if (!ident || !pass) {
       this.showToast("Credentials Required", "Please provide both your Email/ID and password to sign in.", "error");
       return;
     }
 
-    // Try Supabase auth if connected
-    if (this.db && this.db.supabase) {
-      try {
-        const { data, error } = await this.db.supabase.auth.signInWithPassword({
-          email: ident.includes("@") ? ident : `${ident}@kilikoro.local`,
-          password: pass
-        });
-        if (data && data.user) {
-          const profile = await this.db.getProfile();
-          if (profile) this.applyProfile(profile);
-          this.closeOnboardingModal();
-          this.showToast("Welcome Back", `Signed in as ${this.activeProfile?.name || ident}.`, "success");
-          return;
-        }
-      } catch (e) {
-        console.warn("Supabase auth attempted, falling back to local credentials:", e);
+    const btn = document.getElementById("btnSubmitSignIn");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Authenticating...";
+    }
+
+    try {
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: ident, password: pass })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        this.showToast("Sign In Failed", data.error || "Invalid login credentials. Account not found.", "error");
+        return;
+      }
+
+      const profile = data.user;
+      await this.db.saveProfile(profile);
+      this.applyProfile(profile);
+      this.closeOnboardingModal();
+      this.renderContracts();
+      await this.renderTransactions();
+      this.showToast("Welcome Back", `Signed in as ${profile.name} (${profile.role === "employer" ? "Employer" : "Student"}).`, "success");
+    } catch (err) {
+      this.showToast("Connection Error", "Unable to contact authentication server: " + err.message, "error");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Sign In";
       }
     }
-
-    // Local profile fallback check
-    const stored = this.db.getProfile();
-    if (stored && (stored.email === ident || stored.nacosId === ident || stored.name?.toLowerCase() === ident.toLowerCase())) {
-      this.applyProfile(stored);
-      this.closeOnboardingModal();
-      this.showToast("Welcome Back", `Signed in as ${stored.name}.`, "success");
-      return;
-    }
-
-    // Auto-create or login guest with provided identifier
-    const newProfile = {
-      name: ident.split("@")[0].toUpperCase(),
-      email: ident,
-      role: "student",
-      university: "NACOS Chapter",
-      nacosId: `NACOS-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      walletAddress: "0x" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join(""),
-      cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
-      cardCvv: String(Math.floor(100 + Math.random() * 900)),
-      balanceUsdc: 0.00
-    };
-    await this.db.saveProfile(newProfile);
-    this.applyProfile(newProfile);
-    this.closeOnboardingModal();
-    this.showToast("Welcome to KiliKoro", `Signed in as ${newProfile.name}.`, "success");
   }
 
   async submitSignUp() {
     const name = document.getElementById("onboardName")?.value.trim();
     const email = document.getElementById("onboardEmail")?.value.trim();
     const pass = document.getElementById("onboardPassword")?.value.trim();
-    const univ = document.getElementById("onboardUniv")?.value.trim();
-    const nacosId = document.getElementById("onboardNacosId")?.value.trim();
-    const github = document.getElementById("onboardGithub")?.value.trim();
+    const role = this.onboardingRole || "student";
+    const bmoniPhone = document.getElementById("onboardBmoniPhone")?.value.trim();
 
     if (!name) {
-      this.showToast("Name Required", "Please enter your legal name.", "error");
+      this.showToast("Name Required", "Please enter your full legal name.", "error");
       return;
     }
-    if (pass && pass.length < 6) {
+    if (!email || !email.includes("@")) {
+      this.showToast("Email Required", "Please enter a valid email address.", "error");
+      return;
+    }
+    if (!pass || pass.length < 6) {
       this.showToast("Security Notice", "Password must be at least 6 characters.", "warning");
       return;
     }
 
-    const profile = {
-      role: this.onboardingRole || "student",
-      name: name,
-      email: email || `${name.toLowerCase().replace(/\s+/g, "")}@student.nacos.ng`,
-      university: univ || (this.onboardingRole === "student" ? "NACOS Chapter" : "Independent Client"),
-      nacosId: nacosId || (this.onboardingRole === "student" ? `NACOS-2026-${Math.floor(1000 + Math.random() * 9000)}` : null),
-      github: github || "",
-      walletAddress: "0x" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join(""),
-      cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
-      cardCvv: String(Math.floor(100 + Math.random() * 900)),
-      balanceUsdc: 0.00
+    let payload = {
+      name,
+      email,
+      password: pass,
+      role,
+      bmoniPhone: bmoniPhone || null
     };
 
-    if (this.db && this.db.supabase && email && pass) {
-      try {
-        await this.db.supabase.auth.signUp({
-          email: email,
-          password: pass,
-          options: { data: { full_name: name, role: profile.role } }
-        });
-      } catch (e) {
-        console.warn("Supabase auth signUp fallback:", e);
+    if (role === "student") {
+      const univ = document.getElementById("onboardUniv")?.value.trim();
+      const nacosId = document.getElementById("onboardNacosId")?.value.trim();
+      const github = document.getElementById("onboardGithub")?.value.trim();
+      if (!univ || !nacosId) {
+        this.showToast("Student Details Required", "Please enter your University and NACOS Student ID.", "warning");
+        return;
       }
+      payload.university = univ;
+      payload.nacosId = nacosId;
+      payload.github = github || "";
+    } else {
+      const company = document.getElementById("onboardCompany")?.value.trim();
+      const regNumber = document.getElementById("onboardRegNumber")?.value.trim();
+      const department = document.getElementById("onboardDept")?.value.trim();
+      if (!company) {
+        this.showToast("Company Required", "Please enter your Company or Organization name.", "warning");
+        return;
+      }
+      payload.company = company;
+      payload.regNumber = regNumber || "RC-" + Math.floor(100000 + Math.random() * 900000);
+      payload.department = department || "Engineering & Procurement";
+      payload.university = company;
     }
 
-    await this.db.saveProfile(profile);
-    this.applyProfile(profile);
-    await this.renderStudents();
-    this.closeOnboardingModal();
-    this.showToast("Account Created", `Identity: ${profile.name} (${profile.role}) • BMONI Virtual Mastercard activated.`, "success", 5000);
+    const btn = document.getElementById("btnSubmitSignUp");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Creating Account...";
+    }
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        this.showToast("Registration Failed", data.error || "Could not register account.", "error");
+        return;
+      }
+
+      const profile = data.user;
+      await this.db.saveProfile(profile);
+      this.applyProfile(profile);
+      await this.renderStudents();
+      this.renderContracts();
+      this.closeOnboardingModal();
+      this.showToast("Account Created", `Identity: ${profile.name} (${profile.role === "employer" ? "Employer" : "Student"}) • Registered in Supabase.`, "success", 5000);
+    } catch (err) {
+      this.showToast("Registration Error", "Network or server failure: " + err.message, "error");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Create Account & Connect";
+      }
+    }
   }
 
   async loadLiveContracts() {
