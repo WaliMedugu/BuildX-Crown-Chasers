@@ -16,6 +16,7 @@
     "README.md"
   ],
   "scripts": {
+    "build": "node scripts/build-vercel.js",
     "start": "node server.js",
     "cli": "node kilikoro.js"
   },

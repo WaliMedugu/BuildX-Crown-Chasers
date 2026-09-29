@@ -1454,6 +1454,35 @@ GIT DIFF SUMMARY:
 - `server.js`:
   * Added `logo_candidates.html` to preloaded memory cache.
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T08:44:00+01:00
+================================================================================
+
+USER PROMPT:
+STILL
+WTF IS GOING ON.... https://kilikoro.vercel.app/
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Adopted Vercel's Universal `public/` Architecture:
+   - Root Cause: Catch-all rewrite `/(.*)` was forcing every static file request into Node serverless lambda where un-bundled static files 404ed.
+   - Solution: Added `public/` directory (Vercel's universal static folder served across all framework presets).
+   - Created `scripts/build-vercel.js` and added `"build": "node scripts/build-vercel.js"` to `package.json` ensuring automatic synchronization of `index.html`, `css/`, `js/`, and `assets/`.
+   - Updated `vercel.json` to ONLY rewrite `/api/(.*)` to `/api/index.js`, allowing Vercel's native edge CDN to serve all HTML, CSS, JavaScript, and images at native speed with zero lambda invocation.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `public/`:
+  * Created native Vercel static directory containing `index.html`, `css/claude-theme.css`, `js/`, and `assets/`.
+- `scripts/build-vercel.js`:
+  * Automated synchronization script for building `public/`.
+- `package.json`:
+  * Added `"build": "node scripts/build-vercel.js"`.
+- `vercel.json`:
+  * Reverted rewrites to only target `/api/(.*)` -> `/api/index.js`.
+================================================================================
+
 
 
 

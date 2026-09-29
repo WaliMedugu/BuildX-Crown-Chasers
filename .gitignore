@@ -3,5 +3,6 @@
 node_modules/
 .DS_Store
 js/local-config.js
+public/js/local-config.js
 .vercel/
 
