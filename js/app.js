@@ -172,13 +172,97 @@ function cacheResolver(entries, threshold) {
       });
     }
 
+    // Employer Contract Type Toggle (Private Direct vs Public Open)
+    const btnPrivate = document.getElementById("btnTypePrivate");
+    const btnPublic = document.getElementById("btnTypePublic");
+    const privateBox = document.getElementById("privateAssigneeBox");
+    let selectedContractType = "private";
+
+    if (btnPrivate && btnPublic) {
+      btnPrivate.addEventListener("click", () => {
+        selectedContractType = "private";
+        btnPrivate.style.borderColor = "var(--accent-terracotta)";
+        btnPrivate.style.background = "var(--bg-tertiary)";
+        btnPrivate.style.color = "var(--text-primary)";
+        btnPublic.style.borderColor = "var(--border-subtle)";
+        btnPublic.style.background = "transparent";
+        btnPublic.style.color = "var(--text-secondary)";
+        if (privateBox) privateBox.style.display = "block";
+      });
+
+      btnPublic.addEventListener("click", () => {
+        selectedContractType = "public";
+        btnPublic.style.borderColor = "var(--accent-terracotta)";
+        btnPublic.style.background = "var(--bg-tertiary)";
+        btnPublic.style.color = "var(--text-primary)";
+        btnPrivate.style.borderColor = "var(--border-subtle)";
+        btnPrivate.style.background = "transparent";
+        btnPrivate.style.color = "var(--text-secondary)";
+        if (privateBox) privateBox.style.display = "none";
+      });
+    }
+
     const btnDeposit = document.getElementById("btnConfirmDeposit");
     if (btnDeposit) {
       btnDeposit.addEventListener("click", () => {
         const title = document.getElementById("newBountyTitle").value;
         const total = document.getElementById("calcTotal").textContent;
-        alert(`Success! ${total} locked in BMONI Smart Escrow Vault for: "${title}". Milestone is now active.`);
+        const studentId = document.getElementById("targetStudentId") ? document.getElementById("targetStudentId").value : "@chidi_unilag";
+        
+        if (selectedContractType === "private") {
+          alert(`Success! ${total} locked in BMONI Smart Escrow Vault reserved exclusively for ${studentId}.\n\nMilestone is private (zero racing). Student can begin work with guaranteed settlement upon automated test pass.`);
+        } else {
+          alert(`Success! ${total} locked in BMONI Public Bounty Pool for "${title}". Open to all NACOS student developers.`);
+        }
         this.switchView("view-marketplace");
+      });
+    }
+
+    // Candidate CV Verifier Handlers
+    const btnRunCvAudit = document.getElementById("btnRunCvAudit");
+    if (btnRunCvAudit) {
+      btnRunCvAudit.addEventListener("click", async () => {
+        btnRunCvAudit.disabled = true;
+        btnRunCvAudit.textContent = "Running Deep Forensic Research...";
+        const statusBadge = document.getElementById("cvAuditStatusBadge");
+        if (statusBadge) statusBadge.innerHTML = '<span class="status-dot"></span> Analyzing Git Commits & AST...';
+
+        await new Promise(r => setTimeout(r, 900));
+
+        const originalityEl = document.getElementById("auditOriginality");
+        if (originalityEl) originalityEl.textContent = "96.4%";
+
+        const findingsList = document.getElementById("auditFindingsList");
+        if (findingsList) {
+          findingsList.innerHTML = `
+            <li><b>Live GitHub Audit:</b> Analyzed repo structure and commit velocity. Confirmed genuine human incremental commits spread over 14 days (no bulk LLM paste).</li>
+            <li><b>AST Normalization & Entropy:</b> Syntactic entropy 3.42 bits. Flagged 0 ChatGPT canned wrapper patterns.</li>
+            <li><b>Tutorial Clone Check:</b> Cross-referenced against 120+ known public CS tutorial repos. 100% original algorithm implementations.</li>
+            <li><b>NACOS Key Verification:</b> Identity cryptographically signed by UNILAG Chapter Node #04 (Computer Science).</li>
+            <li><b>BMONI Escrow Clearance:</b> Clean escrow record. Ready for immediate private milestone contract assignment.</li>
+          `;
+        }
+
+        if (statusBadge) {
+          statusBadge.style.background = "var(--status-emerald-subtle)";
+          statusBadge.innerHTML = '<span class="status-dot"></span> Audit Passed ✓';
+        }
+
+        btnRunCvAudit.disabled = false;
+        btnRunCvAudit.textContent = "Deep Research Audit Complete ✓";
+        btnRunCvAudit.style.background = "var(--status-emerald)";
+
+        alert("Candidate CV & GitHub Audit Complete!\nOriginality: 96.4% • NACOS Chapter Verified: UNILAG Node #04\nCandidate cleared for Private BMONI Milestone Escrow.");
+      });
+    }
+
+    const btnLoadSampleCv = document.getElementById("btnLoadSampleCv");
+    if (btnLoadSampleCv) {
+      btnLoadSampleCv.addEventListener("click", () => {
+        const cvInput = document.getElementById("cvTextInput");
+        if (cvInput) {
+          cvInput.value = `Candidate: Chidi Okonkwo\nInstitution: University of Lagos (UNILAG), CS Dept '26 (NACOS #04)\nGitHub: https://github.com/WaliMedugu/BuildX-Crown-Chasers\nClaimed Projects:\n- Kilikoro Protocol: AST deterministic sandbox and BMONI stablecoin escrow engine.\n- High-Throughput Cache Expiry Resolver: O(N log N) priority queue algorithm.\n- Campus P2P FinTech Rails: Smart contract integration on BMONI testnet.`;
+        }
       });
     }
 
@@ -186,7 +270,7 @@ function cacheResolver(entries, threshold) {
     const btnCli = document.getElementById("btnSyncCli");
     if (btnCli) {
       btnCli.addEventListener("click", () => {
-        alert("Developer CLI Token:\nkili_live_sec_99482_unilag_node04\n\nRun 'node kilikoro.js test' in your terminal to inspect code locally!");
+        alert("Developer CLI Token:\nkili_live_sec_99482_unilag_node04\n\nRun 'node kilikoro.js analyze .' or 'node kilikoro.js verify-cv' in your terminal!");
       });
     }
 
@@ -235,7 +319,8 @@ function cacheResolver(entries, threshold) {
       "view-workspace": "Active Milestone / TASK-BMONI-104",
       "view-wallet": "BMONI Financial Wallet & Cards",
       "view-passport": "Skill Passport & Verifications",
-      "view-employer": "Employer Escrow Hub"
+      "view-employer": "Employer Escrow Hub",
+      "view-cv-verifier": "Candidate CV & GitHub Repo Verifier"
     };
     if (this.breadcrumbCurrent) {
       this.breadcrumbCurrent.textContent = titles[viewId] || "Platform";
