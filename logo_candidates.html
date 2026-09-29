@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KiliKoro Logo Candidates - Claude Variant Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f0e0c;
+      --bg-card: #191816;
+      --border: #2e2b26;
+      --text-primary: #f5f4f0;
+      --text-secondary: #9c978f;
+      --terracotta: #D97757;
+      --terracotta-hover: #E08769;
+      --amber: #E5A855;
+      --coral: #E66A55;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 3rem 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header {
+      text-align: center;
+      max-width: 700px;
+      margin-bottom: 3rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      background: rgba(217, 119, 87, 0.12);
+      border: 1px solid rgba(217, 119, 87, 0.3);
+      border-radius: 9999px;
+      color: var(--terracotta);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Newsreader', serif;
+      font-size: 2.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    p.subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--terracotta);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(217, 119, 87, 0.15);
+    }
+
+    .candidate-tag {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .logo-container {
+      width: 140px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.5rem 0 1.75rem;
+      position: relative;
+    }
+
+    .logo-container svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 16px rgba(217, 119, 87, 0.25));
+    }
+
+    .card-title {
+      font-family: 'Newsreader', serif;
+      font-size: 1.4rem;
+      margin-bottom: 0.4rem;
+      color: var(--text-primary);
+    }
+
+    .card-meta {
+      font-size: 0.78rem;
+      color: var(--terracotta);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .lockup-preview {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 1rem;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      width: 100%;
+      justify-content: center;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      font-size: 1.1rem;
+    }
+
+    .lockup-preview span.logo-text {
+      color: var(--text-primary);
+    }
+    .lockup-preview span.logo-accent {
+      color: var(--terracotta);
+    }
+
+    .instructions-box {
+      margin-top: 3rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      max-width: 800px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .instructions-box b {
+      color: var(--terracotta);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="badge">Brand Identity Design</div>
+    <h1>KiliKoro Logo Candidates</h1>
+    <p class="subtitle">
+      4 distinct variations inspired by the iconic Claude warm starburst asterisk—fused with algorithmic rigor, NACOS prestige, and BMONI escrow rails.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- CANDIDATE 1 -->
+    <div class="card">
+      <span class="candidate-tag">Candidate 01</span>
+      <div class="logo-container">
+        <!-- SVG 1: Organic Claude Spark (Classic & Warm) -->
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad1" x1="15%" y1="15%" x2="85%" y2="85%">
+              <stop offset="0%" stop-color="#E08769"/>
+              <stop offset="50%" stop-color="#D97757"/>
+              <stop offset="100%" stop-color="#B85435"/>
+            </linearGradient>
+          </defs>
+          <!-- Central Claude-style rounded organic starburst -->
+          <path d="M50 8 C50 28, 28 50, 8 50 C28 50, 50 72, 50 92 C50 72, 72 50, 92 50 C72 50, 50 28, 50 8 Z" fill="url(#grad1)"/>
+          <path d="M22 22 C35 35, 35 35, 50 50 C35 65, 35 65, 22 78 C35 65, 35 65, 50 50 C65 35, 65 35, 78 22 C65 35, 65 35, 50 50 C65 65, 65 65, 78 78" stroke="url(#grad1)" stroke-width="12" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="7" fill="#FFF5F0"/>
+        </svg>
+      </div>
+      <h3 class="card-title">The Sovereign Spark</h3>
+      <div class="card-meta">Pure Claude Asterisk Heritage</div>
+      <p class="card-desc">
+        A seamless modern tribute to Anthropic’s warm terracotta starburst. Features softened organic radiating petals and an illuminated central nexus for high-trust AI verifications.
+      </p>
+      <div class="lockup-preview">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+          <path d="M50 10 C50 30, 30 50, 10 50 C30 50, 50 70, 50 90 C50 70, 70 50, 90 50 C70 50, 50 30, 50 10 Z" fill="#D97757"/>
+          <circle cx="50" cy="50" r="8" fill="#FFF5F0"/>
+        </svg>
+        <span><span class="logo-text">Kili</span><span class="logo-accent">Koro</span></span>
+      </div>
+    </div>
+
+    <!-- CANDIDATE 2 -->
+    <div class="card">
+      <span class="candidate-tag">Candidate 02</span>
+      <div class="logo-container">
+        <!-- SVG 2: Algorithmic Crown Asterisk (BuildX Crown Chasers Motif) -->
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E5A855"/>
+              <stop offset="40%" stop-color="#D97757"/>
+              <stop offset="100%" stop-color="#C24E2E"/>
+            </linearGradient>
+          </defs>
+          <!-- 6-ray geometric crown asterisk -->
+          <g transform="translate(50, 50)">
+            <path d="M0 -42 L8 -16 L28 -32 L16 -8 L42 0 L16 8 L28 32 L8 16 L0 42 L-8 16 L-28 32 L-16 8 L-42 0 L-16 -8 L-28 -32 L-8 -16 Z" fill="url(#grad2)" stroke="#191816" stroke-width="1.5" stroke-linejoin="round"/>
+            <circle cx="0" cy="0" r="10" fill="#191816"/>
+            <circle cx="0" cy="0" r="5.5" fill="#E5A855"/>
+          </g>
+        </svg>
+      </div>
+      <h3 class="card-title">The Crown Asterisk</h3>
+      <div class="card-meta">Crown Chasers & NACOS Prestige</div>
+      <p class="card-desc">
+        Merges Claude's multi-ray asterisk with the geometric peaks of a champion's crown and warm gold accents. Represents 1st-place engineering mastery.
+      </p>
+      <div class="lockup-preview">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+          <g transform="translate(50, 50)">
+            <path d="M0 -40 L7 -15 L26 -30 L15 -7 L40 0 L15 7 L26 30 L7 15 L0 40 L-7 15 L-26 30 L-15 7 L-40 0 L-15 -7 L-26 -30 L-7 -15 Z" fill="#D97757"/>
+            <circle cx="0" cy="0" r="6" fill="#E5A855"/>
+          </g>
+        </svg>
+        <span><span class="logo-text">Kili</span><span class="logo-accent">Koro</span></span>
+      </div>
+    </div>
+
+    <!-- CANDIDATE 3 -->
+    <div class="card">
+      <span class="candidate-tag">Candidate 03</span>
+      <div class="logo-container">
+        <!-- SVG 3: Cryptographic Faceted Diamond Spark (ZK & AST Digest) -->
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad3A" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E88B6E"/>
+              <stop offset="100%" stop-color="#D97757"/>
+            </linearGradient>
+            <linearGradient id="grad3B" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#C25333"/>
+              <stop offset="100%" stop-color="#9C3A1E"/>
+            </linearGradient>
+            <linearGradient id="grad3C" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#F2B366"/>
+              <stop offset="100%" stop-color="#D97757"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(50, 50)">
+            <!-- Top Ray -->
+            <polygon points="0,-45 11,-16 0,-6 -11,-16" fill="url(#grad3A)"/>
+            <!-- Bottom Ray -->
+            <polygon points="0,45 11,16 0,6 -11,16" fill="url(#grad3B)"/>
+            <!-- Right Ray -->
+            <polygon points="45,0 16,11 6,0 16,-11" fill="url(#grad3C)"/>
+            <!-- Left Ray -->
+            <polygon points="-45,0 -16,11 -6,0 -16,-11" fill="url(#grad3A)"/>
+            <!-- Diagonal NE -->
+            <polygon points="32,-32 18,-6 5,-5 6,-18" fill="url(#grad3B)"/>
+            <!-- Diagonal NW -->
+            <polygon points="-32,-32 -6,-18 -5,-5 -18,-6" fill="url(#grad3C)"/>
+            <!-- Diagonal SE -->
+            <polygon points="32,32 6,18 5,5 18,6" fill="url(#grad3A)"/>
+            <!-- Diagonal SW -->
+            <polygon points="-32,32 -18,6 -5,5 -6,18" fill="url(#grad3B)"/>
+            <!-- Center Diamond Shield -->
+            <polygon points="0,-12 12,0 0,12 -12,0" fill="#FFF5F0"/>
+            <polygon points="0,-7 7,0 0,7 -7,0" fill="#D97757"/>
+          </g>
+        </svg>
+      </div>
+      <h3 class="card-title">The Cryptographic Diamond</h3>
+      <div class="card-meta">AST Parsing & ZK Proof Attestation</div>
+      <p class="card-desc">
+        A sharp, origami-faceted diamond starburst embodying mathematical precision, code hygiene, and cryptographic proof-of-competence.
+      </p>
+      <div class="lockup-preview">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+          <g transform="translate(50, 50) scale(0.9)">
+            <polygon points="0,-45 10,-15 0,-5 -10,-15" fill="#D97757"/>
+            <polygon points="0,45 10,15 0,5 -10,15" fill="#B85435"/>
+            <polygon points="45,0 15,10 5,0 15,-10" fill="#E5A855"/>
+            <polygon points="-45,0 -15,10 -5,0 -15,-10" fill="#D97757"/>
+            <polygon points="0,-10 10,0 0,10 -10,0" fill="#FFF5F0"/>
+          </g>
+        </svg>
+        <span><span class="logo-text">Kili</span><span class="logo-accent">Koro</span></span>
+      </div>
+    </div>
+
+    <!-- CANDIDATE 4 -->
+    <div class="card">
+      <span class="candidate-tag">Candidate 04</span>
+      <div class="logo-container">
+        <!-- SVG 4: BMONI Oracle Node Circuit (Fintech Escrow Rails) -->
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E08769"/>
+              <stop offset="40%" stop-color="#D97757"/>
+              <stop offset="100%" stop-color="#A84326"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(50, 50)">
+            <!-- Outer circular node orbit -->
+            <circle cx="0" cy="0" r="42" stroke="rgba(217, 119, 87, 0.2)" stroke-width="2" stroke-dasharray="4 4"/>
+            <!-- Radiating 8-node clover starburst -->
+            <path d="M0 -38 C8 -24, 24 -8, 38 0 C24 8, 8 24, 0 38 C-8 24, -24 8, -38 0 C-24 -8, -8 -24, 0 -38 Z" fill="url(#grad4)"/>
+            <path d="M-26 -26 C-12 -12, 12 12, 26 26" stroke="#FFF5F0" stroke-width="4" stroke-linecap="round"/>
+            <path d="M26 -26 C12 -12, -12 12, -26 26" stroke="#FFF5F0" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="0" cy="-38" r="4" fill="#E5A855"/>
+            <circle cx="38" cy="0" r="4" fill="#E5A855"/>
+            <circle cx="0" cy="38" r="4" fill="#E5A855"/>
+            <circle cx="-38" cy="0" r="4" fill="#E5A855"/>
+            <circle cx="0" cy="0" r="9" fill="#191816"/>
+            <circle cx="0" cy="0" r="5" fill="#D97757"/>
+          </g>
+        </svg>
+      </div>
+      <h3 class="card-title">The BMONI Oracle Nexus</h3>
+      <div class="card-meta">Fintech Escrow & Banking Rails</div>
+      <p class="card-desc">
+        Combines Claude’s starburst core with interlocking escrow nodes and orbital transaction paths. Tailored for automated BMONI stablecoin settlement.
+      </p>
+      <div class="lockup-preview">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+          <g transform="translate(50, 50) scale(0.9)">
+            <path d="M0 -38 C8 -24, 24 -8, 38 0 C24 8, 8 24, 0 38 C-8 24, -24 8, -38 0 C-24 -8, -8 -24, 0 -38 Z" fill="#D97757"/>
+            <circle cx="0" cy="0" r="7" fill="#191816"/>
+            <circle cx="0" cy="0" r="4" fill="#E5A855"/>
+          </g>
+        </svg>
+        <span><span class="logo-text">Kili</span><span class="logo-accent">Koro</span></span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="instructions-box">
+    💡 <b>Which candidate do you prefer?</b> Tell me <b>Candidate 1, 2, 3, or 4</b> (or any specific tweak you want to see), and I will immediately apply the chosen logo to the website navbar, favicon, BMONI Virtual Mastercard, and official NACOS certificate!
+  </div>
+
+</body>
+</html>
