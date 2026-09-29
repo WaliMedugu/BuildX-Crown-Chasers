@@ -4,27 +4,40 @@
       "id": "d15ec5e7-1cd4-4fe1-ac3e-a5d4b70a120a",
       "name": "Wali Medugu",
       "email": "blueparticlestudios@gmail.com",
-      "role": "student",
+      "role": "organization",
       "hasStudentProfile": true,
-      "hasEmployerProfile": false,
+      "hasEmployerProfile": true,
       "studentCredentials": {
         "university": "Nile University of Nigeria",
         "nacosId": "242120036",
         "github": "https://github.com/WaliMedugu"
       },
-      "employerCredentials": null,
+      "employerCredentials": {
+        "company": "Beacora\\Dollara",
+        "regNumber": "Beacora\\Dollara",
+        "department": "gkjv;vvk;k",
+        "location": "Nigeria / Remote"
+      },
       "university": "Nile University of Nigeria",
       "nacosId": "242120036",
       "github": "https://github.com/WaliMedugu",
-      "company": null,
+      "company": "Beacora\\Dollara",
       "walletAddress": "0x5815d72b",
       "cardNumber": "5399 8830 4317 7140",
       "cardCvv": "857",
-      "balanceUsdc": 0,
+      "balanceUsdc": 6.25,
       "bmoniConnected": true,
       "bmoniPhone": "+2349061950587",
       "bmoniTag": "walimedugu.bmoni",
-      "createdAt": "2026-09-29T06:25:21.321Z"
+      "createdAt": "2026-09-29T06:25:21.321Z",
+      "hasOrganizationProfile": true,
+      "organizationCredentials": {
+        "company": "Beacora\\Dollara",
+        "regNumber": "Beacora\\Dollara",
+        "department": "gkjv;vvk;k",
+        "location": "Nigeria / Remote"
+      },
+      "employerBonusCredited": true
     },
     {
       "id": "25a43675-563e-4f16-bb44-12f284949a84",
@@ -72,84 +85,18 @@
       "employerBonusCredited": true
     }
   ],
-  "contracts": [
-    {
-      "type": "public",
-      "sponsor": "Interswitch Technologies",
-      "title": "Real-Time USSD Session Timeout Circuit Breaker",
-      "desc": "Build a distributed sliding-window token revoker for USSD payment gateways.",
-      "amount": 300,
-      "status": "Escrow Locked",
-      "id": "TASK-0460",
-      "createdAt": "2026-09-29T06:07:40.460Z"
-    },
-    {
-      "id": "TASK-BMONI-104",
-      "type": "public",
-      "sponsor": "BMONI Labs",
-      "avatar": "B",
-      "avatarColor": "var(--status-emerald)",
-      "title": "High-Throughput Cache Expiry Resolver",
-      "desc": "Implement an asymptotic O(N log N) cache cleanup pipeline for high-concurrency payment auth tokens.",
-      "amount": 150,
-      "tags": [
-        "Public Bounty",
-        "Escrow Locked"
-      ],
-      "status": "Escrow Locked",
-      "createdAt": "2026-09-29T06:02:09.861Z"
-    },
-    {
-      "id": "TASK-HELIX-202",
-      "type": "public",
-      "sponsor": "Helix AI",
-      "avatar": "H",
-      "avatarColor": "var(--status-emerald)",
-      "title": "Quantized Matrix Dot-Product SIMD Wrapper",
-      "desc": "Build an 8-bit quantized integer matrix multiplication kernel for edge neural inference.",
-      "amount": 250,
-      "tags": [
-        "Public Bounty",
-        "Escrow Locked"
-      ],
-      "status": "Escrow Locked",
-      "createdAt": "2026-09-29T06:02:09.862Z"
-    },
-    {
-      "id": "TASK-PAY-303",
-      "type": "public",
-      "sponsor": "Vivest App",
-      "avatar": "V",
-      "avatarColor": "var(--status-emerald)",
-      "title": "Idempotent Webhook Replay Deduplicator",
-      "desc": "Design a sliding-window Bloom Filter deduplication module rejecting duplicate merchant webhooks.",
-      "amount": 180,
-      "tags": [
-        "Public Bounty",
-        "Escrow Locked"
-      ],
-      "status": "Escrow Locked",
-      "createdAt": "2026-09-29T06:02:09.862Z"
-    },
-    {
-      "id": "TASK-NACOS-404",
-      "type": "public",
-      "sponsor": "NACOS National",
-      "avatar": "N",
-      "avatarColor": "var(--status-emerald)",
-      "title": "Federated Chapter Key Verification Protocol",
-      "desc": "Lightweight cryptographic ECDSA signature validator verifying student identities across 36 states.",
-      "amount": 120,
-      "tags": [
-        "Public Bounty",
-        "Escrow Locked"
-      ],
-      "status": "Escrow Locked",
-      "createdAt": "2026-09-29T06:02:09.862Z"
-    }
-  ],
+  "contracts": [],
   "audits": [],
   "settlements": [
+    {
+      "id": "207bdcac-2e55-4d52-a28c-f0cc0ecaca09",
+      "transactionHash": "0xbmoni_grant_550352",
+      "attestationId": "NACOS-SPONSOR-GRANT-10K",
+      "settledAmountUSDC": 6.25,
+      "status": "Welcome Bonus Credited",
+      "timestamp": "2026-09-29T17:39:10.352Z",
+      "recipient": "blueparticlestudios@gmail.com"
+    },
     {
       "id": "3cac0641-3ff9-4f68-8d5b-1855bba91029",
       "transactionHash": "0xbmoni_grant_233355",
@@ -169,6 +116,23 @@
     }
   ],
   "certificates": [
+    {
+      "id": "NACOS-CERT-2026-4FABCBFB",
+      "candidateName": "Wali Medugu",
+      "nacosId": "NACOS-VERIFIED-MEMBER",
+      "repoUrl": "https://github.com/WaliMedugu/kilikoro-core",
+      "score": 98,
+      "securityStatus": "Clean - Zero Secrets Exposed",
+      "errorHandlingRating": "Robust Guards",
+      "complexity": "O(N log N) Scalability",
+      "sha256Hash": "SHA256: 4fabcbfb367170c5e954729b",
+      "fullHash": "4fabcbfb367170c5e954729bffc9a558abdbaf33f352eb126cd5b7cd26f004d4",
+      "engineModel": "Claude Haiku 4.5 + Kilikoro AST",
+      "issuedAt": "2026-09-29T16:05:15.446Z",
+      "verified": true,
+      "verificationUrl": "https://kilikoro.vercel.app/?cert=NACOS-CERT-2026-4FABCBFB",
+      "badgeUrl": "https://kilikoro.vercel.app/api/badge/NACOS-CERT-2026-4FABCBFB"
+    },
     {
       "id": "NACOS-CERT-2026-10F660F2",
       "candidateName": "Wali Medugu",
