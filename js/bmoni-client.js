@@ -182,11 +182,62 @@ class BmoniClient {
       };
     }
 
-    if (endpoint.includes("/balance")) {
+    if (endpoint.includes("/banks")) {
+      return [
+        { code: "058", name: "Guaranty Trust Bank (GTBank)" },
+        { code: "044", name: "Access Bank" },
+        { code: "057", name: "Zenith Bank" },
+        { code: "033", name: "United Bank for Africa (UBA)" },
+        { code: "011", name: "First Bank of Nigeria" },
+        { code: "090267", name: "Kuda Microfinance Bank" },
+        { code: "100004", name: "OPay Digital Services" },
+        { code: "100033", name: "PalmPay" }
+      ];
+    }
+
+    if (endpoint.includes("/accounts/resolve")) {
       return {
-        liquidUSDC: 0.00,
-        liquidCNGN: 0,
-        status: "ACTIVE",
+        status: "SUCCESS",
+        accountName: "WALI O. MEDUGU",
+        accountNumber: body?.accountNumber || "0123456789",
+        bankCode: body?.bankCode || "058"
+      };
+    }
+
+    if (endpoint.includes("/recipients")) {
+      return {
+        status: "SUCCESS",
+        recipientId: `rcp_bmoni_${Date.now().toString().slice(-6)}`,
+        accountName: body?.name || "WALI O. MEDUGU",
+        accountNumber: body?.accountNumber || "0123456789",
+        bankCode: body?.bankCode || "058",
+        bankName: body?.bankName || "GTBank"
+      };
+    }
+
+    if (endpoint.includes("/transfers/proposals")) {
+      const amtUsdc = body?.amountUSDC || 50;
+      const amtNgn = body?.amountNGN || amtUsdc * this.exchangeRate;
+      return {
+        status: "PROPOSAL_CREATED",
+        proposalId: `PROP-BMONI-${Date.now().toString().slice(-6)}`,
+        sourceCurrency: "USDC",
+        targetCurrency: "NGN",
+        amountUSDC: amtUsdc,
+        amountNGN: amtNgn,
+        exchangeRate: this.exchangeRate,
+        feeNGN: 50,
+        timestamp
+      };
+    }
+
+    if (endpoint.includes("/transfers/sign")) {
+      return {
+        status: "SETTLED",
+        transferId: `tx_ngn_bmoni_${Date.now().toString().slice(-6)}`,
+        reference: mockTx,
+        state: "DISPATCHED_TO_NUBAN",
+        estimatedArrival: "Instant (< 5 seconds)",
         timestamp
       };
     }
