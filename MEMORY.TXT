@@ -1348,3 +1348,29 @@ GIT DIFF SUMMARY:
 - `.gitignore`:
   * Added `.vercel/` to untracked patterns.
 ================================================================================
+
+================================================================================
+SESSION LOG ENTRY - 2026-09-29T08:26:00+01:00
+================================================================================
+
+USER PROMPT:
+[Screenshot showing "Not Found: /" on build-x-crown-chasers.vercel.app and Vercel New Project page with Node preset]
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Fixed Vercel Static Asset & Root Path Routing:
+   - Root Cause: Vercel serverless functions execute with `process.cwd()` set to `/var/task` and do not include unreferenced static files into the lambda bundle by default unless declared. When Vercel routed `/` to the function, `server.js` could not find `index.html` via `__dirname`.
+   - Fix: Added `functions.api/index.js.includeFiles` in `vercel.json` bundling `index.html`, `css/**`, `js/**`, `assets/**`, `data/**`.
+   - Updated `vercel.json` routes with `"handle": "filesystem"` so Vercel's global CDN directly serves all static assets (`index.html`, CSS, JS) at 0ms latency, falling back to `/index.html` and routing `/api/*` to `/api/index.js`.
+   - Updated `server.js` static file resolver to check `process.cwd()`, `__dirname`, and parent directory with automatic SPA fallback to `index.html`.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `vercel.json`:
+  * Added `functions` declaration with `includeFiles`.
+  * Added explicit `routes` with `{"handle": "filesystem"}` and `/api/(.*)` destination.
+- `server.js`:
+  * Updated static file path resolution to check `rootDir` (`process.cwd()`), `__dirname`, and `..` with fallback to `index.html`.
+================================================================================

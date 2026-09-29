@@ -872,25 +872,36 @@ async function handleRequest(req, res) {
   // =========================================================================
   // STATIC FILE SERVING
   // =========================================================================
-  let filePath = path.join(__dirname, pathname === "/" ? "index.html" : pathname);
+  const rootDir = process.env.VERCEL ? process.cwd() : __dirname;
+  const cleanPath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+  let filePath = path.join(rootDir, cleanPath);
 
-  // Security check: ensure path is within __dirname
-  if (!filePath.startsWith(__dirname)) {
-    res.writeHead(403, { "Content-Type": "text/plain" });
-    return res.end("Forbidden");
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(__dirname, cleanPath);
+  }
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(__dirname, "..", cleanPath);
   }
 
-  fs.stat(filePath, (err, stats) => {
+  const resolved = path.resolve(filePath);
+
+  fs.stat(resolved, (err, stats) => {
     if (err || !stats.isFile()) {
+      // Fallback to index.html for SPA-style routing if available
+      const fallbackIndex = path.join(rootDir, "index.html");
+      if (fs.existsSync(fallbackIndex)) {
+        res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+        return fs.createReadStream(fallbackIndex).pipe(res);
+      }
       res.writeHead(404, { "Content-Type": "text/plain" });
       return res.end("Not Found: " + pathname);
     }
 
-    const ext = path.extname(filePath).toLowerCase();
+    const ext = path.extname(resolved).toLowerCase();
     const contentType = MIME_TYPES[ext] || "application/octet-stream";
 
     res.writeHead(200, { "Content-Type": contentType });
-    fs.createReadStream(filePath).pipe(res);
+    fs.createReadStream(resolved).pipe(res);
   });
 }
 
