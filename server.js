@@ -277,16 +277,15 @@ async function handleRequest(req, res) {
         return sendJson(res, 400, { error: "Password must be between 6 and 64 characters." });
       }
 
-      if (role !== "student" && role !== "employer") {
-        return sendJson(res, 400, { error: "Role must be either 'student' or 'employer'." });
-      }
+      const normalizedRole = (role === "employer" || role === "organization") ? "organization" : "personal";
+      const isPersonal = normalizedRole === "personal";
 
-      if (role === "student") {
+      if (isPersonal) {
         if (!university || university.trim().length < 2 || university.trim().length > 100) {
-          return sendJson(res, 400, { error: "University/Chapter must be between 2 and 100 characters." });
+          return sendJson(res, 400, { error: "University/Institution must be between 2 and 100 characters." });
         }
-        if (!nacosId || nacosId.trim().length < 3 || nacosId.trim().length > 30) {
-          return sendJson(res, 400, { error: "NACOS Student ID must be between 3 and 30 characters (e.g. UNILAG-CS-2026-0482)." });
+        if (!nacosId || nacosId.trim().length < 3 || nacosId.trim().length > 40) {
+          return sendJson(res, 400, { error: "Personal Member ID must be between 3 and 40 characters (e.g. UNILAG-CS-2026-0482 or PERS-9821)." });
         }
       } else {
         if (!company || company.trim().length < 2 || company.trim().length > 100) {
@@ -311,33 +310,46 @@ async function handleRequest(req, res) {
       const cardNumber = `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`;
       const cardCvv = String(Math.floor(100 + Math.random() * 900));
 
-      const isStudent = role === "student";
       const formattedBmoni = bmoniPhone ? formatBmoniAccount(bmoniPhone) : null;
-      // All employers receive a ₦10,000 cNGN ($6.25 USDC) bonus gift to fund contracts
-      const initialBalance = isStudent ? 0.00 : 6.25;
+      // All organizations receive a ₦10,000 cNGN ($6.25 USDC) bonus gift to fund contracts
+      const initialBalance = isPersonal ? 0.00 : 6.25;
 
       const profile = {
         id: crypto.randomUUID(),
         name: name.trim(),
         email: email.trim().toLowerCase(),
-        role,
-        hasStudentProfile: isStudent,
-        hasEmployerProfile: !isStudent,
-        studentCredentials: isStudent ? {
+        role: normalizedRole,
+        hasPersonalProfile: isPersonal,
+        hasOrganizationProfile: !isPersonal,
+        // Legacy fields for backwards compatibility
+        hasStudentProfile: isPersonal,
+        hasEmployerProfile: !isPersonal,
+        personalCredentials: isPersonal ? {
           university: university.trim(),
           nacosId: nacosId.trim(),
           github: (github || "").trim()
         } : null,
-        employerCredentials: !isStudent ? {
+        organizationCredentials: !isPersonal ? {
           company: company.trim(),
           regNumber: (regNumber || "RC-" + Math.floor(100000 + Math.random() * 900000)).trim(),
-          department: (department || "Engineering & Procurement").trim(),
+          department: (department || "Engineering & Operations").trim(),
           location: "Nigeria / Remote"
         } : null,
-        university: isStudent ? university.trim() : company.trim(),
-        nacosId: isStudent ? nacosId.trim() : null,
+        studentCredentials: isPersonal ? {
+          university: university.trim(),
+          nacosId: nacosId.trim(),
+          github: (github || "").trim()
+        } : null,
+        employerCredentials: !isPersonal ? {
+          company: company.trim(),
+          regNumber: (regNumber || "RC-" + Math.floor(100000 + Math.random() * 900000)).trim(),
+          department: (department || "Engineering & Operations").trim(),
+          location: "Nigeria / Remote"
+        } : null,
+        university: isPersonal ? university.trim() : company.trim(),
+        nacosId: isPersonal ? nacosId.trim() : null,
         github: (github || "").trim(),
-        company: !isStudent ? company.trim() : null,
+        company: !isPersonal ? company.trim() : null,
         walletAddress,
         cardNumber,
         cardCvv,
@@ -348,8 +360,8 @@ async function handleRequest(req, res) {
         createdAt: new Date().toISOString()
       };
 
-      // If employer, record the ₦10,000 cNGN ($6.25 USDC) welcome grant in settlements ledger
-      if (!isStudent) {
+      // If organization, record the ₦10,000 cNGN ($6.25 USDC) welcome grant in settlements ledger
+      if (!isPersonal) {
         db.settlements.unshift({
           id: crypto.randomUUID(),
           transactionHash: `0xbmoni_grant_${Date.now().toString().slice(-6)}`,
@@ -623,19 +635,25 @@ async function handleRequest(req, res) {
         return sendJson(res, 404, { error: "User not found." });
       }
 
-      if (targetRole === "employer") {
+      const isTargetOrg = targetRole === "organization" || targetRole === "employer";
+
+      if (isTargetOrg) {
         if (!credentials.company || typeof credentials.company !== "string" || credentials.company.trim().length < 2 || credentials.company.trim().length > 100) {
-          return sendJson(res, 400, { error: "Company name must be between 2 and 100 characters." });
+          return sendJson(res, 400, { error: "Company / Organization name must be between 2 and 100 characters." });
         }
-        user.hasEmployerProfile = true;
-        user.employerCredentials = {
+        const orgCreds = {
           company: credentials.company.trim(),
           regNumber: (credentials.regNumber && typeof credentials.regNumber === "string") ? credentials.regNumber.trim().slice(0, 50) : "RC-" + Math.floor(100000 + Math.random() * 900000),
-          department: (credentials.department && typeof credentials.department === "string") ? credentials.department.trim().slice(0, 100) : "Engineering & Procurement",
+          department: (credentials.department && typeof credentials.department === "string") ? credentials.department.trim().slice(0, 100) : "Engineering & Operations",
           location: (credentials.location && typeof credentials.location === "string") ? credentials.location.trim().slice(0, 100) : "Nigeria / Remote"
         };
-        user.role = "employer";
-        // If user didn't have employer bonus yet, credit ₦10,000 cNGN ($6.25 USDC)
+        user.hasOrganizationProfile = true;
+        user.hasEmployerProfile = true;
+        user.organizationCredentials = orgCreds;
+        user.employerCredentials = orgCreds;
+        user.company = credentials.company.trim();
+        user.role = "organization";
+        // If user didn't have organization bonus yet, credit ₦10,000 cNGN ($6.25 USDC)
         if (!user.employerBonusCredited && (!user.balanceUsdc || user.balanceUsdc === 0)) {
           user.balanceUsdc = (user.balanceUsdc || 0) + 6.25;
           user.employerBonusCredited = true;
@@ -649,20 +667,26 @@ async function handleRequest(req, res) {
             recipient: user.email
           });
         }
-      } else if (targetRole === "student") {
+      } else {
         if (!credentials.university || typeof credentials.university !== "string" || credentials.university.trim().length < 2 || credentials.university.trim().length > 100) {
-          return sendJson(res, 400, { error: "University name must be between 2 and 100 characters." });
+          return sendJson(res, 400, { error: "University / Institution name must be between 2 and 100 characters." });
         }
         if (!credentials.nacosId || typeof credentials.nacosId !== "string" || credentials.nacosId.trim().length < 3 || credentials.nacosId.trim().length > 40) {
-          return sendJson(res, 400, { error: "NACOS Student ID must be between 3 and 40 characters." });
+          return sendJson(res, 400, { error: "Personal Member ID must be between 3 and 40 characters." });
         }
-        user.hasStudentProfile = true;
-        user.studentCredentials = {
+        const persCreds = {
           university: credentials.university.trim(),
           nacosId: credentials.nacosId.trim(),
           github: (credentials.github && typeof credentials.github === "string") ? credentials.github.trim().slice(0, 100) : ""
         };
-        user.role = "student";
+        user.hasPersonalProfile = true;
+        user.hasStudentProfile = true;
+        user.personalCredentials = persCreds;
+        user.studentCredentials = persCreds;
+        user.university = credentials.university.trim();
+        user.nacosId = credentials.nacosId.trim();
+        user.github = persCreds.github;
+        user.role = "personal";
       }
 
       writeDb(db);
@@ -680,6 +704,10 @@ async function handleRequest(req, res) {
             body: JSON.stringify({
               user_metadata: {
                 role: user.role,
+                hasPersonalProfile: user.hasPersonalProfile,
+                hasOrganizationProfile: user.hasOrganizationProfile,
+                personalCredentials: user.personalCredentials,
+                organizationCredentials: user.organizationCredentials,
                 hasStudentProfile: user.hasStudentProfile,
                 hasEmployerProfile: user.hasEmployerProfile,
                 studentCredentials: user.studentCredentials,

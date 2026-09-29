@@ -1573,6 +1573,59 @@ GIT DIFF SUMMARY:
 - `server.js`:
   * Updated `pathParam` resolution and removed temporary debug route.
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T09:41:00+01:00
+================================================================================
+
+USER PROMPT:
+(Voice note transcript):
+"Now that I think about it, do I really want to separate the role of a student developer and an employer or client? How about we rename it as Personal and Organization? Personal and Organization, so that this way, yeah, rename in all cases where student developer, employer, or client is mentioned. Rename it as Personal and Organization instead."
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Standardized Role Terminology Across Entire Architecture:
+   - Systematically replaced "Student Developer" / "Student" with "Personal" and "Employer / Client" / "Employer" with "Organization" across the frontend UI, onboarding flows, perspective switcher, user profile cards, credential upgrade modals, API routes, and database models.
+   - Maintained full backward compatibility so existing users and sessions seamlessly map `student` -> `personal` and `employer` -> `organization`.
+2. UI & Modal Enhancements:
+   - Top Header Switcher: Updated toggle to "Switch between Personal and Organization views" with active label `Role: Personal` or `Role: Organization`.
+   - Onboarding & Sign-Up: Account Type pills updated to "Personal" and "Organization", dynamically showing institution / member matric credentials vs company / business registration RC number.
+   - User Account Manager & Role Upgrade: Active role badge displays "Personal" or "Organization". Role switching and upgrade modal dynamically update titles, descriptions, and credential verification inputs.
+   - Directory: Updated view heading to "Verified Members & Talents".
+3. Backend & Data Integration:
+   - Updated `/api/auth/signup`, `/api/auth/signin`, and `/api/user/upgrade-role` in `server.js` to accept and normalize `"personal"` and `"organization"`.
+   - Updated static asset compiler `static-assets-bundle.js` and synced `public/` directory. Verified all routes with automated end-to-end test script `scripts/test-roles.js`.
+
+--------------------------------------------------------------------------------
+DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
+--------------------------------------------------------------------------------
+1. ROLE SCHEMA & CREDENTIALS NORMALIZATION:
+- Personal Role (`role: "personal"`):
+  * Profile flag: `hasPersonalProfile = true` (legacy alias `hasStudentProfile` preserved)
+  * Credentials object: `personalCredentials` (`university`, `nacosId`, `github`)
+- Organization Role (`role: "organization"`):
+  * Profile flag: `hasOrganizationProfile = true` (legacy alias `hasEmployerProfile` preserved)
+  * Credentials object: `organizationCredentials` (`company`, `regNumber`, `department`, `location`)
+  * Entitlement: Eligible for ₦10,000 cNGN ($6.25 USDC) bonus gift upon filing verified credentials to fund milestone escrows.
+- Role Switching (`requestRoleSwitch()` / `toggleRole()`):
+  * If the user already holds verified credentials for the opposite role, instantly switches active perspective and updates UI view.
+  * If credentials have not yet been filed, opens the credential upgrade modal.
+
+2. CONTRACT CREATION & PERMISSIONS:
+- Escrow creation requires `organization` role (or legacy `employer`). If a `personal` user clicks "New Contract", the app notifies them and opens the upgrade modal to file organization credentials.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `index.html`:
+  * Updated navigation, header role switcher, view titles, onboarding pills, user profile modal badges, and upgrade modal fields to Personal and Organization.
+- `js/app.js`:
+  * Updated `openUserAccountModal`, `requestRoleSwitch`, `openRoleUpgradeModal`, `submitRoleUpgrade`, `setOnboardingRole`, `applyProfile`, `submitSignIn`, `submitSignUp`, and `openNewContractModal` to support Personal and Organization roles.
+- `server.js`:
+  * Updated signup, signin, upgrade-role, and contract validation endpoints to normalize roles and store `hasPersonalProfile`, `hasOrganizationProfile`, `personalCredentials`, and `organizationCredentials`.
+- `static-assets-bundle.js` & `public/`:
+  * Rebuilt and synced all production bundle assets.
+================================================================================
+
 
 
 

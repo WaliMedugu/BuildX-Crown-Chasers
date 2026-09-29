@@ -582,7 +582,7 @@ function cacheResolver(entries, threshold) {
   openUserAccountModal() {
     const modal = document.getElementById("userAccountModal");
     if (!modal) return;
-    const profile = this.activeProfile || { name: "Guest User", role: "student", isGuest: true };
+    const profile = this.activeProfile || { name: "Guest User", role: "personal", isGuest: true };
     const initials = (profile.name || "U").split(" ").map(w => w.charAt(0)).join("").toUpperCase().slice(0, 2);
 
     const av = document.getElementById("accountModalAvatar");
@@ -599,21 +599,23 @@ function cacheResolver(entries, threshold) {
     if (av) av.textContent = initials;
     if (nm) nm.textContent = profile.name;
     if (em) em.textContent = profile.email || "individual@kilikoro.local";
+    
+    const isOrg = profile.role === "organization" || profile.role === "employer";
     if (rb) {
-      rb.textContent = profile.role === "employer" ? "Employer / Client" : "Student Developer";
-      rb.style.color = profile.role === "employer" ? "var(--accent-terracotta)" : "var(--status-emerald)";
+      rb.textContent = isOrg ? "Organization" : "Personal";
+      rb.style.color = isOrg ? "var(--accent-terracotta)" : "var(--status-emerald)";
     }
 
-    if (profile.role === "employer") {
+    if (isOrg) {
       if (orgLabel) orgLabel.textContent = "ORGANIZATION / COMPANY";
-      if (org) org.textContent = profile.company || profile.employerCredentials?.company || profile.university || "Independent Client";
+      if (org) org.textContent = profile.company || profile.organizationCredentials?.company || profile.employerCredentials?.company || profile.university || "Independent Organization";
       if (idLabel) idLabel.textContent = "BUSINESS REG / RC NO";
-      if (nacos) nacos.textContent = profile.employerCredentials?.regNumber || "RC-VERIFIED-ENTERPRISE";
+      if (nacos) nacos.textContent = profile.organizationCredentials?.regNumber || profile.employerCredentials?.regNumber || "RC-VERIFIED-ENTERPRISE";
     } else {
       if (orgLabel) orgLabel.textContent = "INSTITUTION / CHAPTER";
-      if (org) org.textContent = profile.studentCredentials?.university || profile.university || "NACOS Chapter";
-      if (idLabel) idLabel.textContent = "NACOS MATRIC ID";
-      if (nacos) nacos.textContent = profile.studentCredentials?.nacosId || profile.nacosId || "NACOS-2026-VERIFIED";
+      if (org) org.textContent = profile.personalCredentials?.university || profile.studentCredentials?.university || profile.university || "NACOS Chapter";
+      if (idLabel) idLabel.textContent = "PERSONAL / NACOS ID";
+      if (nacos) nacos.textContent = profile.personalCredentials?.nacosId || profile.studentCredentials?.nacosId || profile.nacosId || "PERS-2026-VERIFIED";
     }
 
     if (card) card.textContent = profile.cardNumber || "5399 •••• •••• 4892";
@@ -629,21 +631,21 @@ function cacheResolver(entries, threshold) {
     const lockedTitle = document.getElementById("roleLockedTitle");
     const lockedDesc = document.getElementById("roleLockedDesc");
 
-    const currentRole = profile.role || "student";
-    const targetRole = currentRole === "student" ? "employer" : "student";
-    const hasTargetCredentials = targetRole === "employer" 
-      ? Boolean(profile.hasEmployerProfile || profile.employerCredentials)
-      : Boolean(profile.hasStudentProfile || profile.studentCredentials);
+    const currentRole = isOrg ? "organization" : "personal";
+    const targetRole = currentRole === "personal" ? "organization" : "personal";
+    const hasTargetCredentials = targetRole === "organization" 
+      ? Boolean(profile.hasOrganizationProfile || profile.hasEmployerProfile || profile.organizationCredentials || profile.employerCredentials)
+      : Boolean(profile.hasPersonalProfile || profile.hasStudentProfile || profile.personalCredentials || profile.studentCredentials);
 
     if (hasTargetCredentials) {
       if (unlockedSec) unlockedSec.style.display = "block";
       if (lockedSec) lockedSec.style.display = "none";
-      if (toggleLabel) toggleLabel.textContent = `Switch to ${targetRole === "employer" ? "Employer / Client" : "Student Developer"} Perspective`;
+      if (toggleLabel) toggleLabel.textContent = `Switch to ${targetRole === "organization" ? "Organization" : "Personal"} Perspective`;
     } else {
       if (unlockedSec) unlockedSec.style.display = "none";
       if (lockedSec) lockedSec.style.display = "block";
-      if (lockedTitle) lockedTitle.textContent = `${targetRole === "employer" ? "Employer" : "Student"} Role Requires Verified Credentials`;
-      if (lockedDesc) lockedDesc.textContent = `To ${targetRole === "employer" ? "post contracts and lock milestone escrow" : "submit tasks and receive student attestations"}, file your ${targetRole === "employer" ? "company organization" : "NACOS chapter"} credentials.`;
+      if (lockedTitle) lockedTitle.textContent = `${targetRole === "organization" ? "Organization" : "Personal"} Role Requires Verified Credentials`;
+      if (lockedDesc) lockedDesc.textContent = `To ${targetRole === "organization" ? "post contracts and lock milestone escrow" : "submit tasks and receive talent attestations"}, file your ${targetRole === "organization" ? "company or organization" : "personal institution"} credentials.`;
     }
 
     // BMONI Connected Account View
@@ -685,11 +687,11 @@ function cacheResolver(entries, threshold) {
       return;
     }
 
-    const currentRole = this.activeProfile.role || "student";
-    const targetRole = currentRole === "student" ? "employer" : "student";
-    const hasTargetCredentials = targetRole === "employer" 
-      ? Boolean(this.activeProfile.hasEmployerProfile || this.activeProfile.employerCredentials)
-      : Boolean(this.activeProfile.hasStudentProfile || this.activeProfile.studentCredentials);
+    const currentRole = (this.activeProfile.role === "organization" || this.activeProfile.role === "employer") ? "organization" : "personal";
+    const targetRole = currentRole === "personal" ? "organization" : "personal";
+    const hasTargetCredentials = targetRole === "organization" 
+      ? Boolean(this.activeProfile.hasOrganizationProfile || this.activeProfile.hasEmployerProfile || this.activeProfile.organizationCredentials || this.activeProfile.employerCredentials)
+      : Boolean(this.activeProfile.hasPersonalProfile || this.activeProfile.hasStudentProfile || this.activeProfile.personalCredentials || this.activeProfile.studentCredentials);
 
     if (!hasTargetCredentials) {
       this.openRoleUpgradeModal();
@@ -701,7 +703,7 @@ function cacheResolver(entries, threshold) {
     this.applyProfile(this.activeProfile);
     this.renderContracts();
 
-    const roleName = targetRole === "employer" ? "Employer / Client" : "Student Developer";
+    const roleName = targetRole === "organization" ? "Organization" : "Personal";
     this.showToast("Perspective Switched", `Active view updated to: ${roleName}. All views and capabilities adjusted.`, "success");
 
     const modal = document.getElementById("userAccountModal");
@@ -714,22 +716,22 @@ function cacheResolver(entries, threshold) {
     const modal = document.getElementById("roleUpgradeModal");
     if (!modal) return;
 
-    const currentRole = this.activeProfile?.role || "student";
-    const targetRole = currentRole === "student" ? "employer" : "student";
+    const currentRole = (this.activeProfile?.role === "organization" || this.activeProfile?.role === "employer") ? "organization" : "personal";
+    const targetRole = currentRole === "personal" ? "organization" : "personal";
 
     const title = document.getElementById("roleUpgradeTitle");
     const sub = document.getElementById("roleUpgradeSubtitle");
     const empFields = document.getElementById("upgradeEmployerFields");
     const stuFields = document.getElementById("upgradeStudentFields");
 
-    if (targetRole === "employer") {
-      if (title) title.textContent = "File Employer Credentials";
-      if (sub) sub.textContent = "Provide your company and business registration credentials to unlock the Employer perspective.";
+    if (targetRole === "organization") {
+      if (title) title.textContent = "File Organization Credentials";
+      if (sub) sub.textContent = "Provide your company and business registration credentials to unlock the Organization perspective.";
       if (empFields) empFields.style.display = "flex";
       if (stuFields) stuFields.style.display = "none";
     } else {
-      if (title) title.textContent = "File Student Credentials";
-      if (sub) sub.textContent = "Provide your institution and NACOS chapter matriculation credentials to unlock the Student perspective.";
+      if (title) title.textContent = "File Personal Credentials";
+      if (sub) sub.textContent = "Provide your institution and personal member credentials to unlock the Personal perspective.";
       if (empFields) empFields.style.display = "none";
       if (stuFields) stuFields.style.display = "flex";
     }
@@ -780,11 +782,11 @@ function cacheResolver(entries, threshold) {
 
   async submitRoleUpgrade() {
     if (!this.activeProfile) return;
-    const currentRole = this.activeProfile.role || "student";
-    const targetRole = currentRole === "student" ? "employer" : "student";
+    const currentRole = (this.activeProfile.role === "organization" || this.activeProfile.role === "employer") ? "organization" : "personal";
+    const targetRole = currentRole === "personal" ? "organization" : "personal";
 
     let credentials = {};
-    if (targetRole === "employer") {
+    if (targetRole === "organization") {
       const company = document.getElementById("upgradeCompany")?.value.trim();
       const reg = document.getElementById("upgradeRegNumber")?.value.trim();
       const dept = document.getElementById("upgradeDept")?.value.trim();
@@ -795,18 +797,18 @@ function cacheResolver(entries, threshold) {
       credentials = {
         company,
         regNumber: reg ? reg.slice(0, 50) : "RC-" + Math.floor(100000 + Math.random() * 900000),
-        department: dept ? dept.slice(0, 100) : "Engineering & Procurement"
+        department: dept ? dept.slice(0, 100) : "Engineering & Operations"
       };
     } else {
       const univ = document.getElementById("upgradeUniv")?.value.trim();
       const nacosId = document.getElementById("upgradeNacosId")?.value.trim();
       const github = document.getElementById("upgradeGithub")?.value.trim();
       if (!univ || univ.length < 2 || univ.length > 100) {
-        this.showToast("University Required", "University / Institution name must be between 2 and 100 characters.", "error");
+        this.showToast("Institution Required", "Institution / University name must be between 2 and 100 characters.", "error");
         return;
       }
       if (!nacosId || nacosId.length < 3 || nacosId.length > 40) {
-        this.showToast("NACOS ID Required", "NACOS Student ID / Matric Number must be between 3 and 40 characters.", "error");
+        this.showToast("Member ID Required", "Personal Member ID / Matric Number must be between 3 and 40 characters.", "error");
         return;
       }
       credentials = {
@@ -838,7 +840,7 @@ function cacheResolver(entries, threshold) {
       this.applyProfile(this.activeProfile);
       this.closeRoleUpgradeModal();
       this.renderContracts();
-      this.showToast("Credentials Verified", `You now hold dual-role status! Active view: ${targetRole === "employer" ? "Employer" : "Student"}.`, "success", 5000);
+      this.showToast("Credentials Verified", `You now hold dual-role status! Active view: ${targetRole === "organization" ? "Organization" : "Personal"}.`, "success", 5000);
 
       const accModal = document.getElementById("userAccountModal");
       if (accModal && accModal.style.display !== "none") {
@@ -943,9 +945,10 @@ function cacheResolver(entries, threshold) {
       this.promptAuth("create and lock an escrow contract");
       return;
     }
-    if (this.activeProfile?.role !== "employer") {
-      this.showToast("Employer Role Required", "Only verified Employers can create contracts and lock escrow. Please switch to or file Employer credentials.", "warning", 5000);
-      if (this.activeProfile?.hasEmployerProfile) {
+    const isOrg = this.activeProfile?.role === "organization" || this.activeProfile?.role === "employer";
+    if (!isOrg) {
+      this.showToast("Organization Role Required", "Only verified Organizations can create contracts and lock escrow. Please switch to or file Organization credentials.", "warning", 5000);
+      if (this.activeProfile?.hasOrganizationProfile || this.activeProfile?.hasEmployerProfile) {
         this.requestRoleSwitch();
       } else {
         this.openRoleUpgradeModal();
@@ -1504,14 +1507,17 @@ function cacheResolver(entries, threshold) {
     const authLabel = document.getElementById("headerAuthLabel");
     const roleLabel = document.getElementById("headerRoleLabel");
 
+    const isOrg = profile.role === "organization" || profile.role === "employer";
+    const roleDisplay = isOrg ? "Organization" : "Personal";
+
     if (avatarEl) avatarEl.textContent = initials;
     if (nameEl) nameEl.textContent = profile.name;
-    if (subEl) subEl.textContent = profile.role === "student" ? (profile.university || "NACOS Chapter Member") : (profile.university || "Enterprise Client");
+    if (subEl) subEl.textContent = !isOrg ? (profile.university || "Personal Builder • NACOS Node") : (profile.company || profile.university || "Enterprise Organization");
     if (authLabel) {
-      authLabel.textContent = `${profile.name.split(" ")[0]} (${profile.role === "student" ? "Student" : "Employer"})`;
+      authLabel.textContent = `${profile.name.split(" ")[0]} (${roleDisplay})`;
     }
     if (roleLabel) {
-      roleLabel.textContent = `Role: ${profile.role === "student" ? "Student" : "Employer"}`;
+      roleLabel.textContent = `Role: ${roleDisplay}`;
     }
 
     // BMONI Virtual Mastercard (Exact Image 1)
@@ -1610,13 +1616,14 @@ function cacheResolver(entries, threshold) {
   }
 
   setOnboardingRole(role) {
-    this.onboardingRole = role;
+    const normRole = (role === "employer" || role === "organization") ? "organization" : "personal";
+    this.onboardingRole = normRole;
     const btnStudent = document.getElementById("onboardRoleStudent");
     const btnEmployer = document.getElementById("onboardRoleEmployer");
     const studentFields = document.getElementById("onboardStudentFields");
     const employerFields = document.getElementById("onboardEmployerFields");
 
-    if (role === "student") {
+    if (normRole === "personal") {
       if (btnStudent) btnStudent.classList.add("active");
       if (btnEmployer) btnEmployer.classList.remove("active");
       if (studentFields) studentFields.style.display = "block";
@@ -1668,7 +1675,8 @@ function cacheResolver(entries, threshold) {
       this.closeOnboardingModal();
       this.renderContracts();
       await this.renderTransactions();
-      this.showToast("Welcome Back", `Signed in as ${profile.name} (${profile.role === "employer" ? "Employer" : "Student"}).`, "success");
+      const isOrg = profile.role === "organization" || profile.role === "employer";
+      this.showToast("Welcome Back", `Signed in as ${profile.name} (${isOrg ? "Organization" : "Personal"}).`, "success");
     } catch (err) {
       this.showToast("Connection Error", "Unable to contact authentication server: " + err.message, "error");
     } finally {
@@ -1683,7 +1691,7 @@ function cacheResolver(entries, threshold) {
     const name = document.getElementById("onboardName")?.value.trim();
     const email = document.getElementById("onboardEmail")?.value.trim();
     const pass = document.getElementById("onboardPassword")?.value.trim();
-    const role = this.onboardingRole || "student";
+    const role = (this.onboardingRole === "organization" || this.onboardingRole === "employer") ? "organization" : "personal";
     const bmoniPhone = document.getElementById("onboardBmoniPhone")?.value.trim();
 
     if (!name || name.length < 2 || name.length > 100) {
@@ -1712,16 +1720,16 @@ function cacheResolver(entries, threshold) {
       bmoniPhone: bmoniPhone || null
     };
 
-    if (role === "student") {
+    if (role === "personal") {
       const univ = document.getElementById("onboardUniv")?.value.trim();
       const nacosId = document.getElementById("onboardNacosId")?.value.trim();
       const github = document.getElementById("onboardGithub")?.value.trim();
       if (!univ || univ.length < 2 || univ.length > 100) {
-        this.showToast("University Required", "University / Chapter name must be between 2 and 100 characters.", "warning");
+        this.showToast("Institution Required", "Institution / University name must be between 2 and 100 characters.", "warning");
         return;
       }
       if (!nacosId || nacosId.length < 3 || nacosId.length > 40) {
-        this.showToast("NACOS ID Required", "NACOS Student ID / Matric Number must be between 3 and 40 characters.", "warning");
+        this.showToast("Member ID Required", "Personal Member ID / Matric Number must be between 3 and 40 characters.", "warning");
         return;
       }
       payload.university = univ;
@@ -1737,7 +1745,7 @@ function cacheResolver(entries, threshold) {
       }
       payload.company = company;
       payload.regNumber = regNumber ? regNumber.slice(0, 50) : "RC-" + Math.floor(100000 + Math.random() * 900000);
-      payload.department = department ? department.slice(0, 100) : "Engineering & Procurement";
+      payload.department = department ? department.slice(0, 100) : "Engineering & Operations";
       payload.university = company;
     }
 

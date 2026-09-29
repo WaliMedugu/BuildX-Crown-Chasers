@@ -25,6 +25,51 @@
       "bmoniPhone": "+2349061950587",
       "bmoniTag": "walimedugu.bmoni",
       "createdAt": "2026-09-29T06:25:21.321Z"
+    },
+    {
+      "id": "25a43675-563e-4f16-bb44-12f284949a84",
+      "name": "Tunde Oladipo",
+      "email": "test_pers_1790671231106@example.com",
+      "role": "organization",
+      "hasPersonalProfile": true,
+      "hasOrganizationProfile": true,
+      "hasStudentProfile": true,
+      "hasEmployerProfile": true,
+      "personalCredentials": {
+        "university": "UNILAG",
+        "nacosId": "UNILAG-CS-2026-9999",
+        "github": "tunde-dev"
+      },
+      "organizationCredentials": {
+        "company": "Apex Labs Ltd",
+        "regNumber": "RC-998877",
+        "department": "Engineering",
+        "location": "Nigeria / Remote"
+      },
+      "studentCredentials": {
+        "university": "UNILAG",
+        "nacosId": "UNILAG-CS-2026-9999",
+        "github": "tunde-dev"
+      },
+      "employerCredentials": {
+        "company": "Apex Labs Ltd",
+        "regNumber": "RC-998877",
+        "department": "Engineering",
+        "location": "Nigeria / Remote"
+      },
+      "university": "UNILAG",
+      "nacosId": "UNILAG-CS-2026-9999",
+      "github": "tunde-dev",
+      "company": "Apex Labs Ltd",
+      "walletAddress": "0x64c5bffb",
+      "cardNumber": "5399 1041 9286 1476",
+      "cardCvv": "914",
+      "balanceUsdc": 6.25,
+      "bmoniConnected": false,
+      "bmoniPhone": null,
+      "bmoniTag": "tundeoladipo.bmoni",
+      "createdAt": "2026-09-29T08:40:31.112Z",
+      "employerBonusCredited": true
     }
   ],
   "contracts": [
@@ -105,6 +150,15 @@
   ],
   "audits": [],
   "settlements": [
+    {
+      "id": "3cac0641-3ff9-4f68-8d5b-1855bba91029",
+      "transactionHash": "0xbmoni_grant_233355",
+      "attestationId": "NACOS-SPONSOR-GRANT-10K",
+      "settledAmountUSDC": 6.25,
+      "status": "Welcome Bonus Credited",
+      "timestamp": "2026-09-29T08:40:33.355Z",
+      "recipient": "test_pers_1790671231106@example.com"
+    },
     {
       "transactionHash": "0xbmoni_144f0d0a6826",
       "attestationId": "OFFRAMP-NGN-7890",
