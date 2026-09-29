@@ -874,6 +874,25 @@ async function handleRequest(req, res) {
   // =========================================================================
   const rootDir = process.env.VERCEL ? process.cwd() : __dirname;
   const cleanPath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+
+  if (pathname === "/" || pathname === "/index.html") {
+    const possibleIndexPaths = [
+      path.join(rootDir, "index.html"),
+      path.join(__dirname, "index.html"),
+      path.join(__dirname, "..", "index.html"),
+      path.resolve("index.html")
+    ];
+    for (const ip of possibleIndexPaths) {
+      if (fs.existsSync(ip)) {
+        try {
+          const html = fs.readFileSync(ip, "utf8");
+          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+          return res.end(html);
+        } catch (e) {}
+      }
+    }
+  }
+
   let filePath = path.join(rootDir, cleanPath);
 
   if (!fs.existsSync(filePath)) {
