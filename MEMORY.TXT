@@ -911,10 +911,12 @@ DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
   * `getCardBalance()` / `toggleCardFreeze()`: Real-time balance and card controls.
   * Built-in sandbox fallback for offline hackathon demonstration.
 
-4. GIT COMMIT & SYNC:
-- Commit SHA: 04b4d7d
+5. NPM REGISTRY NAME CONFIGURATION:
+- Verified `kilikoro` name availability on npm registry (HTTP 404 - available).
+- Updated `package.json` with `"name": "kilikoro"` and `"files": ["kilikoro.js", "js/", "README.md"]`.
+- Relinked globally with `npm link` so `kilikoro` is ready for instant `npm publish --access public`.
+- Commit SHA: 981de22
 - Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
-- Local Web Server: http://localhost:3000
 ================================================================================
 
 
