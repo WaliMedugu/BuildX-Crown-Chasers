@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kilikoro Protocol — Verified Developer Bounties & Programmable Escrow</title>
+  <title>Kilikoro — Developer Verification & BMONI Milestone Escrow</title>
   <link rel="stylesheet" href="css/claude-theme.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23D97757'/><text x='50%' y='68%' font-size='60' text-anchor='middle' fill='%23FAF9F5' font-family='serif' font-weight='bold'>K</text></svg>">
 </head>
@@ -17,7 +17,7 @@
     <aside class="sidebar">
       <div class="sidebar-top">
         <!-- Brand -->
-        <a href="#" class="sidebar-brand" id="navLogoHome">
+        <a href="#" class="sidebar-brand" onclick="app.switchView('view-verifier')">
           <div class="brand-icon">K</div>
           <span class="brand-title">Kilikoro</span>
           <span class="brand-tag">BuildX</span>
@@ -25,18 +25,26 @@
 
         <!-- Main Nav List -->
         <nav class="sidebar-nav">
-          <span class="nav-section-title">Developer Platform</span>
-          
-          <a class="nav-item active" data-view="view-marketplace" id="navItemExplore">
+          <span class="nav-section-title">Hiring & Verification</span>
+
+          <a class="nav-item active" data-view="view-verifier" id="navItemVerifier">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <span>Explore Bounties</span>
-            <span class="nav-counter" id="bountyCountBadge">4</span>
+            <span>Candidate Verifier</span>
+            <span class="tag" style="font-size: 0.65rem; color: var(--accent-terracotta);">Claude AI</span>
           </a>
+
+          <a class="nav-item" data-view="view-contracts" id="navItemContracts">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Contracts & Escrows</span>
+            <span class="nav-counter" id="contractCountBadge">6</span>
+          </a>
+
+          <span class="nav-section-title" style="margin-top: 1rem;">Developer Hub</span>
 
           <a class="nav-item" data-view="view-workspace" id="navItemWorkspace">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
             <span>Active Milestone</span>
-            <span class="tag" style="font-size: 0.65rem; color: var(--accent-terracotta);">TASK-104</span>
+            <span class="tag" style="font-size: 0.65rem; color: var(--status-emerald);">TASK-104</span>
           </a>
 
           <a class="nav-item" data-view="view-wallet" id="navItemWallet">
@@ -44,27 +52,14 @@
             <span>BMONI Wallet & Cards</span>
           </a>
 
-          <a class="nav-item" data-view="view-passport" id="navItemPassport">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            <span>Skill Passport</span>
-          </a>
-
-          <a class="nav-item" data-view="view-cv-verifier" id="navItemCvVerifier">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>CV & Repo Verifier</span>
-            <span class="tag" style="font-size: 0.65rem; color: var(--status-emerald);">Claude AI</span>
-          </a>
-
-          <span class="nav-section-title" style="margin-top: 1rem;">Organizations</span>
-
-          <a class="nav-item" data-view="view-employer" id="navItemEmployer">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-            <span>Employer Escrow Hub</span>
+          <a class="nav-item" data-view="view-students" id="navItemStudents">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <span>Verified Students</span>
           </a>
         </nav>
       </div>
 
-      <!-- User & Network Status at Bottom -->
+      <!-- Network & User Info -->
       <div class="sidebar-bottom">
         <div class="network-pill" title="Connected to BMONI Oracle Rails">
           <span class="status-dot"></span>
@@ -89,217 +84,192 @@
       <!-- Top Header Bar -->
       <header class="top-header">
         <div class="breadcrumbs" id="breadcrumbTrail">
-          <a href="#" onclick="app.switchView('view-marketplace')">Kilikoro</a>
+          <a href="#" onclick="app.switchView('view-verifier')">Kilikoro</a>
           <span class="separator">/</span>
-          <span class="current" id="breadcrumbCurrent">Explore Bounties</span>
+          <span class="current" id="breadcrumbCurrent">Candidate Verifier</span>
         </div>
 
         <div class="header-actions">
-          <button class="btn btn-secondary" id="btnSyncCli" title="Sync with local Developer CLI">
+          <button class="btn btn-secondary" id="btnCliToken">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"></path></svg>
             <span>CLI Token</span>
           </button>
-          <button class="btn btn-primary" onclick="app.switchView('view-employer')">
+          <button class="btn btn-primary" onclick="app.openNewContractModal()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            <span>Post Bounty</span>
+            <span>New Contract</span>
           </button>
         </div>
       </header>
 
-      <!-- Scrollable Main Content -->
+      <!-- Scrollable Page Views -->
       <main class="page-content">
 
         <!-- ===================================================================== -->
-        <!-- VIEW 1: EXPLORE BOUNTIES (MARKETPLACE)                                 -->
+        <!-- VIEW 1: CANDIDATE VERIFIER (GITHUB REPO & RESUME AUDITOR)             -->
         <!-- ===================================================================== -->
-        <section class="app-view active" id="view-marketplace">
+        <section class="app-view active" id="view-verifier">
           <div class="marketplace-header">
-            <h1 class="headline-large">Funded Milestone Bounties</h1>
+            <h1 class="headline-large">Candidate Code & Resume Auditor</h1>
             <p class="subheadline">
-              Work on production engineering challenges verified by NACOS Chapter keys and paid out trustlessly through BMONI stablecoin escrows.
+              Verify student GitHub repositories, detect copy-pasted ChatGPT code, and confirm active NACOS member status.
             </p>
           </div>
 
-          <!-- Filters & Search Toolbar -->
-          <div class="filter-toolbar">
-            <div class="search-box">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" id="bountySearchInput" placeholder="Search tasks, stacks, or sponsors...">
+          <!-- Auditor Input Form -->
+          <div class="submission-card" style="margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+              <div>
+                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Repository URL</label>
+                <input type="text" id="verifierRepoUrl" value="https://github.com/WaliMedugu/BuildX-Crown-Chasers" placeholder="https://github.com/username/repository" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.9rem;">
+              </div>
+              <div>
+                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID (Optional)</label>
+                <input type="text" id="verifierNacosId" value="UNILAG-CS-2026-0482" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.9rem;">
+              </div>
             </div>
 
-            <div class="filter-pills">
-              <button class="filter-pill active" data-filter="all">All Bounties</button>
-              <button class="filter-pill" data-filter="algorithms">Algorithms</button>
-              <button class="filter-pill" data-filter="fintech">FinTech Core</button>
-              <button class="filter-pill" data-filter="systems">Distributed Systems</button>
+            <div style="margin-top: 1rem;">
+              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Resume / Project Claims (Paste text or extract from CV)</label>
+              <textarea id="verifierResumeText" rows="3" placeholder="Paste candidate resume text or project summary here..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem 0.85rem; color: var(--text-primary); font-size: 0.85rem; font-family: var(--font-sans); resize: vertical;">Chidi Okonkwo • Computer Science @ UNILAG. Built High-Throughput Cache Expiry Resolver in JavaScript with asymptotic O(N log N) time limit. Integrated BMONI stablecoin escrow for micro-payments.</textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+              <button class="btn btn-primary" id="btnRunAudit" style="padding: 0.65rem 1.5rem;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <span>Run Deep Audit with Claude 3.7</span>
+              </button>
             </div>
           </div>
 
-          <!-- Bounty Cards Grid -->
-          <div class="bounty-grid" id="bountyListGrid">
-            
-            <!-- Card 1 (Active Flagship) -->
-            <article class="bounty-card" onclick="app.openMilestone('TASK-BMONI-104')">
-              <div class="bounty-card-top">
-                <div class="company-badge">
-                  <div class="company-avatar">B</div>
-                  <div>
-                    <div class="company-name">BMONI Labs</div>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">Verified Sponsor</span>
-                  </div>
-                </div>
-                <div class="reward-pill">$150.00 USDC</div>
-              </div>
-
+          <!-- Audit Results Card (Initially populated with clean benchmark) -->
+          <div class="submission-card" id="auditResultCard">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.25rem;">
               <div>
-                <h2 class="bounty-card-title">High-Throughput Cache Expiry Resolver</h2>
-                <p class="bounty-card-desc">
-                  Implement an asymptotic O(N log N) memory cache cleanup pipeline that filters expired cache nodes and priority-orders remaining entries.
-                </p>
+                <span class="tag" style="color: var(--status-emerald);">Audit Completed</span>
+                <h2 style="font-family: var(--font-editorial); font-size: 1.5rem; margin-top: 0.35rem;" id="auditResultTitle">Chidi Okonkwo — GitHub & Resume Audit</h2>
+                <span style="font-size: 0.8rem; color: var(--text-muted);" id="auditResultRepo">Repository: https://github.com/WaliMedugu/BuildX-Crown-Chasers</span>
               </div>
-
-              <div class="bounty-card-footer">
-                <div class="tag-list">
-                  <span class="tag">JavaScript</span>
-                  <span class="tag">O(N log N)</span>
-                  <span class="tag">Algorithms</span>
-                </div>
-                <span class="status-badge">
-                  <span class="status-dot"></span>
-                  Escrow Locked
+              <div style="text-align: right;">
+                <span class="status-badge" style="background: var(--status-emerald-subtle); color: var(--status-emerald); font-size: 0.95rem; padding: 0.4rem 0.85rem;" id="auditVerdictBadge">
+                  ✓ Recommendation: Hire
                 </span>
               </div>
-            </article>
+            </div>
 
-            <!-- Card 2 -->
-            <article class="bounty-card" onclick="app.openMilestone('TASK-HELIX-202')">
-              <div class="bounty-card-top">
-                <div class="company-badge">
-                  <div class="company-avatar" style="color: #6088A8;">H</div>
-                  <div>
-                    <div class="company-name">Helix AI</div>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">AI Infrastructure</span>
-                  </div>
-                </div>
-                <div class="reward-pill">$250.00 USDC</div>
+            <!-- 4 Metrics Row -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem;">
+              <div class="stat-box">
+                <span class="stat-label">Code Authenticity</span>
+                <span class="stat-val" style="color: var(--status-emerald);" id="auditScoreVal">94%</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Authentic Engineering</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">AI Boilerplate Risk</span>
+                <span class="stat-val" style="color: var(--status-emerald);" id="auditAiRiskVal">Low</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">&lt;6% LLM template match</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">NACOS Student Status</span>
+                <span class="stat-val" style="color: var(--accent-terracotta);" id="auditNacosVal">Verified</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">UNILAG Chapter Node #04</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">Algorithmic Asymptotic</span>
+                <span class="stat-val" style="color: var(--text-primary);" id="auditComplexityVal">O(N log N)</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Stress tested N=5,000</span>
+              </div>
+            </div>
+
+            <!-- Analysis Summary & Points -->
+            <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem;">
+              <span style="font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.5rem;">Audit Findings:</span>
+              <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;" id="auditSummaryText">
+                Codebase displays genuine structural problem-solving with tailored data structure selections and deterministic memory bounding. Commit history demonstrates step-by-step feature additions without monolithic ChatGPT paste signatures.
+              </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <span style="font-size: 0.75rem; color: var(--status-emerald); font-weight: 600; text-transform: uppercase;">Verified Strengths</span>
+                <ul style="list-style: none; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.35rem;" id="auditStrengthsList">
+                  <li>✓ Clean modular separation of concerns</li>
+                  <li>✓ Deterministic memory allocation and error boundaries</li>
+                  <li>✓ Active UNILAG NACOS student member</li>
+                </ul>
               </div>
 
-              <div>
-                <h2 class="bounty-card-title">Quantized Matrix Dot-Product SIMD Wrapper</h2>
-                <p class="bounty-card-desc">
-                  Build an 8-bit quantized integer matrix multiplication kernel for edge neural inference on low-memory mobile runtimes.
-                </p>
+              <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <span style="font-size: 0.75rem; color: var(--status-amber); font-weight: 600; text-transform: uppercase;">Hygiene Notes</span>
+                <ul style="list-style: none; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.35rem;" id="auditFlagsList">
+                  <li>! Add unit tests for empty input edge cases</li>
+                  <li>! Verify API keys are restricted to environment variables</li>
+                </ul>
               </div>
-
-              <div class="bounty-card-footer">
-                <div class="tag-list">
-                  <span class="tag">Systems</span>
-                  <span class="tag">Wasm</span>
-                  <span class="tag">Edge AI</span>
-                </div>
-                <span class="status-badge">
-                  <span class="status-dot"></span>
-                  Escrow Locked
-                </span>
-              </div>
-            </article>
-
-            <!-- Card 3 -->
-            <article class="bounty-card" onclick="app.openMilestone('TASK-PAY-303')">
-              <div class="bounty-card-top">
-                <div class="company-badge">
-                  <div class="company-avatar" style="color: var(--status-emerald);">V</div>
-                  <div>
-                    <div class="company-name">Vivest App</div>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">Open Banking</span>
-                  </div>
-                </div>
-                <div class="reward-pill">$180.00 USDC</div>
-              </div>
-
-              <div>
-                <h2 class="bounty-card-title">Idempotent Webhook Replay Deduplicator</h2>
-                <p class="bounty-card-desc">
-                  Design a sliding-window Bloom Filter deduplication module that rejects duplicate merchant payment notifications under 5ms.
-                </p>
-              </div>
-
-              <div class="bounty-card-footer">
-                <div class="tag-list">
-                  <span class="tag">TypeScript</span>
-                  <span class="tag">FinTech</span>
-                  <span class="tag">O(1)</span>
-                </div>
-                <span class="status-badge">
-                  <span class="status-dot"></span>
-                  Escrow Locked
-                </span>
-              </div>
-            </article>
-
-            <!-- Card 4 -->
-            <article class="bounty-card" onclick="app.openMilestone('TASK-NACOS-404')">
-              <div class="bounty-card-top">
-                <div class="company-badge">
-                  <div class="company-avatar" style="color: var(--status-amber);">N</div>
-                  <div>
-                    <div class="company-name">NACOS National</div>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">Campus Registry</span>
-                  </div>
-                </div>
-                <div class="reward-pill">$120.00 USDC</div>
-              </div>
-
-              <div>
-                <h2 class="bounty-card-title">Federated Chapter Key Verification Protocol</h2>
-                <p class="bounty-card-desc">
-                  Create a lightweight cryptographic ECDSA signature validator verifying multi-campus student identities across 36 states.
-                </p>
-              </div>
-
-              <div class="bounty-card-footer">
-                <div class="tag-list">
-                  <span class="tag">Cryptography</span>
-                  <span class="tag">Identity</span>
-                  <span class="tag">Security</span>
-                </div>
-                <span class="status-badge">
-                  <span class="status-dot"></span>
-                  Escrow Locked
-                </span>
-              </div>
-            </article>
-
+            </div>
           </div>
         </section>
 
         <!-- ===================================================================== -->
-        <!-- VIEW 2: MILESTONE WORKSPACE & SUBMISSION                               -->
+        <!-- VIEW 2: CONTRACTS & ESCROWS (PUBLIC & PRIVATE)                        -->
+        <!-- ===================================================================== -->
+        <section class="app-view" id="view-contracts">
+          <div class="marketplace-header">
+            <h1 class="headline-large">Contracts & Milestone Escrows</h1>
+            <p class="subheadline">
+              Direct private 1-on-1 contracts and open public bounties secured by BMONI stablecoin escrows with 3-second payouts.
+            </p>
+          </div>
+
+          <!-- Segmented Tab Switcher (Public vs Private) -->
+          <div class="filter-toolbar">
+            <div style="display: flex; gap: 0.5rem; background: var(--bg-secondary); padding: 0.3rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <button class="filter-pill active" id="tabPublicContracts" onclick="app.setContractType('public')">
+                Public Bounties (4)
+              </button>
+              <button class="filter-pill" id="tabPrivateContracts" onclick="app.setContractType('private')">
+                Private Direct Contracts (2)
+              </button>
+            </div>
+
+            <div class="search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="contractSearchInput" placeholder="Filter contracts...">
+            </div>
+          </div>
+
+          <!-- Contract Cards Grid -->
+          <div class="bounty-grid" id="contractListGrid">
+            <!-- Cards rendered dynamically by app.js -->
+          </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- VIEW 3: ACTIVE MILESTONE WORKSPACE & SUBMISSION                       -->
         <!-- ===================================================================== -->
         <section class="app-view" id="view-workspace">
           <div class="workspace-container">
 
-            <!-- Milestone Header / Banner -->
+            <!-- Milestone Header -->
             <div class="milestone-banner">
               <div style="flex: 1;">
                 <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
-                  <span class="brand-pill">TASK-BMONI-104</span>
-                  <span class="tag">Algorithms & FinTech</span>
+                  <span class="brand-pill" id="wsTaskId">TASK-BMONI-104</span>
+                  <span class="tag" id="wsCategory">Algorithms & FinTech</span>
                 </div>
-                <h1 class="headline-large" style="font-size: 2rem;">High-Throughput Cache Expiry Resolver</h1>
-                <p class="subheadline" style="margin-top: 0.5rem;">
-                  Sponsor: <b>BMONI Labs</b> • Challenge Track: <b>Open Payments & FinTech</b>
+                <h1 class="headline-large" style="font-size: 2rem;" id="wsTitle">High-Throughput Cache Expiry Resolver</h1>
+                <p class="subheadline" style="margin-top: 0.5rem;" id="wsSponsor">
+                  Sponsor: <b>BMONI Labs</b> • Escrow Model: <b>Automated Milestone Release</b>
                 </p>
               </div>
 
               <div class="milestone-meta-box">
                 <div class="meta-row">
                   <span class="meta-label">Bounty Escrow</span>
-                  <span class="meta-val" style="color: var(--accent-terracotta); font-size: 1.1rem;">$150.00 USDC</span>
+                  <span class="meta-val" style="color: var(--accent-terracotta); font-size: 1.1rem;" id="wsAmount">$150.00 USDC</span>
                 </div>
                 <div class="meta-row">
-                  <span class="meta-label">Naira Value</span>
-                  <span class="meta-val">≈ ₦240,000 cNGN</span>
+                  <span class="meta-label">Naira Payout</span>
+                  <span class="meta-val" id="wsNaira">≈ ₦240,000 cNGN</span>
                 </div>
                 <div class="meta-row">
                   <span class="meta-label">Complexity Limit</span>
@@ -312,38 +282,31 @@
               </div>
             </div>
 
-            <!-- Problem Specification Body -->
+            <!-- Contract Deliverables Spec -->
             <div class="submission-card">
-              <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">Requirements & Contract Specifications</h2>
-              <p style="color: var(--text-secondary); line-height: 1.6;">
+              <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">Requirements & Specifications</h2>
+              <p style="color: var(--text-secondary); line-height: 1.6;" id="wsDescription">
                 High-frequency payment systems face microsecond cache bottlenecks when thousands of transaction auth tokens expire concurrently. You must implement the function <code>cacheResolver(entries, threshold)</code> to filter out expired items and return remaining entries sorted by priority.
               </p>
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
                 <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
                   <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Sample Input:</span>
-                  <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--accent-terracotta);">entries = [
-  { id: 10, ttl: 40 },
-  { id: 2, ttl: 15 },
-  { id: 8, ttl: 25 }
-]
+                  <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--accent-terracotta);">entries = [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }]
 threshold = 20</pre>
                 </div>
 
                 <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Expected Return:</span>
-                  <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--status-emerald);">[
-  { id: 8, ttl: 25 },
-  { id: 10, ttl: 40 }
-]</pre>
+                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Expected Output:</span>
+                  <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--status-emerald);">[{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]</pre>
                 </div>
               </div>
             </div>
 
-            <!-- Solution Submission Panel -->
+            <!-- Code Submission & Checklist -->
             <div class="submission-card">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">Submit Implementation</h2>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">Submit Code Implementation</h2>
                 <div style="display: flex; gap: 0.5rem;">
                   <button class="btn btn-secondary" id="btnPresetHuman" style="font-size: 0.78rem;">Load Authentic Code</button>
                   <button class="btn btn-secondary" id="btnPresetAi" style="font-size: 0.78rem; color: var(--status-ruby);">Load AI Trap Code</button>
@@ -353,12 +316,12 @@ threshold = 20</pre>
               <!-- Code Box -->
               <textarea class="code-box-editor" id="solutionInput" spellcheck="false"></textarea>
 
-              <!-- Live Automated Check Pipeline -->
+              <!-- 4-Step Verification Checklist -->
               <div class="verification-progress-card">
-                <span class="panel-title">Automated Verification Protocol</span>
+                <span class="panel-title">Automated Verification & Payout Pipeline</span>
                 <div class="check-item" id="checkSyntax">
                   <span class="check-icon">1</span>
-                  <span>Syntax & AST Parse Tree (acorn engine)</span>
+                  <span>Syntax & AST Parse Tree Validation</span>
                 </div>
                 <div class="check-item" id="checkEntropy">
                   <span class="check-icon">2</span>
@@ -366,7 +329,7 @@ threshold = 20</pre>
                 </div>
                 <div class="check-item" id="checkComplexity">
                   <span class="check-icon">3</span>
-                  <span>Dynamic Input Scaling & Big-O Asymptotic Verification (N=10..5000)</span>
+                  <span>Input Scaling & Asymptotic Big-O Verification (N=10..5,000)</span>
                 </div>
                 <div class="check-item" id="checkEscrow">
                   <span class="check-icon">4</span>
@@ -374,10 +337,10 @@ threshold = 20</pre>
                 </div>
               </div>
 
-              <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
-                <button class="btn btn-secondary" onclick="app.switchView('view-marketplace')">Back to Bounties</button>
+              <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.75rem;">
+                <button class="btn btn-secondary" onclick="app.switchView('view-contracts')">Back to Contracts</button>
                 <button class="btn btn-emerald" id="btnRunVerification" style="padding: 0.65rem 1.5rem; font-size: 0.95rem;">
-                  Run Verification & Release Payout
+                  Verify & Release Payout
                 </button>
               </div>
             </div>
@@ -386,23 +349,23 @@ threshold = 20</pre>
         </section>
 
         <!-- ===================================================================== -->
-        <!-- VIEW 3: BMONI WALLET & CARDS (FINANCIAL DASHBOARD)                     -->
+        <!-- VIEW 4: BMONI WALLET & VIRTUAL CARDS                                  -->
         <!-- ===================================================================== -->
         <section class="app-view" id="view-wallet">
           <div class="wallet-grid">
 
-            <!-- Left: Financial Overview & Transactions -->
+            <!-- Left: Balances & Transactions -->
             <div>
               <div class="balance-overview-card">
                 <div class="balance-headline-row">
                   <div>
-                    <span class="balance-title">BMONI Liquid Stablecoin Balance</span>
+                    <span class="balance-title">BMONI Liquid Balance</span>
                     <div class="balance-huge" id="walletTotalUsdc">$150.00 USDC</div>
                     <div class="balance-naira-equiv" id="walletTotalNaira">≈ ₦240,000 cNGN (1 USD = ₦1,600)</div>
                   </div>
                   <span class="status-badge" style="background: var(--status-emerald-subtle); padding: 0.35rem 0.75rem; border-radius: 999px;">
                     <span class="status-dot"></span>
-                    Mastercard Ready
+                    Mastercard Active
                   </span>
                 </div>
 
@@ -416,17 +379,17 @@ threshold = 20</pre>
                     <span class="stat-val" id="statLifetimeEarned">$450.00</span>
                   </div>
                   <div class="stat-box">
-                    <span class="stat-label">Settlement Latency</span>
-                    <span class="stat-val" style="color: var(--status-emerald);">1.8s Avg</span>
+                    <span class="stat-label">Payout Latency</span>
+                    <span class="stat-val" style="color: var(--status-emerald);">&lt;3.0s</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Transaction Ledger -->
+              <!-- Transactions Table -->
               <div class="transaction-section">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <h2 style="font-family: var(--font-editorial); font-size: 1.5rem;">Recent Financial Activity</h2>
-                  <button class="btn btn-secondary" onclick="alert('Statements exported to CSV!')" style="font-size: 0.78rem;">Export Statement</button>
+                  <button class="btn btn-secondary" onclick="alert('Statements exported!')" style="font-size: 0.78rem;">Export Statement</button>
                 </div>
 
                 <div class="table-card">
@@ -435,7 +398,7 @@ threshold = 20</pre>
                       <tr>
                         <th>Transaction ID</th>
                         <th>Description</th>
-                        <th>Date & Time</th>
+                        <th>Date</th>
                         <th>Status</th>
                         <th style="text-align: right;">Amount</th>
                       </tr>
@@ -444,21 +407,21 @@ threshold = 20</pre>
                       <tr>
                         <td><code>0xbmoni_7f8a92</code></td>
                         <td>Milestone Payout: Task #104 (Cache Expiry)</td>
-                        <td>Sep 29, 2026 • 00:34</td>
+                        <td>Today</td>
                         <td><span class="tag" style="color: var(--status-emerald);">Confirmed</span></td>
                         <td style="text-align: right;" class="amount-positive">+$150.00 USDC</td>
                       </tr>
                       <tr>
                         <td><code>0xbmoni_44e1a0</code></td>
                         <td>Milestone Payout: Task #101 (Ring Buffer)</td>
-                        <td>Sep 26, 2026 • 16:12</td>
+                        <td>Sep 26</td>
                         <td><span class="tag" style="color: var(--status-emerald);">Confirmed</span></td>
                         <td style="text-align: right;" class="amount-positive">+$200.00 USDC</td>
                       </tr>
                       <tr>
                         <td><code>0xpos_unilag_08</code></td>
                         <td>Campus Store POS Debit (Mastercard **** 4892)</td>
-                        <td>Sep 25, 2026 • 12:45</td>
+                        <td>Sep 25</td>
                         <td><span class="tag">Settled</span></td>
                         <td style="text-align: right; color: var(--text-secondary); font-family: var(--font-mono);">-₦12,500 cNGN</td>
                       </tr>
@@ -468,9 +431,9 @@ threshold = 20</pre>
               </div>
             </div>
 
-            <!-- Right: 3D Interactive BMONI Card -->
+            <!-- Right: 3D Mastercard -->
             <div class="card-preview-column">
-              <span class="panel-title">Active BMONI Virtual Mastercard</span>
+              <span class="panel-title">BMONI Virtual Mastercard</span>
 
               <div class="virtual-card-box">
                 <div class="interactive-card" id="walletVirtualCard">
@@ -483,7 +446,7 @@ threshold = 20</pre>
                     <div class="card-balance-block">
                       <div class="card-balance-label">Card Available Limit</div>
                       <div class="card-balance-val" id="walletCardBalance">$150.00 USDC</div>
-                      <div class="card-balance-label">Linked to BMONI Stablecoin Vault</div>
+                      <div class="card-balance-label">Linked to BMONI Escrow Vault</div>
                     </div>
                     <div class="card-bottom">
                       <div>
@@ -503,13 +466,12 @@ threshold = 20</pre>
                     <div style="font-size: 0.7rem; color: var(--text-muted); text-align: right; margin-bottom: 0.2rem;">CVV SECURITY CODE</div>
                     <div class="card-cvv-strip">834</div>
                     <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 1rem; line-height: 1.3;">
-                      Valid for POS terminals across Nigeria and international online transactions with zero foreign exchange markup fees.
+                      Valid for POS terminals across Nigeria and international payments with zero bank transfer delays.
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card Action Controls -->
               <div style="display: flex; gap: 0.5rem;">
                 <button class="btn btn-secondary" id="btnFlipWalletCard" style="flex: 1; justify-content: center;">
                   Flip to Reveal CVV
@@ -520,8 +482,8 @@ threshold = 20</pre>
               </div>
 
               <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1.25rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
-                <span style="font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Borderless Settlement</span>
-                Funds credited to your BMONI Mastercard can be spent directly anywhere Mastercard is accepted or swapped to Naira into any commercial bank account in 3 seconds.
+                <span style="font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Direct Card Payouts</span>
+                Funds released from completed milestones go directly to your BMONI Mastercard in 3 seconds, ready to spend online or swipe on campus.
               </div>
             </div>
 
@@ -529,307 +491,167 @@ threshold = 20</pre>
         </section>
 
         <!-- ===================================================================== -->
-        <!-- VIEW 4: SKILL PASSPORT & CERTIFICATION                                -->
+        <!-- VIEW 5: VERIFIED STUDENTS DIRECTORY (NACOS CHAPTERS)                  -->
         <!-- ===================================================================== -->
-        <section class="app-view" id="view-passport">
-          <div class="passport-container">
-            <div class="passport-card">
-
-              <div class="passport-profile-header">
-                <div class="passport-avatar-lg">CO</div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <h1 class="headline-large" style="font-size: 1.8rem; margin: 0;">Chidi Okonkwo</h1>
-                    <span class="brand-pill">NACOS Certified</span>
-                  </div>
-                  <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">
-                    Computer Science Undergraduate • University of Lagos (UNILAG Chapter Node #04)
-                  </p>
-                  <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
-                    DID: did:nacos:unilag:2026:0482 • BMONI Wallet: 0x9b4b...ed22
-                  </p>
-                </div>
-              </div>
-
-              <hr style="border: none; border-top: 1px solid var(--border-subtle);">
-
-              <div>
-                <h2 style="font-family: var(--font-editorial); font-size: 1.35rem; margin-bottom: 1rem;">
-                  Cryptographically Verified Skills & Bounties
-                </h2>
-
-                <div class="skills-grid">
-                  <div class="skill-credential-box">
-                    <span class="badge-tag-pass">100% Verified AST Pass</span>
-                    <span style="font-weight: 600; color: var(--text-primary);">High-Throughput Caching</span>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Verified O(N log N) asymptotic speed • Task #104</span>
-                    <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-terracotta);">Sig: 0x4b9f...f892b1a0</span>
-                  </div>
-
-                  <div class="skill-credential-box">
-                    <span class="badge-tag-pass">100% Verified AST Pass</span>
-                    <span style="font-weight: 600; color: var(--text-primary);">Ring Buffer Memory Architecture</span>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Verified O(1) buffer complexity • Task #101</span>
-                    <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-terracotta);">Sig: 0x77ee...c819d44e</span>
-                  </div>
-                </div>
-              </div>
-
-              <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Public Verification Hash:</span>
-                  <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-primary); margin-top: 0.2rem;">
-                    0x4b9f8a02c819d44e7eccee9b4b989741f2f123954aed22b87ad585f892b1a0
-                  </div>
-                </div>
-                <button class="btn btn-secondary" onclick="alert('Public verification link copied to clipboard!')">Copy Passport Link</button>
-              </div>
-
-            </div>
+        <section class="app-view" id="view-students">
+          <div class="marketplace-header">
+            <h1 class="headline-large">Verified Student Developers</h1>
+            <p class="subheadline">
+              Computing students across Nigerian university chapters with cryptographically verified skills and authentic GitHub repos.
+            </p>
           </div>
-        </section>
 
-        <!-- ===================================================================== -->
-        <!-- VIEW 5: EMPLOYER ESCROW HUB                                            -->
-        <!-- ===================================================================== -->
-        <section class="app-view" id="view-employer">
-          <div class="workspace-container">
-            <div class="milestone-banner">
-              <div>
-                <span class="brand-pill">Client & Recruiter Console</span>
-                <h1 class="headline-large" style="font-size: 2rem; margin-top: 0.5rem;">Fund a Milestone with Trustless Escrow</h1>
-                <p class="subheadline">
-                  Deposit stablecoins into the BMONI smart escrow vault. Payouts are programmatically locked until student code mathematically passes your test specification.
-                </p>
-              </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 420px 1fr; gap: 1.5rem;">
-              <!-- Form -->
-              <div class="submission-card">
-                <h2 style="font-family: var(--font-editorial); font-size: 1.3rem;">Create Milestone Bounty</h2>
-                
-                <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div class="bounty-grid" id="studentListGrid">
+            <!-- Student 1 -->
+            <article class="bounty-card">
+              <div class="bounty-card-top">
+                <div class="company-badge">
+                  <div class="company-avatar" style="background: var(--accent-terracotta); color: white;">CO</div>
                   <div>
-                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Contract Privacy & Assignment Mode</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-                      <button type="button" class="btn btn-secondary active-contract-type" id="btnTypePrivate" style="font-size: 0.78rem; justify-content: center; border-color: var(--accent-terracotta); background: var(--bg-tertiary); color: var(--text-primary);">
-                        🔒 Private Directed (1-on-1)
-                      </button>
-                      <button type="button" class="btn btn-secondary" id="btnTypePublic" style="font-size: 0.78rem; justify-content: center; color: var(--text-secondary);">
-                        🌐 Public Open Bounty
-                      </button>
-                    </div>
-                    <div id="privateAssigneeBox" style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 0.75rem; border-radius: 6px;">
-                      <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Designated Student DID / Handle (100% Reserved Escrow):</label>
-                      <input type="text" id="targetStudentId" value="@chidi_unilag (did:nacos:unilag:2026:0482)" style="width: 100%; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 0.4rem; color: var(--status-emerald); font-size: 0.82rem; font-family: var(--font-mono);">
-                      <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4; margin-bottom: 0;">
-                        ✓ <b>Guaranteed Escrow:</b> 100% of funds are reserved exclusively for this developer. No other student can scoop or race their job. Instant payout upon test pass.
-                      </p>
-                    </div>
+                    <div class="company-name">Chidi Okonkwo</div>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">UNILAG CS '26 • NACOS #04</span>
                   </div>
-
-                  <div>
-                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Bounty Title</label>
-                    <input type="text" id="newBountyTitle" value="Distributed Consensus Gossip Node Validator" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; color: var(--text-primary); font-size: 0.88rem;">
-                  </div>
-
-                  <div>
-                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Category</label>
-                    <select style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; color: var(--text-primary); font-size: 0.88rem;">
-                      <option>Distributed Systems</option>
-                      <option>FinTech / Payment Core</option>
-                      <option>Algorithms & Optimization</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Reward Amount (USDC)</label>
-                    <input type="number" id="newBountyAmount" value="300" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; color: var(--text-primary); font-size: 0.88rem;">
-                  </div>
-
-                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.82rem;">
-                      <span style="color: var(--text-muted);">Principal Payout:</span>
-                      <span style="font-family: var(--font-mono); font-weight: 600;" id="calcPrincipal">$300.00</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-top: 0.3rem;">
-                      <span style="color: var(--text-muted);">Protocol Fee (2.5%):</span>
-                      <span style="font-family: var(--font-mono); font-weight: 600;" id="calcFee">$7.50</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-top: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem;">
-                      <span style="font-weight: 600; color: var(--text-primary);">Total Escrow Deposit:</span>
-                      <span style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-terracotta);" id="calcTotal">$307.50 USDC</span>
-                    </div>
-                  </div>
-
-                  <button class="btn btn-primary" id="btnConfirmDeposit" style="padding: 0.75rem; justify-content: center; font-size: 0.95rem;">
-                    Deposit & Lock Escrow via BMONI
-                  </button>
                 </div>
+                <span class="tag" style="color: var(--status-emerald);">Verified Candidate</span>
               </div>
-
-              <!-- Active Escrows Table -->
-              <div class="submission-card">
-                <h2 style="font-family: var(--font-editorial); font-size: 1.3rem;">Active Escrow Vaults</h2>
-                
-                <table class="data-table" style="margin-top: 0.5rem;">
-                  <thead>
-                    <tr>
-                      <th>Bounty</th>
-                      <th>Locked Funds</th>
-                      <th>Submissions</th>
-                      <th>Oracle Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><b>High-Throughput Cache Expiry</b></td>
-                      <td>$153.75 USDC</td>
-                      <td>1 Verified Pass</td>
-                      <td><span class="tag" style="color: var(--status-emerald);">Settled</span></td>
-                    </tr>
-                    <tr>
-                      <td><b>SIMD Vector Dot-Product</b></td>
-                      <td>$256.25 USDC</td>
-                      <td>0 Submissions</td>
-                      <td><span class="tag" style="color: var(--status-amber);">Vault Locked</span></td>
-                    </tr>
-                    <tr>
-                      <td><b>Bloom Filter Deduplicator</b></td>
-                      <td>$184.50 USDC</td>
-                      <td>0 Submissions</td>
-                      <td><span class="tag" style="color: var(--status-amber);">Vault Locked</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- ===================================================================== -->
-        <!-- VIEW 6: CANDIDATE CV & REPO DEEP VERIFIER (CLAUDE AI POWERED)           -->
-        <!-- ===================================================================== -->
-        <section class="app-view" id="view-cv-verifier">
-          <div class="workspace-container">
-            <div class="milestone-banner">
-              <div>
-                <span class="brand-pill">Recruiter Forensic Console</span>
-                <h1 class="headline-large" style="font-size: 2rem; margin-top: 0.5rem;">Candidate CV & GitHub Deep Verifier</h1>
-                <p class="subheadline">
-                  Eliminate resume fraud and copy-pasted ChatGPT code. The Kilikoro deep research engine cross-examines student claims against live GitHub commit logs, AST syntax entropy, and NACOS chapter enrollment records.
-                </p>
-              </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 460px 1fr; gap: 1.5rem;">
-              
-              <!-- Input Panel -->
-              <div class="submission-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                  <h2 style="font-family: var(--font-editorial); font-size: 1.3rem;">Candidate Submission</h2>
-                  <button class="btn btn-secondary" id="btnLoadSampleCv" style="font-size: 0.75rem;">Load Sample Profile</button>
+              <p class="bounty-card-desc">
+                Specializes in distributed memory caches and FinTech transaction pipelines. 100% AST integrity pass on Kilikoro.
+              </p>
+              <div class="bounty-card-footer">
+                <div class="tag-list">
+                  <span class="tag">JavaScript</span>
+                  <span class="tag">Caching</span>
+                  <span class="tag">Algorithms</span>
                 </div>
+                <button class="btn btn-secondary" onclick="app.directHire('UNILAG-CS-2026-0482', 'Chidi Okonkwo')" style="font-size: 0.75rem;">
+                  Direct Hire (Private)
+                </button>
+              </div>
+            </article>
 
-                <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <!-- Student 2 -->
+            <article class="bounty-card">
+              <div class="bounty-card-top">
+                <div class="company-badge">
+                  <div class="company-avatar" style="background: #6088A8; color: white;">AB</div>
                   <div>
-                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Target GitHub Repository or Portfolio Link</label>
-                    <input type="text" id="cvGithubUrl" value="https://github.com/WaliMedugu/BuildX-Crown-Chasers" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; color: var(--text-primary); font-size: 0.85rem; font-family: var(--font-mono);">
+                    <div class="company-name">Amina Bello</div>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">ABU Zaria CS '25 • NACOS #12</span>
                   </div>
+                </div>
+                <span class="tag" style="color: var(--status-emerald);">Verified Candidate</span>
+              </div>
+              <p class="bounty-card-desc">
+                Edge AI & Wasm engineer. Built quantized neural network SIMD kernels with zero ChatGPT copy-paste boilerplate.
+              </p>
+              <div class="bounty-card-footer">
+                <div class="tag-list">
+                  <span class="tag">Wasm</span>
+                  <span class="tag">Edge AI</span>
+                  <span class="tag">C++</span>
+                </div>
+                <button class="btn btn-secondary" onclick="app.directHire('ABU-CS-2025-0112', 'Amina Bello')" style="font-size: 0.75rem;">
+                  Direct Hire (Private)
+                </button>
+              </div>
+            </article>
 
+            <!-- Student 3 -->
+            <article class="bounty-card">
+              <div class="bounty-card-top">
+                <div class="company-badge">
+                  <div class="company-avatar" style="background: var(--status-emerald); color: white;">FE</div>
                   <div>
-                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Paste Candidate CV / Project Summary</label>
-                    <textarea id="cvTextInput" style="width: 100%; height: 180px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.75rem; color: var(--text-primary); font-size: 0.82rem; font-family: var(--font-sans); line-height: 1.5;" spellcheck="false">Candidate: Chidi Okonkwo
-Institution: University of Lagos (UNILAG), CS Dept '26 (NACOS #04)
-GitHub: https://github.com/WaliMedugu/BuildX-Crown-Chasers
-Claimed Projects:
-- Kilikoro Protocol: AST deterministic sandbox and BMONI stablecoin escrow engine.
-- High-Throughput Cache Expiry Resolver: O(N log N) priority queue algorithm.
-- Campus P2P FinTech Rails: Smart contract integration on BMONI testnet.</textarea>
+                    <div class="company-name">Femi Eze</div>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">FUTA CS '26 • NACOS #08</span>
                   </div>
-
-                  <button class="btn btn-emerald" id="btnRunCvAudit" style="padding: 0.75rem; justify-content: center; font-size: 0.95rem;">
-                    Run Deep Forensic Research
-                  </button>
                 </div>
+                <span class="tag" style="color: var(--status-emerald);">Verified Candidate</span>
               </div>
-
-              <!-- Live Forensic Audit Report Panel -->
-              <div class="submission-card" id="cvAuditResultCard">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                  <h2 style="font-family: var(--font-editorial); font-size: 1.3rem;">Forensic Audit Ledger</h2>
-                  <span class="status-badge" id="cvAuditStatusBadge" style="background: var(--status-emerald-subtle);">
-                    <span class="status-dot"></span>
-                    Audit Ready
-                  </span>
+              <p class="bounty-card-desc">
+                FinTech payment systems and Bloom filter webhook deduplication. 96% Code Authenticity Score.
+              </p>
+              <div class="bounty-card-footer">
+                <div class="tag-list">
+                  <span class="tag">TypeScript</span>
+                  <span class="tag">FinTech</span>
+                  <span class="tag">Node.js</span>
                 </div>
-
-                <div id="cvAuditContent" style="display: flex; flex-direction: column; gap: 1rem;">
-                  
-                  <!-- Metric Cards -->
-                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
-                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem;">
-                      <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">NACOS Node Status</span>
-                      <div style="font-weight: 600; color: var(--status-emerald); font-size: 0.95rem; margin-top: 0.25rem;" id="auditNacosNode">
-                        UNILAG-NODE-04 ✓
-                      </div>
-                      <span style="font-size: 0.7rem; color: var(--text-secondary);">Verified Computing Student</span>
-                    </div>
-
-                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem;">
-                      <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Originality Score</span>
-                      <div style="font-weight: 700; color: var(--accent-terracotta); font-size: 1.1rem; margin-top: 0.25rem;" id="auditOriginality">
-                        94.2%
-                      </div>
-                      <span style="font-size: 0.7rem; color: var(--status-emerald);">Passed Human Threshold</span>
-                    </div>
-
-                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem;">
-                      <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">BMONI Escrow Clearance</span>
-                      <div style="font-weight: 600; color: var(--status-emerald); font-size: 0.95rem; margin-top: 0.25rem;" id="auditEscrowClear">
-                        Approved ✓
-                      </div>
-                      <span style="font-size: 0.7rem; color: var(--text-secondary);">Eligible for Direct Escrows</span>
-                    </div>
-                  </div>
-
-                  <!-- Detailed Audit Findings -->
-                  <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
-                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 0.5rem;">
-                      Automated Cross-Examination Findings:
-                    </span>
-                    <ul style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin: 0; padding-left: 1.2rem;" id="auditFindingsList">
-                      <li><b>Repository Authenticity:</b> Cross-referenced commit timestamps against academic schedule. Verified genuine incremental Git history (no 1-blast LLM copy-paste).</li>
-                      <li><b>Tutorial Clone Check:</b> Zero match against standard tutorial repositories (e.g. Traversy / Angela Yu clones). Original AST architecture confirmed.</li>
-                      <li><b>Identity Cross-Check:</b> Candidate GitHub handle matches NACOS Chapter register #0482 at University of Lagos.</li>
-                      <li><b>Escrow Settlement Safety:</b> Candidate has 0 dispute rate and 2 completed milestones on BMONI testnet.</li>
-                    </ul>
-                  </div>
-
-                  <!-- Recruiter Recommendation Callout -->
-                  <div style="border-left: 3px solid var(--accent-terracotta); background: var(--bg-secondary); padding: 0.85rem 1rem; border-radius: 0 6px 6px 0;">
-                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--accent-terracotta);">Recruiter Action Recommendation:</span>
-                    <p style="font-size: 0.82rem; color: var(--text-primary); margin: 0.25rem 0 0 0;" id="auditRecommendation">
-                      Candidate demonstrates production-level systems competence with genuine human authorship. Highly recommended for private milestone contracts or technical recruitment.
-                    </p>
-                  </div>
-
-                </div>
+                <button class="btn btn-secondary" onclick="app.directHire('FUTA-CS-2026-0881', 'Femi Eze')" style="font-size: 0.75rem;">
+                  Direct Hire (Private)
+                </button>
               </div>
-
-            </div>
-
+            </article>
           </div>
         </section>
 
       </main>
     </div>
+  </div>
 
+  <!-- ========================================================================= -->
+  <!-- MODAL: CREATE CONTRACT (PUBLIC OR PRIVATE)                                -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="contractModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; align-items: center; justify-content: center;">
+    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 520px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h2 style="font-family: var(--font-editorial); font-size: 1.5rem;">Create Milestone Contract</h2>
+        <button onclick="app.closeNewContractModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Visibility</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+            <button class="filter-pill active" id="modalBtnPrivate" onclick="app.setModalVisibility('private')" style="justify-content: center;">
+              Private Direct Hire
+            </button>
+            <button class="filter-pill" id="modalBtnPublic" onclick="app.setModalVisibility('public')" style="justify-content: center;">
+              Public Bounty
+            </button>
+          </div>
+        </div>
+
+        <div id="modalRecipientGroup">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Assigned Student NACOS ID</label>
+          <input type="text" id="modalStudentId" value="UNILAG-CS-2026-0482" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title / Deliverable</label>
+          <input type="text" id="modalContractTitle" value="High-Throughput Cache Expiry Resolver" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Reward Amount (USDC)</label>
+          <input type="number" id="modalContractAmount" value="150" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+
+        <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.82rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-muted);">Payout Amount:</span>
+            <span style="font-family: var(--font-mono); font-weight: 600;" id="modalPrincipal">$150.00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 0.25rem;">
+            <span style="color: var(--text-muted);">Protocol Fee (2.5%):</span>
+            <span style="font-family: var(--font-mono); font-weight: 600;" id="modalFee">$3.75</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 0.4rem; border-top: 1px solid var(--border-subtle); padding-top: 0.4rem;">
+            <span style="font-weight: 600; color: var(--text-primary);">Total Escrow Deposit:</span>
+            <span style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-terracotta);" id="modalTotal">$153.75 USDC</span>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+          <button class="btn btn-secondary" onclick="app.closeNewContractModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="app.submitNewContract()">Deposit & Lock Escrow</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->
+  <script src="js/claude-service.js"></script>
   <script src="js/ast-engine.js"></script>
   <script src="js/escrow-simulator.js"></script>
   <script src="js/app.js"></script>

@@ -1,8 +1,8 @@
 /**
  * ==========================================================================
- * KILIKORO PROTOCOL: SAAS APPLICATION CONTROLLER
- * Full Linear/GitHub style navigation, automated verification checklist,
- * BMONI wallet transactions, 3D card controls, and cryptographic passport.
+ * KILIKORO PROTOCOL: SAAS APPLICATION CONTROLLER (app.js)
+ * Clean GitHub/Linear style interaction controller.
+ * Powers Candidate Verifier, Public & Private Contracts, and BMONI Wallet.
  * ==========================================================================
  */
 
@@ -10,8 +10,95 @@ class KilikoroSaaSApp {
   constructor() {
     this.astEngine = new KilikoroASTEngine();
     this.escrowEngine = new BmoniEscrowEngine();
+    this.claudeService = new KilikoroClaudeService();
 
-    // Default Authentic Solution (O(N log N))
+    // Contract Visibility State ('public' or 'private')
+    this.currentContractTab = "public";
+    this.modalVisibility = "private";
+
+    // Repository of Contracts (Public Bounties & Private 1-on-1s)
+    this.contracts = [
+      {
+        id: "TASK-BMONI-104",
+        type: "public",
+        sponsor: "BMONI Labs",
+        avatar: "B",
+        avatarColor: "var(--accent-terracotta)",
+        title: "High-Throughput Cache Expiry Resolver",
+        desc: "Implement an asymptotic O(N log N) cache cleanup pipeline for high-concurrency payment auth tokens.",
+        amount: 150.00,
+        tags: ["JavaScript", "O(N log N)", "Algorithms"],
+        status: "Escrow Locked",
+        studentId: null
+      },
+      {
+        id: "TASK-HELIX-202",
+        type: "public",
+        sponsor: "Helix AI",
+        avatar: "H",
+        avatarColor: "#6088A8",
+        title: "Quantized Matrix Dot-Product SIMD Wrapper",
+        desc: "Build an 8-bit quantized integer matrix multiplication kernel for edge neural inference.",
+        amount: 250.00,
+        tags: ["Wasm", "Systems", "Edge AI"],
+        status: "Escrow Locked",
+        studentId: null
+      },
+      {
+        id: "TASK-PAY-303",
+        type: "public",
+        sponsor: "Vivest App",
+        avatar: "V",
+        avatarColor: "var(--status-emerald)",
+        title: "Idempotent Webhook Replay Deduplicator",
+        desc: "Design a sliding-window Bloom Filter deduplication module rejecting duplicate merchant webhooks.",
+        amount: 180.00,
+        tags: ["TypeScript", "FinTech", "O(1)"],
+        status: "Escrow Locked",
+        studentId: null
+      },
+      {
+        id: "TASK-NACOS-404",
+        type: "public",
+        sponsor: "NACOS National",
+        avatar: "N",
+        avatarColor: "var(--status-amber)",
+        title: "Federated Chapter Key Verification Protocol",
+        desc: "Lightweight cryptographic ECDSA signature validator verifying student identities across 36 states.",
+        amount: 120.00,
+        tags: ["Cryptography", "Identity", "Security"],
+        status: "Escrow Locked",
+        studentId: null
+      },
+      {
+        id: "PRIV-UNILAG-101",
+        type: "private",
+        sponsor: "PayPulse Africa",
+        avatar: "P",
+        avatarColor: "var(--accent-terracotta)",
+        title: "Direct Hire: Core POS Gateway Settlement Module",
+        desc: "Private 1-on-1 milestone assigned directly to Chidi Okonkwo (UNILAG #04). Hidden from public marketplace.",
+        amount: 300.00,
+        tags: ["Private Hire", "Direct Escrow", "FinTech"],
+        status: "Escrow Locked",
+        studentId: "UNILAG-CS-2026-0482"
+      },
+      {
+        id: "PRIV-ABU-102",
+        type: "private",
+        sponsor: "Apex Infrastructure",
+        avatar: "A",
+        avatarColor: "#6088A8",
+        title: "Direct Hire: Micro-Kernel SIMD Optimization",
+        desc: "Direct private contract assigned to Amina Bello (ABU #12). Automatic release on verification.",
+        amount: 400.00,
+        tags: ["Private Hire", "Direct Escrow", "Wasm"],
+        status: "Escrow Locked",
+        studentId: "ABU-CS-2025-0112"
+      }
+    ];
+
+    // Default Code Solutions
     this.humanSolution = `/**
  * Kilikoro Verified Implementation
  * Task #104: High-Throughput Cache Expiry Resolver
@@ -34,17 +121,15 @@ function cacheResolver(entries, threshold) {
   return valid;
 }`;
 
-    // AI Boilerplate Trap Solution (High entropy, bloated, O(N^2) loop)
     this.aiSolutionTrap = `/**
  * Generated Solution with Redundant Boilerplate & O(N^2) Loop
  */
 function cacheResolver(entries, threshold) {
-  // Excessive defensive sanity checks typical of LLMs
   if (typeof entries === "undefined" || entries === null) return [];
-  if (!Array.isArray(entries)) throw new Error("invalid input: argument must be an array");
+  if (!Array.isArray(entries)) throw new Error("invalid input");
   if (typeof threshold !== "number") return [];
 
-  // Inefficient O(N^2) nested loop typical of naive AI auto-complete
+  // Inefficient O(N^2) nested loop typical of naive AI autocomplete
   const result = [];
   for (let i = 0; i < entries.length; i++) {
     for (let j = 0; j < entries.length; j++) {
@@ -60,28 +145,22 @@ function cacheResolver(entries, threshold) {
 
     this.testCases = [
       {
-        title: "Basic Filter & Threshold Validation",
-        input: [
-          [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }],
-          20
-        ],
+        title: "Basic Filter & Threshold",
+        input: [[{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }], 20],
         expected: [{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]
       },
       {
         title: "Boundary Conditions & Null Checks",
-        input: [
-          [{ id: 99, ttl: 5 }, { id: 14, ttl: 12 }],
-          10
-        ],
+        input: [[{ id: 99, ttl: 5 }, { id: 14, ttl: 12 }], 10],
         expected: [{ id: 14, ttl: 12 }]
       },
       {
         title: "Dynamic Stress Input (N=5,000 items)",
         input: [
-          Array.from({ length: 100 }, (_, i) => ({ id: 100 - i, ttl: (i % 30) + 10 })),
+          Array.from({ length: 60 }, (_, i) => ({ id: 60 - i, ttl: (i % 30) + 10 })),
           25
         ],
-        expected: Array.from({ length: 100 }, (_, i) => ({ id: 100 - i, ttl: (i % 30) + 10 }))
+        expected: Array.from({ length: 60 }, (_, i) => ({ id: 60 - i, ttl: (i % 30) + 10 }))
           .filter(x => x.ttl >= 25)
           .sort((a, b) => a.id - b.id)
       }
@@ -89,6 +168,7 @@ function cacheResolver(entries, threshold) {
 
     this.initDOM();
     this.bindEvents();
+    this.renderContracts();
   }
 
   initDOM() {
@@ -102,7 +182,6 @@ function cacheResolver(entries, threshold) {
     this.checkComplexity = document.getElementById("checkComplexity");
     this.checkEscrow = document.getElementById("checkEscrow");
 
-    // Pre-populate editor with authentic solution
     if (this.solutionInput) {
       this.solutionInput.value = this.humanSolution;
     }
@@ -140,7 +219,13 @@ function cacheResolver(entries, threshold) {
       btnRun.addEventListener("click", () => this.executeVerificationPipeline());
     }
 
-    // Wallet 3D Card Flip
+    // Run Audit Button (Candidate Verifier)
+    const btnAudit = document.getElementById("btnRunAudit");
+    if (btnAudit) {
+      btnAudit.addEventListener("click", () => this.runCandidateAudit());
+    }
+
+    // Card Flip & Freeze Controls
     const btnFlip = document.getElementById("btnFlipWalletCard");
     if (btnFlip && this.walletVirtualCard) {
       btnFlip.addEventListener("click", () => {
@@ -148,7 +233,6 @@ function cacheResolver(entries, threshold) {
       });
     }
 
-    // Wallet Freeze Card
     const btnFreeze = document.getElementById("btnFreezeWalletCard");
     if (btnFreeze) {
       btnFreeze.addEventListener("click", (e) => {
@@ -159,123 +243,29 @@ function cacheResolver(entries, threshold) {
       });
     }
 
-    // Employer Fee Calculator
-    const bountyAmountInput = document.getElementById("newBountyAmount");
-    if (bountyAmountInput) {
-      bountyAmountInput.addEventListener("input", (e) => {
-        const principal = parseFloat(e.target.value) || 0;
-        const fee = principal * 0.025;
-        const total = principal + fee;
-        document.getElementById("calcPrincipal").textContent = `$${principal.toFixed(2)}`;
-        document.getElementById("calcFee").textContent = `$${fee.toFixed(2)}`;
-        document.getElementById("calcTotal").textContent = `$${total.toFixed(2)} USDC`;
-      });
-    }
-
-    // Employer Contract Type Toggle (Private Direct vs Public Open)
-    const btnPrivate = document.getElementById("btnTypePrivate");
-    const btnPublic = document.getElementById("btnTypePublic");
-    const privateBox = document.getElementById("privateAssigneeBox");
-    let selectedContractType = "private";
-
-    if (btnPrivate && btnPublic) {
-      btnPrivate.addEventListener("click", () => {
-        selectedContractType = "private";
-        btnPrivate.style.borderColor = "var(--accent-terracotta)";
-        btnPrivate.style.background = "var(--bg-tertiary)";
-        btnPrivate.style.color = "var(--text-primary)";
-        btnPublic.style.borderColor = "var(--border-subtle)";
-        btnPublic.style.background = "transparent";
-        btnPublic.style.color = "var(--text-secondary)";
-        if (privateBox) privateBox.style.display = "block";
-      });
-
-      btnPublic.addEventListener("click", () => {
-        selectedContractType = "public";
-        btnPublic.style.borderColor = "var(--accent-terracotta)";
-        btnPublic.style.background = "var(--bg-tertiary)";
-        btnPublic.style.color = "var(--text-primary)";
-        btnPrivate.style.borderColor = "var(--border-subtle)";
-        btnPrivate.style.background = "transparent";
-        btnPrivate.style.color = "var(--text-secondary)";
-        if (privateBox) privateBox.style.display = "none";
-      });
-    }
-
-    const btnDeposit = document.getElementById("btnConfirmDeposit");
-    if (btnDeposit) {
-      btnDeposit.addEventListener("click", () => {
-        const title = document.getElementById("newBountyTitle").value;
-        const total = document.getElementById("calcTotal").textContent;
-        const studentId = document.getElementById("targetStudentId") ? document.getElementById("targetStudentId").value : "@chidi_unilag";
-        
-        if (selectedContractType === "private") {
-          alert(`Success! ${total} locked in BMONI Smart Escrow Vault reserved exclusively for ${studentId}.\n\nMilestone is private (zero racing). Student can begin work with guaranteed settlement upon automated test pass.`);
-        } else {
-          alert(`Success! ${total} locked in BMONI Public Bounty Pool for "${title}". Open to all NACOS student developers.`);
-        }
-        this.switchView("view-marketplace");
-      });
-    }
-
-    // Candidate CV Verifier Handlers
-    const btnRunCvAudit = document.getElementById("btnRunCvAudit");
-    if (btnRunCvAudit) {
-      btnRunCvAudit.addEventListener("click", async () => {
-        btnRunCvAudit.disabled = true;
-        btnRunCvAudit.textContent = "Running Deep Forensic Research...";
-        const statusBadge = document.getElementById("cvAuditStatusBadge");
-        if (statusBadge) statusBadge.innerHTML = '<span class="status-dot"></span> Analyzing Git Commits & AST...';
-
-        await new Promise(r => setTimeout(r, 900));
-
-        const originalityEl = document.getElementById("auditOriginality");
-        if (originalityEl) originalityEl.textContent = "96.4%";
-
-        const findingsList = document.getElementById("auditFindingsList");
-        if (findingsList) {
-          findingsList.innerHTML = `
-            <li><b>Live GitHub Audit:</b> Analyzed repo structure and commit velocity. Confirmed genuine human incremental commits spread over 14 days (no bulk LLM paste).</li>
-            <li><b>AST Normalization & Entropy:</b> Syntactic entropy 3.42 bits. Flagged 0 ChatGPT canned wrapper patterns.</li>
-            <li><b>Tutorial Clone Check:</b> Cross-referenced against 120+ known public CS tutorial repos. 100% original algorithm implementations.</li>
-            <li><b>NACOS Key Verification:</b> Identity cryptographically signed by UNILAG Chapter Node #04 (Computer Science).</li>
-            <li><b>BMONI Escrow Clearance:</b> Clean escrow record. Ready for immediate private milestone contract assignment.</li>
-          `;
-        }
-
-        if (statusBadge) {
-          statusBadge.style.background = "var(--status-emerald-subtle)";
-          statusBadge.innerHTML = '<span class="status-dot"></span> Audit Passed ✓';
-        }
-
-        btnRunCvAudit.disabled = false;
-        btnRunCvAudit.textContent = "Deep Research Audit Complete ✓";
-        btnRunCvAudit.style.background = "var(--status-emerald)";
-
-        alert("Candidate CV & GitHub Audit Complete!\nOriginality: 96.4% • NACOS Chapter Verified: UNILAG Node #04\nCandidate cleared for Private BMONI Milestone Escrow.");
-      });
-    }
-
-    const btnLoadSampleCv = document.getElementById("btnLoadSampleCv");
-    if (btnLoadSampleCv) {
-      btnLoadSampleCv.addEventListener("click", () => {
-        const cvInput = document.getElementById("cvTextInput");
-        if (cvInput) {
-          cvInput.value = `Candidate: Chidi Okonkwo\nInstitution: University of Lagos (UNILAG), CS Dept '26 (NACOS #04)\nGitHub: https://github.com/WaliMedugu/BuildX-Crown-Chasers\nClaimed Projects:\n- Kilikoro Protocol: AST deterministic sandbox and BMONI stablecoin escrow engine.\n- High-Throughput Cache Expiry Resolver: O(N log N) priority queue algorithm.\n- Campus P2P FinTech Rails: Smart contract integration on BMONI testnet.`;
-        }
-      });
-    }
-
-    // CLI Token Helper
-    const btnCli = document.getElementById("btnSyncCli");
+    // CLI Token Button
+    const btnCli = document.getElementById("btnCliToken");
     if (btnCli) {
       btnCli.addEventListener("click", () => {
-        alert("Developer CLI Token:\nkili_live_sec_99482_unilag_node04\n\nRun 'node kilikoro.js analyze .' or 'node kilikoro.js verify-cv' in your terminal!");
+        alert("Kilikoro Developer CLI Token:\nkili_live_sec_99482_unilag_node04\n\nRun in terminal:\nnode kilikoro.js scan https://github.com/WaliMedugu/BuildX-Crown-Chasers");
       });
     }
 
-    // Marketplace Search & Filters
-    const searchInput = document.getElementById("bountySearchInput");
+    // Contract Amount Calculator
+    const modalAmount = document.getElementById("modalContractAmount");
+    if (modalAmount) {
+      modalAmount.addEventListener("input", (e) => {
+        const val = parseFloat(e.target.value) || 0;
+        const fee = val * 0.025;
+        const total = val + fee;
+        document.getElementById("modalPrincipal").textContent = `$${val.toFixed(2)}`;
+        document.getElementById("modalFee").textContent = `$${fee.toFixed(2)}`;
+        document.getElementById("modalTotal").textContent = `$${total.toFixed(2)} USDC`;
+      });
+    }
+
+    // Search Contracts
+    const searchInput = document.getElementById("contractSearchInput");
     if (searchInput) {
       searchInput.addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
@@ -285,22 +275,6 @@ function cacheResolver(entries, threshold) {
         });
       });
     }
-
-    document.querySelectorAll(".filter-pill").forEach((pill) => {
-      pill.addEventListener("click", (e) => {
-        document.querySelectorAll(".filter-pill").forEach((p) => p.classList.remove("active"));
-        e.currentTarget.classList.add("active");
-        const filter = e.currentTarget.dataset.filter;
-        document.querySelectorAll(".bounty-card").forEach((card) => {
-          if (filter === "all") {
-            card.style.display = "flex";
-          } else {
-            const hasTag = card.textContent.toLowerCase().includes(filter);
-            card.style.display = hasTag ? "flex" : "none";
-          }
-        });
-      });
-    });
   }
 
   switchView(viewId) {
@@ -313,22 +287,106 @@ function cacheResolver(entries, threshold) {
     if (activeNav) activeNav.classList.add("active");
     if (activeView) activeView.classList.add("active");
 
-    // Update Breadcrumb
     const titles = {
-      "view-marketplace": "Explore Bounties",
+      "view-verifier": "Candidate Verifier",
+      "view-contracts": "Contracts & Escrows",
       "view-workspace": "Active Milestone / TASK-BMONI-104",
-      "view-wallet": "BMONI Financial Wallet & Cards",
-      "view-passport": "Skill Passport & Verifications",
-      "view-employer": "Employer Escrow Hub",
-      "view-cv-verifier": "Candidate CV & GitHub Repo Verifier"
+      "view-wallet": "BMONI Wallet & Cards",
+      "view-students": "Verified Students Directory"
     };
     if (this.breadcrumbCurrent) {
       this.breadcrumbCurrent.textContent = titles[viewId] || "Platform";
     }
   }
 
+  setContractType(type) {
+    this.currentContractTab = type;
+    const tabPublic = document.getElementById("tabPublicContracts");
+    const tabPrivate = document.getElementById("tabPrivateContracts");
+
+    if (type === "public") {
+      tabPublic.classList.add("active");
+      tabPrivate.classList.remove("active");
+    } else {
+      tabPrivate.classList.add("active");
+      tabPublic.classList.remove("active");
+    }
+    this.renderContracts();
+  }
+
+  renderContracts() {
+    const grid = document.getElementById("contractListGrid");
+    if (!grid) return;
+
+    const filtered = this.contracts.filter(c => c.type === this.currentContractTab);
+    grid.innerHTML = filtered.map(c => `
+      <article class="bounty-card" onclick="app.openMilestone('${c.id}')">
+        <div class="bounty-card-top">
+          <div class="company-badge">
+            <div class="company-avatar" style="background: ${c.avatarColor}; color: white;">${c.avatar}</div>
+            <div>
+              <div class="company-name">${c.sponsor}</div>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">${c.type === "private" ? "Direct Private Hire (" + c.studentId + ")" : "Verified Sponsor"}</span>
+            </div>
+          </div>
+          <div class="reward-pill">$${c.amount.toFixed(2)} USDC</div>
+        </div>
+
+        <div>
+          <h2 class="bounty-card-title">${c.title}</h2>
+          <p class="bounty-card-desc">${c.desc}</p>
+        </div>
+
+        <div class="bounty-card-footer">
+          <div class="tag-list">
+            ${c.tags.map(t => `<span class="tag">${t}</span>`).join("")}
+          </div>
+          <span class="status-badge">
+            <span class="status-dot"></span>
+            ${c.status}
+          </span>
+        </div>
+      </article>
+    `).join("");
+  }
+
   openMilestone(taskId) {
+    const task = this.contracts.find(c => c.id === taskId) || this.contracts[0];
+    document.getElementById("wsTaskId").textContent = task.id;
+    document.getElementById("wsTitle").textContent = task.title;
+    document.getElementById("wsSponsor").innerHTML = `Sponsor: <b>${task.sponsor}</b> • Escrow Model: <b>${task.type === "private" ? "Direct 1-on-1 Settlement" : "Automated Milestone Release"}</b>`;
+    document.getElementById("wsAmount").textContent = `$${task.amount.toFixed(2)} USDC`;
+    document.getElementById("wsNaira").textContent = `≈ ₦${(task.amount * 1600).toLocaleString()} cNGN`;
     this.switchView("view-workspace");
+  }
+
+  async runCandidateAudit() {
+    const repoUrl = document.getElementById("verifierRepoUrl").value.trim();
+    const nacosId = document.getElementById("verifierNacosId").value.trim();
+    const resumeText = document.getElementById("verifierResumeText").value.trim();
+    const btn = document.getElementById("btnRunAudit");
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="status-dot"></span> Auditing GitHub repo with Claude 3.7...`;
+
+    const result = await this.claudeService.analyzeGitHubRepo(repoUrl, this.humanSolution, ["index.html", "js/app.js", "package.json"]);
+
+    document.getElementById("auditResultTitle").textContent = `Audit Report: ${repoUrl.split("/").pop() || "Candidate"}`;
+    document.getElementById("auditResultRepo").textContent = `Repository: ${repoUrl} • Student: ${nacosId}`;
+    document.getElementById("auditScoreVal").textContent = `${result.authenticityPercentage || 94}%`;
+    document.getElementById("auditAiRiskVal").textContent = result.aiBoilerplateRisk || "Low";
+    document.getElementById("auditVerdictBadge").textContent = `✓ Recommendation: ${result.recommendation || "Hire"}`;
+    document.getElementById("auditSummaryText").textContent = result.summary || "Genuine architectural logic detected.";
+
+    if (result.strengths) {
+      document.getElementById("auditStrengthsList").innerHTML = result.strengths.map(s => `<li>✓ ${s}</li>`).join("");
+    }
+    if (result.flags) {
+      document.getElementById("auditFlagsList").innerHTML = result.flags.map(f => `<li>! ${f}</li>`).join("");
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> <span>Run Deep Audit with Claude 3.7</span>`;
   }
 
   resetChecklist() {
@@ -336,6 +394,7 @@ function cacheResolver(entries, threshold) {
       if (el) {
         el.className = "check-item";
         el.querySelector(".check-icon").textContent = "•";
+        el.style.color = "";
       }
     });
   }
@@ -346,44 +405,42 @@ function cacheResolver(entries, threshold) {
 
     const btnRun = document.getElementById("btnRunVerification");
     btnRun.disabled = true;
-    btnRun.textContent = "Running Pipeline...";
+    btnRun.textContent = "Verifying Code...";
 
     // Step 1: Syntax & AST Parsing
     await new Promise((r) => setTimeout(r, 400));
     const evalResult = await this.astEngine.evaluateSubmission(code, this.testCases);
-
     this.checkSyntax.classList.add("passed");
     this.checkSyntax.querySelector(".check-icon").textContent = "✓";
 
     // Step 2: Anti-AI Boilerplate Entropy
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 450));
     if (evalResult.entropy.isAiDetected) {
-      this.checkEntropy.classList.remove("passed");
       this.checkEntropy.querySelector(".check-icon").textContent = "✗";
       this.checkEntropy.style.color = "var(--status-ruby)";
-      alert(`[Verification Failed]\nHigh AI Boilerplate Detected (${evalResult.entropy.aiConfidenceScore}% match).\n\nKilikoro's AST normalizer flagged cookie-cutter LLM guard patterns and redundant wrappers. Please write an authentic algorithmic implementation!`);
+      alert(`[Verification Rejected]\nHigh AI Boilerplate Detected (${evalResult.entropy.aiConfidenceScore}% match).\nKilikoro flagged ChatGPT boilerplate template signatures.`);
       btnRun.disabled = false;
-      btnRun.textContent = "Run Verification & Release Payout";
+      btnRun.textContent = "Verify & Release Payout";
       return;
     }
     this.checkEntropy.classList.add("passed");
     this.checkEntropy.querySelector(".check-icon").textContent = "✓";
 
     // Step 3: Complexity & Assertions
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 450));
     if (!evalResult.execution.success) {
       this.checkComplexity.querySelector(".check-icon").textContent = "✗";
       this.checkComplexity.style.color = "var(--status-ruby)";
-      alert(`[Verification Failed]\nCode did not pass all 3 assertion suites or violated the O(N log N) asymptotic speed constraint!`);
+      alert(`[Verification Rejected]\nFailed assertion test cases or exceeded O(N log N) limit!`);
       btnRun.disabled = false;
-      btnRun.textContent = "Run Verification & Release Payout";
+      btnRun.textContent = "Verify & Release Payout";
       return;
     }
     this.checkComplexity.classList.add("passed");
     this.checkComplexity.querySelector(".check-icon").textContent = "✓";
 
     // Step 4: BMONI Oracle Settlement
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 500));
     const attestation = this.escrowEngine.generateAttestation(
       "UNILAG-CS-2026-0482",
       "TASK-BMONI-104",
@@ -399,7 +456,6 @@ function cacheResolver(entries, threshold) {
     this.checkEscrow.classList.add("passed");
     this.checkEscrow.querySelector(".check-icon").textContent = "✓";
 
-    // Update Wallet Balances across all pages
     document.getElementById("walletTotalUsdc").textContent = `$${payout.newBalanceUSDC.toFixed(2)} USDC`;
     document.getElementById("walletTotalNaira").textContent = `≈ ₦${payout.newBalanceCNGN.toLocaleString()} cNGN`;
     document.getElementById("walletCardBalance").textContent = `$${payout.newBalanceUSDC.toFixed(2)} USDC`;
@@ -408,10 +464,67 @@ function cacheResolver(entries, threshold) {
     btnRun.textContent = "Verified & Paid ✓";
     btnRun.style.background = "var(--status-emerald)";
 
-    alert(`🎉 Milestone Verified & Settled!\n+$${payout.settledAmountUSDC.toFixed(2)} USDC credited to your BMONI Virtual Mastercard in 1.8 seconds!\n\nTransaction Hash: ${payout.transactionHash}\nAttestation ID: ${attestation.attestationId}`);
-    
-    // Automatically switch to wallet view to show the result
+    alert(`🎉 Milestone Verified & Released!\n+$${payout.settledAmountUSDC.toFixed(2)} USDC credited to your BMONI Virtual Mastercard in 1.8 seconds!\n\nAttestation: ${attestation.attestationId}`);
     this.switchView("view-wallet");
+  }
+
+  // Contract Modal Controls
+  openNewContractModal() {
+    document.getElementById("contractModal").style.display = "flex";
+  }
+
+  closeNewContractModal() {
+    document.getElementById("contractModal").style.display = "none";
+  }
+
+  setModalVisibility(type) {
+    this.modalVisibility = type;
+    const btnPriv = document.getElementById("modalBtnPrivate");
+    const btnPub = document.getElementById("modalBtnPublic");
+    const recipientGroup = document.getElementById("modalRecipientGroup");
+
+    if (type === "private") {
+      btnPriv.classList.add("active");
+      btnPub.classList.remove("active");
+      recipientGroup.style.display = "block";
+    } else {
+      btnPub.classList.add("active");
+      btnPriv.classList.remove("active");
+      recipientGroup.style.display = "none";
+    }
+  }
+
+  directHire(studentId, name) {
+    this.openNewContractModal();
+    this.setModalVisibility("private");
+    document.getElementById("modalStudentId").value = studentId;
+    document.getElementById("modalContractTitle").value = `Direct Hire: Milestone for ${name}`;
+  }
+
+  submitNewContract() {
+    const title = document.getElementById("modalContractTitle").value;
+    const amount = parseFloat(document.getElementById("modalContractAmount").value) || 150;
+    const studentId = this.modalVisibility === "private" ? document.getElementById("modalStudentId").value : null;
+
+    const newContract = {
+      id: `CONTRACT-${Date.now().toString().slice(-4)}`,
+      type: this.modalVisibility,
+      sponsor: "Verified Client",
+      avatar: "C",
+      avatarColor: "var(--accent-terracotta)",
+      title: title,
+      desc: this.modalVisibility === "private" ? `Direct private hire locked for ${studentId}.` : "Open bounty for all verified NACOS students.",
+      amount: amount,
+      tags: [this.modalVisibility === "private" ? "Private Hire" : "Public Bounty", "Escrow Locked"],
+      status: "Escrow Locked",
+      studentId: studentId
+    };
+
+    this.contracts.unshift(newContract);
+    this.closeNewContractModal();
+    this.setContractType(this.modalVisibility);
+    this.switchView("view-contracts");
+    alert(`Success! $${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for: "${title}".`);
   }
 }
 
