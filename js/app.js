@@ -983,3 +983,48 @@ window.addEventListener("DOMContentLoaded", async () => {
   await window.app.renderTransactions();
   await window.app.renderStudents();
 });
+// Mobile sidebar navigation
+window.addEventListener("DOMContentLoaded", () => {
+  const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+  const sidebar = document.querySelector(".sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+  if (!mobileMenuBtn || !sidebar || !sidebarOverlay) return;
+
+  const closeMobileSidebar = () => {
+    sidebar.classList.remove("mobile-open");
+    sidebarOverlay.classList.remove("mobile-open");
+
+    mobileMenuBtn.setAttribute("aria-expanded", "false");
+    mobileMenuBtn.setAttribute("aria-label", "Open navigation menu");
+    mobileMenuBtn.textContent = "☰";
+  };
+
+  const toggleMobileSidebar = () => {
+    const isOpen = sidebar.classList.toggle("mobile-open");
+    sidebarOverlay.classList.toggle("mobile-open", isOpen);
+
+    mobileMenuBtn.setAttribute("aria-expanded", String(isOpen));
+    mobileMenuBtn.setAttribute(
+      "aria-label",
+      isOpen ? "Close navigation menu" : "Open navigation menu"
+    );
+    mobileMenuBtn.textContent = isOpen ? "✕" : "☰";
+  };
+
+  mobileMenuBtn.addEventListener("click", toggleMobileSidebar);
+
+  sidebarOverlay.addEventListener("click", closeMobileSidebar);
+
+  // Close the sidebar after selecting a navigation item
+  sidebar.querySelectorAll(".nav-item").forEach((navItem) => {
+    navItem.addEventListener("click", closeMobileSidebar);
+  });
+
+  // If the screen becomes desktop-sized, reset the mobile menu state
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 767) {
+      closeMobileSidebar();
+    }
+  });
+});
