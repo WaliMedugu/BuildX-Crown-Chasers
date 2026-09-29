@@ -803,6 +803,54 @@ DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
 - Local Web Server: http://localhost:3000
 ================================================================================
 
+================================================================================
+SESSION: 2026-09-29 | PRODUCTION PURGE OF ALL MOCK DATA & FIELD PLACEHOLDERS
+================================================================================
+
+[USER PROMPT]
+"ask yourself... who is the certificate for.. who issues it.. who should have access to it.. is it public... etc
+i still see nothing onn supabase btw.. no table no nothing.. why
+also how do i integrate the bmoni api for the hackathon
+i still see mock data in eg contacts and escrows screen.. etc
+i want to push this production but still looks like its in testing... why???/ whys myname for example a placehoolder? why is unilag a default uni? why are some fields  filled?????"
+
+[AGENT SHORT RESPONSE]
+Addressed every point and purged all remaining mock artifacts:
+1. Clarified Certificate Architecture & Access Model:
+   - For: Student developers (to prove verified competence) and employers/investors (to hire with zero fraud risk).
+   - Issuer: NACOS National Directorate & Kilikoro Autonomous Settlement Oracle.
+   - Access: Public to verify via cryptographic hash permalink (no login needed), private to manage and issue (student-only).
+2. Clarified Supabase Tables: Explained that Supabase prevents REST API creation of tables via frontend DDL; 1-click execution in Supabase SQL editor (`setup-db.sql`) creates the 4 tables in 3 seconds.
+3. BMONI Hackathon API Integration: Explained the exact escrow lock, verification attestation, and disbursement flow with drop-in configuration.
+4. Total Purge of Mock Contracts & Data:
+   - Purged hardcoded `this.contracts` array (was pre-filled with 6 fake bounties). Contracts now load dynamically from Supabase/local DB with clean empty states.
+   - Dynamic tab counts (`pubCount` and `privCount`) update based on real data.
+   - Active Milestone Workspace defaults to `#wsEmptyState` until a real contract is selected.
+   - Purged all hardcoded input values: Full Name, University, NACOS ID, GitHub username, and contract fields are now empty placeholders (`placeholder="e.g. ..."`).
+   - Default app state is strictly Guest Mode until the user onboards.
+Committed and pushed to GitHub main branch (commit 579d2c6).
+
+--------------------------------------------------------------------------------
+DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
+--------------------------------------------------------------------------------
+
+1. ZERO MOCK CONTRACTS:
+- `this.contracts` initialized to `[]`.
+- `renderContracts()` displays clean empty state if no contracts exist in Supabase.
+- Tab counts update dynamically.
+- `openMilestone(taskId)` shows `#wsContent` and populates the selected contract's details, hiding `#wsEmptyState`.
+
+2. FORM FIELD CLEANUP & TRUE GUEST INITIALIZATION:
+- `index.html`: Removed all `value="..."` attributes from `#modalContractAmount`, `#modalContractTitle`, `#modalStudentId`, `#onboardName`, `#onboardUniv`, `#onboardNacosId`, `#onboardGithub`.
+- `js/app.js`: Replaced default auto-generation of "Wali Medugu / UNILAG" profile in `initProfile()` with `applyGuestMode()`. Guest mode leaves all verifier and account fields completely blank.
+- Certificate modal fields (`certCandidateName`, `certCandidateDid`, `certRepoUrl`) default to blank placeholders (`--`) until populated from a live audit.
+
+3. GIT COMMIT & SYNC:
+- Commit SHA: 579d2c6
+- Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
+- Local Web Server: http://localhost:3000
+================================================================================
+
 
 
 
