@@ -29,12 +29,18 @@ const SUPABASE_URL = process.env.SUPABASE_URL || "https://wgcgkbftotnkkeyurttb.s
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnY2drYmZ0b3Rua2tleXVydHRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2MzY4NjUsImV4cCI6MjEwNjIxMjg2NX0.yosBpBph5rNHPrisblRyKNZU0dRsNUUT15YZUDtlB80";
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnY2drYmZ0b3Rua2tleXVydHRiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDYzNjg2NSwiZXhwIjoyMTA2MjEyODY1fQ.UZ_m5kuWrHgHjB-5FlYiAyqahptrPTRBz_rv41jOZs4";
 
-// Persistent Database Directory & File
-const DATA_DIR = path.join(__dirname, "data");
+// Persistent Database Directory & File (Vercel serverless compatible)
+const DATA_DIR = process.env.VERCEL
+  ? path.join("/tmp", "data")
+  : path.join(__dirname, "data");
 const DB_FILE = path.join(DATA_DIR, "kilikoro_db.json");
 
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+} catch (e) {
+  console.warn("[Storage Notice] Could not create DATA_DIR:", e.message);
 }
 
 // Initial Database State
@@ -106,12 +112,26 @@ function readDb() {
   } catch (e) {
     console.error("DB Read Error:", e);
   }
-  fs.writeFileSync(DB_FILE, JSON.stringify(INITIAL_DB, null, 2), "utf8");
+  // Try reading bundled initial seed data
+  const bundledFile = path.join(__dirname, "data", "kilikoro_db.json");
+  if (fs.existsSync(bundledFile)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(bundledFile, "utf8"));
+      writeDb(data);
+      return data;
+    } catch (e) {}
+  }
+  try {
+    writeDb(INITIAL_DB);
+  } catch (e) {}
   return JSON.parse(JSON.stringify(INITIAL_DB));
 }
 
 function writeDb(data) {
   try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
   } catch (e) {
     console.error("DB Write Error:", e);
@@ -207,7 +227,7 @@ function sendJson(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
-const server = http.createServer(async (req, res) => {
+async function handleRequest(req, res) {
   // CORS Preflight
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
@@ -872,10 +892,18 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": contentType });
     fs.createReadStream(filePath).pipe(res);
   });
-});
+}
 
-server.listen(PORT, () => {
-  console.log(`[Kilikoro Engine] Production backend listening on http://localhost:${PORT}`);
-  console.log(`[Supabase Integration] Connected to ${SUPABASE_URL}`);
-  console.log(`[Database Storage] Persisting to ${DB_FILE}`);
-});
+const server = http.createServer(handleRequest);
+
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`[Kilikoro Engine] Production backend listening on http://localhost:${PORT}`);
+    console.log(`[Supabase Integration] Connected to ${SUPABASE_URL}`);
+    console.log(`[Database Storage] Persisting to ${DB_FILE}`);
+  });
+}
+
+module.exports = handleRequest;
+module.exports.server = server;
+module.exports.handleRequest = handleRequest;

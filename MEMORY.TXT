@@ -1309,3 +1309,42 @@ GIT DIFF SUMMARY:
   * Fixed syntax error before `.passport-container` ensuring full stylesheet parsing.
   * Verified 100% bracket balance across all 1,719 lines.
 ================================================================================
+
+================================================================================
+SESSION LOG ENTRY - 2026-09-29T08:22:00+01:00
+================================================================================
+
+USER PROMPT:
+remove 9PSB Connected
+
+and can i push the website to vercel from githuub? if no set it up
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Removed 9PSB Connected Badge:
+   - Removed the `9PSB Connected` status badge from the top header of the BMONI Liquid Balance card (`.bmoni-frame-top`) in `index.html`, leaving only the clean BMONI brand header to strictly match reference Image 2.
+2. Vercel GitHub Deployment Configured:
+   - Verified that the website can be pushed directly from GitHub to Vercel.
+   - Configured `vercel.json` with URL rewrites routing `/api/*` requests to serverless function handler while serving all static assets (`index.html`, CSS, JS, assets) directly through Vercel's global edge CDN.
+   - Created `api/index.js` serverless function entrypoint wrapping the production backend.
+   - Enhanced `server.js` database operations to be serverless-compatible by defaulting persistent storage to `/tmp/data` on Vercel while falling back to bundled seed data.
+   - Updated `.gitignore` to ignore `.vercel/` build cache artifacts.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `index.html`:
+  * Removed `<span class="status-badge">...9PSB Connected</span>` from `.bmoni-frame-top`.
+- `server.js`:
+  * Changed `DATA_DIR` to use `process.env.VERCEL ? path.join("/tmp", "data") : path.join(__dirname, "data")`.
+  * Updated `readDb` to seed from bundled `data/kilikoro_db.json` when running in a serverless sandbox.
+  * Extracted `async function handleRequest(req, res)` and wrapped `server.listen` inside `if (require.main === module)`.
+  * Exported `module.exports = handleRequest; module.exports.server = server;`.
+- `api/index.js`:
+  * Created Vercel serverless function entrypoint delegating to `server.js`.
+- `vercel.json`:
+  * Created routing specification rewriting `/api/(.*)` to `/api/index.js`.
+- `.gitignore`:
+  * Added `.vercel/` to untracked patterns.
+================================================================================

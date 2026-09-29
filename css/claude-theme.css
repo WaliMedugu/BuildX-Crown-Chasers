@@ -3,7 +3,7 @@
    Modeled after Linear, GitHub, and Mercury with Anthropic's Warm Editorial Palette
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap');
 
 :root {
   /* Surface Layers */
@@ -865,9 +865,9 @@ body {
    ========================================================================== */
 .bmoni-liquid-card-frame {
   background: #1e0223;
-  border: 1.5px solid #40064a;
+  border: 1.5px solid #3a0543;
   border-radius: 22px;
-  padding: 1.25rem 1.25rem 1.15rem 1.25rem;
+  padding: 1.1rem 1.1rem 1rem 1.1rem;
   position: relative;
   overflow: hidden;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 25px rgba(110, 0, 120, 0.15);
@@ -879,40 +879,48 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.85rem;
-  padding: 0 0.35rem;
+  margin-bottom: 0.75rem;
+  padding: 0.2rem 0.35rem;
 }
 
 .bmoni-brand-logo-txt {
-  font-family: var(--font-sans);
+  font-family: 'Montserrat', var(--font-sans);
   font-weight: 900;
-  font-size: 1.35rem;
-  letter-spacing: -0.03em;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
   color: #ffffff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  text-transform: uppercase;
 }
 
 .bmoni-naira-layer {
   position: relative;
-  margin-bottom: -18px;
+  margin-bottom: -22px;
   z-index: 1;
-  padding: 0 0.85rem;
+  padding: 0 0.6rem;
+}
+
+/* Fan of stacked banknotes peeking from the pocket */
+.bmoni-naira-bill-stack {
+  position: relative;
+  height: 65px;
 }
 
 .bmoni-naira-bill {
-  height: 52px;
-  background: linear-gradient(135deg, #0d4b75 0%, #1f6b9c 35%, #59aedf 65%, #18527a 100%);
-  border-radius: 8px 8px 0 0;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  height: 50px;
+  background: linear-gradient(135deg, #0d5a7a 0%, #1a7da8 30%, #4daad4 60%, #1e6e94 100%);
+  border-radius: 6px 6px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-bottom: none;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.25rem;
-  position: relative;
+  padding: 0 1rem;
+  position: absolute;
+  left: 0;
+  right: 0;
   overflow: hidden;
-  transform: rotate(-0.75deg);
 }
 
 .bmoni-naira-bill::before {
@@ -921,155 +929,181 @@ body {
   inset: 0;
   background: repeating-linear-gradient(
     45deg,
-    rgba(255, 255, 255, 0.04) 0px,
-    rgba(255, 255, 255, 0.04) 2px,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 2px,
     transparent 2px,
-    transparent 8px
+    transparent 7px
   );
 }
 
-.naira-bill-title {
-  font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+/* 3 stacked bills for fan effect */
+.bmoni-naira-bill:nth-child(1) {
+  bottom: 20px;
+  transform: rotate(-2.5deg);
+  opacity: 0.7;
+  z-index: 1;
+}
+
+.bmoni-naira-bill:nth-child(2) {
+  bottom: 12px;
+  transform: rotate(-1.2deg);
+  opacity: 0.85;
   z-index: 2;
 }
 
+.bmoni-naira-bill:nth-child(3) {
+  bottom: 4px;
+  transform: rotate(-0.3deg);
+  z-index: 3;
+}
+
+.naira-bill-title {
+  font-family: 'Inter', var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  white-space: nowrap;
+}
+
 .naira-bill-denom {
-  font-family: var(--font-sans);
-  font-size: 1.45rem;
+  font-family: 'Montserrat', var(--font-sans);
+  font-size: 1.3rem;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.9);
   letter-spacing: -0.02em;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 2;
 }
 
 /* Stitched Leather Pocket Sleeve */
 .bmoni-pocket-sleeve {
-  background: linear-gradient(180deg, #6c0074 0%, #5d0064 100%);
-  border-radius: 18px;
-  padding: 1.35rem 1.4rem 1.2rem 1.4rem;
+  background: linear-gradient(180deg, #7a1082 0%, #6b0a73 50%, #5d0064 100%);
+  border-radius: 14px;
+  padding: 1.35rem 1.3rem 1.15rem 1.3rem;
   position: relative;
   z-index: 2;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-  border-left: 2px dashed rgba(255, 255, 255, 0.25);
-  border-right: 2px dashed rgba(255, 255, 255, 0.25);
-  border-bottom: 2px dashed rgba(255, 255, 255, 0.25);
-  border-top: none;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  /* Stitched top edge only */
+  border-top: 2.5px dashed rgba(255, 255, 255, 0.3);
+  /* Subtle grain texture */
+  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(255,255,255,0.02)'/%3E%3C/svg%3E");
 }
 
 .pocket-rivet {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #350039;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  position: absolute;
-  top: 10px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-.pocket-rivet.left {
-  left: 14px;
-}
-
-.pocket-rivet.right {
-  right: 14px;
+  display: none; /* Not visible in the reference image */
 }
 
 .bmoni-balance-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.15rem;
+  margin-top: 0.35rem;
   margin-bottom: 0.5rem;
 }
 
 .bmoni-liquid-amount-val {
-  font-family: var(--font-sans);
-  font-size: 2.25rem;
+  font-family: 'Montserrat', var(--font-sans);
+  font-size: 2.15rem;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Naira sign with line-through (₦) in the reference */
+.bmoni-liquid-amount-val .naira-symbol {
+  text-decoration: line-through;
 }
 
 .bmoni-eye-toggle-btn {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.65);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  padding: 0.35rem;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  padding: 0;
 }
 
 .bmoni-eye-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
   color: #ffffff;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .bmoni-bank-details-block {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .bmoni-bank-name-label {
-  font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.75);
-  font-weight: 500;
-  margin-bottom: 0.25rem;
+  font-family: 'Inter', var(--font-sans);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  margin-bottom: 0.3rem;
 }
 
 .bmoni-acct-number-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-sans);
+  gap: 0.55rem;
+  font-family: 'Inter', var(--font-sans);
   font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
 .bmoni-copy-icon-btn {
-  background: none;
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.85);
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  border-radius: 3px;
+  color: #5d0064;
   cursor: pointer;
-  padding: 0.2rem;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   transition: all 0.15s ease;
+  padding: 0;
+}
+
+.bmoni-copy-icon-btn svg {
+  width: 12px;
+  height: 12px;
 }
 
 .bmoni-copy-icon-btn:hover {
-  color: #ffffff;
-  transform: scale(1.15);
+  background: #ffffff;
+  transform: scale(1.1);
 }
 
 .bmoni-pocket-footer-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.5rem;
+  margin-top: 0.85rem;
 }
 
 .bmoni-flag-pill {
-  width: 28px;
-  height: 19px;
+  width: 32px;
+  height: 22px;
   border-radius: 4px;
   overflow: hidden;
   display: flex;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .bmoni-flag-pill .flag-g {
@@ -1087,6 +1121,7 @@ body {
   align-items: center;
   gap: 0.45rem;
   color: rgba(255, 255, 255, 0.85);
+  font-family: 'Inter', var(--font-sans);
   font-size: 0.92rem;
   font-weight: 500;
   cursor: pointer;
@@ -1100,18 +1135,19 @@ body {
 }
 
 .info-circle-glyph {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: #ffffff;
   color: #5d0064;
-  font-size: 0.75rem;
-  font-weight: 900;
+  font-size: 0.82rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: serif;
   font-style: italic;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 /* ==========================================================================
@@ -1147,42 +1183,37 @@ body {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 1.5rem;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(110, 0, 120, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(180, 100, 200, 0.3);
   overflow: hidden;
 }
 
 /* Exact Deep Magenta Purple with Diagonal Repeating "VIRTUAL" watermark */
 .card-face.front {
-  background-color: #48004f;
-  background-image: radial-gradient(circle at 85% 15%, rgba(130, 0, 140, 0.4) 0%, transparent 60%),
-    repeating-linear-gradient(
-      -40deg,
-      transparent 0,
-      transparent 22px,
-      rgba(255, 255, 255, 0.05) 23px,
-      rgba(255, 255, 255, 0.05) 25px
-    );
+  background-color: #7B1878;
+  background-image: radial-gradient(circle at 80% 20%, rgba(140, 40, 160, 0.3) 0%, transparent 55%);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
+/* Diagonal repeating VIRTUAL watermark across entire card */
 .card-face.front::before {
-  content: "VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL VIRTUAL";
+  content: "VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL  VIRTUAL";
   position: absolute;
-  top: -120px;
-  left: -120px;
-  right: -120px;
-  bottom: -120px;
-  font-family: var(--font-sans);
+  top: -200px;
+  left: -200px;
+  right: -200px;
+  bottom: -200px;
+  font-family: 'Montserrat', var(--font-sans);
   font-weight: 900;
-  font-size: 1.12rem;
-  line-height: 1.85;
-  letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.08);
+  font-size: 1rem;
+  line-height: 2.2;
+  letter-spacing: 0.25em;
+  word-spacing: 1.2em;
+  color: rgba(255, 255, 255, 0.07);
   transform: rotate(-38deg);
   pointer-events: none;
   word-break: break-all;
@@ -1199,83 +1230,75 @@ body {
   padding: 1.25rem 1.5rem;
 }
 
-/* Mastercard Top-Right Circles */
+/* Mastercard Circles — stacked vertically, amber on top, red below */
 .card-mc-top-right {
   position: absolute;
-  top: 1.5rem;
+  top: 1.25rem;
   right: 1.5rem;
-  display: flex;
-  align-items: center;
   z-index: 5;
 }
 
 .mc-circles-pair {
-  display: flex;
-  align-items: center;
   position: relative;
-  width: 58px;
-  height: 36px;
-}
-
-.mc-circle-red {
-  width: 36px;
-  height: 36px;
-  background: #EB001B;
-  border-radius: 50%;
-  position: absolute;
-  left: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  width: 52px;
+  height: 72px;
 }
 
 .mc-circle-amber {
-  width: 36px;
-  height: 36px;
-  background: #F79E1B;
+  width: 46px;
+  height: 46px;
+  background: radial-gradient(circle at 40% 35%, #FFD93D, #F79E1B 60%, #E88A0E);
   border-radius: 50%;
   position: absolute;
-  right: 0;
-  opacity: 0.95;
-  mix-blend-mode: screen;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.mc-circle-red {
+  width: 46px;
+  height: 46px;
+  background: radial-gradient(circle at 45% 40%, #FF3B3B, #EB001B 60%, #CC0016);
+  border-radius: 50%;
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* BMONI Bottom-Right Vertical Brand */
 .card-bmoni-bottom-right {
   position: absolute;
-  bottom: 1.5rem;
+  bottom: 1.25rem;
   right: 1.5rem;
   z-index: 5;
 }
 
 .bmoni-vertical-brand-text {
-  font-family: var(--font-sans);
+  font-family: 'Montserrat', var(--font-sans);
   font-weight: 900;
-  font-size: 1.3rem;
-  letter-spacing: 0.12em;
+  font-size: 1.4rem;
+  letter-spacing: 0.1em;
   color: #ffffff;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  text-transform: uppercase;
 }
 
+/* Card details hidden on front per reference - shown only on flip */
 .card-details-overlay {
   position: relative;
   z-index: 5;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding-right: 65px;
+  display: none;
 }
 
 .card-chip-gold {
-  width: 38px;
-  height: 28px;
-  background: linear-gradient(135deg, #ECC880 0%, #D4AF37 50%, #9B7811 100%);
-  border-radius: 5px;
-  margin-bottom: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+  display: none;
 }
 
 .card-number-clean {
@@ -1289,7 +1312,7 @@ body {
 }
 
 .card-holder-clean {
-  font-family: var(--font-sans);
+  font-family: 'Montserrat', var(--font-sans);
   font-size: 0.82rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.9);
