@@ -980,6 +980,52 @@ threshold = 20</pre>
     </div>
   </div>
 
+  <!-- ========================================================================= -->
+  <!-- MODAL: KILIKORO CLI AUTH TOKEN & ONE-LINER COMMAND                        -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="cliTokenModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 520px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span class="status-dot" style="background: var(--accent-terracotta);"></span>
+          <h2 style="font-family: var(--font-editorial); font-size: 1.35rem; margin: 0;">Developer CLI Integration</h2>
+        </div>
+        <button onclick="app.closeCliTokenModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">✕</button>
+      </div>
+
+      <div style="font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5;">
+        Kilikoro CLI is published live on NPM. Scan candidate repositories or CI/CD workflows directly from your local terminal with zero installation.
+      </div>
+
+      <!-- Token Box -->
+      <div style="margin-bottom: 1rem;">
+        <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em;">Your Authenticated API Token</label>
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="text" id="cliTokenValue" value="kili_live_sec_99482_unilag_node04" readonly style="flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--accent-terracotta); font-family: var(--font-mono); font-size: 0.85rem;">
+          <button class="btn btn-secondary" onclick="app.copyCliToken()" style="font-size: 0.8rem; white-space: nowrap;">
+            Copy Token
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Run One-Liner -->
+      <div style="margin-bottom: 1.25rem;">
+        <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em;">Global Terminal Command</label>
+        <div style="background: #0d0c0a; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.75rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+          <code>npx kilikoro scan &lt;repo-url&gt;</code>
+          <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('npx kilikoro scan https://github.com/WaliMedugu/BuildX-Crown-Chasers'); app.showToast('Copied to Clipboard', 'One-liner CLI command copied!', 'success');" style="font-size: 0.72rem; padding: 0.25rem 0.5rem;">Copy</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn btn-primary" onclick="app.closeCliTokenModal()" style="font-size: 0.82rem;">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-App Toast Container (Sonner / Linear Style) -->
+  <div class="toast-container" id="toastContainer"></div>
+
   <!-- Scripts -->
   <script src="js/local-config.js"></script>
   <script src="js/supabase-client.js"></script>
