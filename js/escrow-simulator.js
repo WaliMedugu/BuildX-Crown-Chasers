@@ -43,6 +43,20 @@ class BmoniEscrowEngine {
   }
 
   /**
+   * Returns current wallet balances and card state
+   */
+  getBalance() {
+    return {
+      liquidUSDC: this.currentBalanceUSDC,
+      liquidCNGN: this.currentBalanceCNGN,
+      escrowLockedUSDC: this.activeTask ? this.activeTask.rewardUSDC : 0,
+      cardStatus: this.virtualCard.isFrozen ? "FROZEN" : "ACTIVE",
+      cardHolder: this.virtualCard.cardHolder,
+      cardNumber: this.virtualCard.cardNumber
+    };
+  }
+
+  /**
    * Generates a cryptographic verification signature
    */
   generateAttestation(developerId, taskId, metrics) {

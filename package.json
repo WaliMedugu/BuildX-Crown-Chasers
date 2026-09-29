@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Deterministic Proof-of-Competence Engine and BMONI Stablecoin Milestone Escrow for African Computing Students",
   "main": "kilikoro.js",
+  "bin": {
+    "kilikoro": "./kilikoro.js"
+  },
   "scripts": {
     "start": "npx serve -l 3000 .",
     "cli": "node kilikoro.js"

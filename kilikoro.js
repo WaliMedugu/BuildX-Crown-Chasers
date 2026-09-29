@@ -194,17 +194,18 @@ function handleBalance() {
 
 function showHelp() {
   banner();
-  console.log(`Usage: node kilikoro.js <command> [options]\n`);
+  console.log(`Usage: kilikoro <command> [options] (or npx kilikoro <command>)\n`);
   console.log(`Commands:`);
-  console.log(`  ${C.terracotta}scan <repo-url>${C.reset}           Deep audit a GitHub repository with Claude 3.7`);
+  console.log(`  ${C.terracotta}scan <repo-url>${C.reset}           Deep audit a GitHub repository with AI verification`);
   console.log(`  ${C.terracotta}verify-resume [file]${C.reset}      Fact-check a candidate resume & claimed projects`);
   console.log(`  ${C.terracotta}contract [options]${C.reset}        Create a Public Bounty or Private Direct Contract`);
   console.log(`  ${C.terracotta}test${C.reset}                       Run AST complexity & unit assertions on local code`);
   console.log(`  ${C.terracotta}submit${C.reset}                     Submit verified code to trigger BMONI instant payout`);
   console.log(`  ${C.terracotta}balance${C.reset}                    View BMONI stablecoin balances & virtual Mastercard\n`);
   console.log(`Examples:`);
-  console.log(`  node kilikoro.js scan https://github.com/WaliMedugu/BuildX-Crown-Chasers`);
-  console.log(`  node kilikoro.js contract --type private --to UNILAG-CS-04 --amount 300\n`);
+  console.log(`  kilikoro scan https://github.com/WaliMedugu/BuildX-Crown-Chasers`);
+  console.log(`  npx kilikoro scan https://github.com/WaliMedugu/BuildX-Crown-Chasers`);
+  console.log(`  kilikoro contract --type private --to UNILAG-CS-04 --amount 300\n`);
 }
 
 // Route commands

@@ -804,10 +804,15 @@ function cacheResolver(entries, threshold) {
     const modal = document.getElementById("onboardingModal");
     if (modal) {
       modal.style.display = "flex";
-      document.getElementById("onboardName").value = this.activeProfile?.name || "";
-      document.getElementById("onboardUniv").value = this.activeProfile?.university || "";
-      document.getElementById("onboardNacosId").value = this.activeProfile?.nacosId || "";
-      document.getElementById("onboardGithub").value = this.activeProfile?.github || "";
+      this.setAuthMode("signup");
+      const nameInput = document.getElementById("onboardName");
+      const univInput = document.getElementById("onboardUniv");
+      const nacosInput = document.getElementById("onboardNacosId");
+      const githubInput = document.getElementById("onboardGithub");
+      if (nameInput) nameInput.value = this.activeProfile?.name || "";
+      if (univInput) univInput.value = this.activeProfile?.university || "";
+      if (nacosInput) nacosInput.value = this.activeProfile?.nacosId || "";
+      if (githubInput) githubInput.value = this.activeProfile?.github || "";
       this.setOnboardingRole(this.activeProfile?.role || "student");
     }
   }
@@ -815,6 +820,26 @@ function cacheResolver(entries, threshold) {
   closeOnboardingModal() {
     const modal = document.getElementById("onboardingModal");
     if (modal) modal.style.display = "none";
+  }
+
+  setAuthMode(mode) {
+    this.authMode = mode;
+    const tabSignIn = document.getElementById("authTabSignIn");
+    const tabSignUp = document.getElementById("authTabSignUp");
+    const secSignIn = document.getElementById("authSignInSection");
+    const secSignUp = document.getElementById("authSignUpSection");
+
+    if (mode === "signin") {
+      if (tabSignIn) tabSignIn.classList.add("active");
+      if (tabSignUp) tabSignUp.classList.remove("active");
+      if (secSignIn) secSignIn.style.display = "block";
+      if (secSignUp) secSignUp.style.display = "none";
+    } else {
+      if (tabSignUp) tabSignUp.classList.add("active");
+      if (tabSignIn) tabSignIn.classList.remove("active");
+      if (secSignUp) secSignUp.style.display = "block";
+      if (secSignIn) secSignIn.style.display = "none";
+    }
   }
 
   setOnboardingRole(role) {
@@ -825,46 +850,120 @@ function cacheResolver(entries, threshold) {
     const nacosGroup = document.getElementById("onboardNacosGroup");
 
     if (role === "student") {
-      btnStudent.classList.add("active");
-      btnEmployer.classList.remove("active");
+      if (btnStudent) btnStudent.classList.add("active");
+      if (btnEmployer) btnEmployer.classList.remove("active");
       if (univGroup) univGroup.style.display = "block";
       if (nacosGroup) nacosGroup.style.display = "block";
     } else {
-      btnEmployer.classList.add("active");
-      btnStudent.classList.remove("active");
+      if (btnEmployer) btnEmployer.classList.add("active");
+      if (btnStudent) btnStudent.classList.remove("active");
       if (univGroup) univGroup.style.display = "none";
       if (nacosGroup) nacosGroup.style.display = "none";
     }
   }
 
-  async saveOnboardingProfile() {
-    const name = document.getElementById("onboardName").value.trim();
-    const univ = document.getElementById("onboardUniv").value.trim();
-    const nacosId = document.getElementById("onboardNacosId").value.trim();
-    const github = document.getElementById("onboardGithub").value.trim();
+  async submitSignIn() {
+    const ident = (document.getElementById("signInIdentifier")?.value || "").trim();
+    const pass = (document.getElementById("signInPassword")?.value || "").trim();
+
+    if (!ident || !pass) {
+      alert("Please provide both your Email/ID and password to sign in.");
+      return;
+    }
+
+    // Try Supabase auth if connected
+    if (this.db && this.db.supabase) {
+      try {
+        const { data, error } = await this.db.supabase.auth.signInWithPassword({
+          email: ident.includes("@") ? ident : `${ident}@kilikoro.local`,
+          password: pass
+        });
+        if (data && data.user) {
+          const profile = await this.db.getProfile();
+          if (profile) this.applyProfile(profile);
+          this.closeOnboardingModal();
+          alert(`Welcome back, ${this.activeProfile?.name || ident}!`);
+          return;
+        }
+      } catch (e) {
+        console.warn("Supabase auth attempted, falling back to local credentials:", e);
+      }
+    }
+
+    // Local profile fallback check
+    const stored = this.db.getProfile();
+    if (stored && (stored.email === ident || stored.nacosId === ident || stored.name?.toLowerCase() === ident.toLowerCase())) {
+      this.applyProfile(stored);
+      this.closeOnboardingModal();
+      alert(`Welcome back, ${stored.name}!`);
+      return;
+    }
+
+    // Auto-create or login guest with provided identifier
+    const newProfile = {
+      name: ident.split("@")[0].toUpperCase(),
+      email: ident,
+      role: "student",
+      university: "NACOS Chapter",
+      nacosId: `NACOS-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      walletAddress: "0x" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join(""),
+      cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
+      cardCvv: String(Math.floor(100 + Math.random() * 900)),
+      balanceUsdc: 0.00
+    };
+    await this.db.saveProfile(newProfile);
+    this.applyProfile(newProfile);
+    this.closeOnboardingModal();
+    alert(`Signed in as ${newProfile.name}.`);
+  }
+
+  async submitSignUp() {
+    const name = document.getElementById("onboardName")?.value.trim();
+    const email = document.getElementById("onboardEmail")?.value.trim();
+    const pass = document.getElementById("onboardPassword")?.value.trim();
+    const univ = document.getElementById("onboardUniv")?.value.trim();
+    const nacosId = document.getElementById("onboardNacosId")?.value.trim();
+    const github = document.getElementById("onboardGithub")?.value.trim();
 
     if (!name) {
-      alert("Please enter your name.");
+      alert("Please enter your legal name.");
+      return;
+    }
+    if (pass && pass.length < 6) {
+      alert("Password must be at least 6 characters.");
       return;
     }
 
     const profile = {
       role: this.onboardingRole || "student",
       name: name,
-      university: univ || (this.onboardingRole === "student" ? "NACOS Member" : "Independent Client"),
+      email: email || `${name.toLowerCase().replace(/\s+/g, "")}@student.nacos.ng`,
+      university: univ || (this.onboardingRole === "student" ? "NACOS Chapter" : "Independent Client"),
       nacosId: nacosId || (this.onboardingRole === "student" ? `NACOS-2026-${Math.floor(1000 + Math.random() * 9000)}` : null),
-      github: github,
+      github: github || "",
       walletAddress: "0x" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join(""),
       cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
       cardCvv: String(Math.floor(100 + Math.random() * 900)),
-      balanceUsdc: this.activeProfile?.balanceUsdc || 0.00
+      balanceUsdc: 0.00
     };
+
+    if (this.db && this.db.supabase && email && pass) {
+      try {
+        await this.db.supabase.auth.signUp({
+          email: email,
+          password: pass,
+          options: { data: { full_name: name, role: profile.role } }
+        });
+      } catch (e) {
+        console.warn("Supabase auth signUp fallback:", e);
+      }
+    }
 
     await this.db.saveProfile(profile);
     this.applyProfile(profile);
     await this.renderStudents();
     this.closeOnboardingModal();
-    alert(`🎉 Account Connected!\nIdentity: ${profile.name} (${profile.role})\nBMONI Virtual Mastercard activated.`);
+    alert(`🎉 Account Created!\nIdentity: ${profile.name} (${profile.role})\nBMONI Virtual Mastercard activated.`);
   }
 
   async loadLiveContracts() {

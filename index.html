@@ -30,13 +30,12 @@
           <a class="nav-item active" data-view="view-verifier" id="navItemVerifier">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <span>Candidate Verifier</span>
-            <span class="tag" style="font-size: 0.65rem; color: var(--accent-terracotta);">Claude AI</span>
           </a>
 
           <a class="nav-item" data-view="view-contracts" id="navItemContracts">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
             <span>Contracts & Escrows</span>
-            <span class="nav-counter" id="contractCountBadge">6</span>
+            <span class="nav-counter" id="contractCountBadge">0</span>
           </a>
 
           <span class="nav-section-title" style="margin-top: 1rem;">Developer Hub</span>
@@ -44,7 +43,6 @@
           <a class="nav-item" data-view="view-workspace" id="navItemWorkspace">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
             <span>Active Milestone</span>
-            <span class="tag" style="font-size: 0.65rem; color: var(--status-emerald);">TASK-104</span>
           </a>
 
           <a class="nav-item" data-view="view-wallet" id="navItemWallet">
@@ -458,13 +456,13 @@ threshold = 20</pre>
                     </div>
                     <div class="card-balance-block">
                       <div class="card-balance-label">Card Available Limit</div>
-                      <div class="card-balance-val" id="walletCardBalance">$150.00 USDC</div>
+                      <div class="card-balance-val" id="walletCardBalance">$0.00 USDC</div>
                       <div class="card-balance-label">Linked to BMONI Escrow Vault</div>
                     </div>
                     <div class="card-bottom">
                       <div>
-                        <div class="card-holder-name" id="walletCardHolderName">WALI MEDUGU</div>
-                        <div class="card-number" id="walletCardNumber">5399 •••• •••• 4892</div>
+                        <div class="card-holder-name" id="walletCardHolderName">GUEST USER</div>
+                        <div class="card-number" id="walletCardNumber">5399 •••• •••• ----</div>
                       </div>
                       <div class="mastercard-circles">
                         <div class="circle-red"></div>
@@ -477,7 +475,7 @@ threshold = 20</pre>
                   <div class="card-face back">
                     <div class="card-magstripe"></div>
                     <div style="font-size: 0.7rem; color: var(--text-muted); text-align: right; margin-bottom: 0.2rem;">CVV SECURITY CODE</div>
-                    <div class="card-cvv-strip" id="walletCardCvv">834</div>
+                    <div class="card-cvv-strip" id="walletCardCvv">---</div>
                     <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 1rem; line-height: 1.3;">
                       Valid for POS terminals across Nigeria and international payments with zero bank transfer delays.
                     </div>
@@ -585,19 +583,48 @@ threshold = 20</pre>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL: PROFILE ONBOARDING / EDIT                                          -->
+  <!-- MODAL: AUTHENTICATION (SIGN IN & REGISTER)                                -->
   <!-- ========================================================================= -->
   <div class="modal-overlay" id="onboardingModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 1000; align-items: center; justify-content: center;">
     <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
-          <h2 style="font-family: var(--font-editorial); font-size: 1.5rem;">Welcome to Kilikoro</h2>
-          <span style="font-size: 0.8rem; color: var(--text-muted);">Set up your verified profile & BMONI rails</span>
+          <h2 style="font-family: var(--font-editorial); font-size: 1.5rem;" id="authModalTitle">Account Access</h2>
+          <span style="font-size: 0.8rem; color: var(--text-muted);" id="authModalSubtitle">Sign in or register to manage contracts and BMONI payouts</span>
         </div>
         <button onclick="app.closeOnboardingModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">✕</button>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <!-- Segmented Auth Mode Switcher -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.25rem;">
+        <button class="filter-pill active" id="authTabSignIn" onclick="app.setAuthMode('signin')" style="justify-content: center;">
+          Sign In
+        </button>
+        <button class="filter-pill" id="authTabSignUp" onclick="app.setAuthMode('signup')" style="justify-content: center;">
+          Create Account
+        </button>
+      </div>
+
+      <!-- Form 1: Sign In -->
+      <div id="authSignInSection" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email or NACOS ID</label>
+          <input type="text" id="loginIdentifier" placeholder="e.g. candidate@unilag.edu.ng or UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••••••" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+          <button class="btn btn-secondary" onclick="app.closeOnboardingModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="app.submitSignIn()">Sign In</button>
+        </div>
+      </div>
+
+      <!-- Form 2: Sign Up (Register) -->
+      <div id="authSignUpSection" style="display: none; flex-direction: column; gap: 1rem;">
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Account Type</label>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
@@ -612,32 +639,42 @@ threshold = 20</pre>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Full Name</label>
-          <input type="text" id="onboardName" value="" placeholder="Your full name" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="onboardName" placeholder="Your full legal name" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Email Address</label>
+          <input type="email" id="onboardEmail" placeholder="e.g. dev@domain.com" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Password</label>
+          <input type="password" id="onboardPassword" placeholder="Create password (min 6 characters)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div id="onboardUnivGroup">
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & NACOS Chapter</label>
-          <input type="text" id="onboardUniv" value="" placeholder="e.g. UNILAG, ABU Zaria, FUTA" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="onboardUniv" placeholder="e.g. UNILAG, ABU Zaria, FUTA" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div id="onboardNacosGroup">
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number</label>
-          <input type="text" id="onboardNacosId" value="" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="onboardNacosId" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL</label>
-          <input type="text" id="onboardGithub" value="" placeholder="e.g. octocat" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="onboardGithub" placeholder="e.g. octocat" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
-          <span style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.2rem;">BMONI Virtual Rails</span>
-          Completing onboarding registers your identity to Supabase and links your BMONI Virtual Mastercard for instant 3s milestone payouts.
+          <span style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.2rem;">BMONI Virtual Mastercard Rails</span>
+          Account creation registers your credentials and activates a verified BMONI Virtual Mastercard for instant escrow payouts.
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
-          <button class="btn btn-secondary" onclick="app.closeOnboardingModal()">Skip for Now</button>
-          <button class="btn btn-primary" onclick="app.saveOnboardingProfile()">Save Profile & Connect</button>
+          <button class="btn btn-secondary" onclick="app.closeOnboardingModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="app.submitSignUp()">Create Account & Connect</button>
         </div>
       </div>
     </div>
@@ -782,6 +819,7 @@ threshold = 20</pre>
   <script src="js/claude-service.js"></script>
   <script src="js/ast-engine.js"></script>
   <script src="js/escrow-simulator.js"></script>
+  <script src="js/bmoni-client.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
