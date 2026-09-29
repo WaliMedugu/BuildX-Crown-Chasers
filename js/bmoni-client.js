@@ -68,7 +68,7 @@ class BmoniClient {
   }
 
   /**
-   * 3. Issue Virtual Mastercard for Student
+   * 3. Issue Virtual Mastercard for Student (Direct Spend)
    */
   async issueVirtualCard({ studentName, nacosId, university }) {
     return await this._request("/cards/issue", "POST", {
@@ -86,6 +86,51 @@ class BmoniClient {
    */
   async getCardBalance(cardId = "default") {
     return await this._request(`/cards/${cardId}/balance`, "GET");
+  }
+
+  /**
+   * 5. Nigerian Bank Off-Ramp Rails (BMONI Embedded Nigeria)
+   */
+  async getNigerianBanks() {
+    return await this._request("/banks?country=NG", "GET");
+  }
+
+  async verifyBankAccount({ bankCode, accountNumber }) {
+    return await this._request("/accounts/resolve", "POST", {
+      bankCode,
+      accountNumber,
+      country: "NG"
+    });
+  }
+
+  async registerWithdrawalAccount({ accountName, accountNumber, bankCode, bankName }) {
+    return await this._request("/recipients", "POST", {
+      type: "NGN_BANK_ACCOUNT",
+      name: accountName,
+      accountNumber,
+      bankCode,
+      bankName,
+      currency: "NGN"
+    });
+  }
+
+  async createWithdrawalProposal({ recipientId, amountUSDC, amountNGN }) {
+    return await this._request("/transfers/proposals", "POST", {
+      recipientId,
+      sourceCurrency: "USDC",
+      targetCurrency: "NGN",
+      amountUSDC,
+      amountNGN: amountNGN || amountUSDC * this.exchangeRate,
+      idempotencyKey: `PROP-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    });
+  }
+
+  async signProposal({ proposalId, authSignature }) {
+    return await this._request("/transfers/sign", "POST", {
+      proposalId,
+      authSignature: authSignature || "sig_verified_nacos_node",
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
