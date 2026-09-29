@@ -54,7 +54,7 @@ async function handleScan(repoUrl) {
   }
 
   console.log(`${C.cyan}[Audit]${C.reset} Fetching and scanning repository: ${C.bold}${repoUrl}${C.reset}`);
-  console.log(`${C.dim}• Connecting to Claude 3.7 API & AST Engine...${C.reset}`);
+  console.log(`${C.dim}• Connecting to Claude Haiku 4.5 API & AST Engine...${C.reset}`);
 
   // Sample sample files for evaluation
   let sampleSnippet = "";

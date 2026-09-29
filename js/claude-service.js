@@ -31,7 +31,7 @@ const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 class KilikoroClaudeService {
   constructor(apiKey = ANTHROPIC_API_KEY) {
     this.apiKey = apiKey;
-    this.model = "claude-3-5-sonnet-20241022";
+    this.model = "claude-haiku-4-5-20251001";
   }
 
   /**
