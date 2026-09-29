@@ -857,6 +857,9 @@ body {
 
 .amount-positive {
   color: var(--status-emerald);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
 /* ==========================================================================
    BMONI LIQUID BALANCE CARD UI (EXACT IMAGE 2 REPLICATION)
    ========================================================================== */
@@ -1316,6 +1319,8 @@ body {
   width: 80%;
   align-self: flex-end;
 }
+
+.passport-container {
   max-width: 780px;
   margin: 0 auto;
   display: flex;
