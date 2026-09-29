@@ -265,7 +265,7 @@ ${resumeText.slice(0, 4000)}
           headers: headers,
           body: JSON.stringify({
             model: this.model,
-            max_tokens: 1200,
+            max_tokens: 3000,
             system: systemPrompt,
             messages: [{ role: "user", content: userPrompt }]
           })
@@ -275,7 +275,15 @@ ${resumeText.slice(0, 4000)}
           const data = await response.json();
           const raw = data.content?.[0]?.text || "";
           const jsonMatch = raw.match(/\{[\s\S]*\}/);
-          if (jsonMatch) return JSON.parse(jsonMatch[0]);
+          if (jsonMatch) {
+            try {
+              return JSON.parse(jsonMatch[0]);
+            } catch (jsonErr) {
+              // Try fixing unclosed JSON or trailing quotes
+              const sanitized = jsonMatch[0].replace(/,\s*([\}\]])/g, "$1");
+              return JSON.parse(sanitized);
+            }
+          }
         }
       } catch (err) {
         console.warn("Claude API resume verification fallback:", err.message);
@@ -290,9 +298,10 @@ ${resumeText.slice(0, 4000)}
     const lines = resumeText.split("\n").map(l => l.trim()).filter(Boolean);
     const candidateName = lines[0] ? lines[0].replace(/^(Name:|Candidate:)\s*/i, "") : (githubUsername || "Candidate");
 
-    // Extract skills mentioned in text
-    const commonSkills = ["JavaScript", "TypeScript", "Python", "React", "Node.js", "SQL", "PostgreSQL", "Solidity", "Rust", "Go", "Docker", "AWS", "CSS", "HTML", "C++", "Java"];
-    const foundSkills = commonSkills.filter(s => new RegExp(`\\b${s}\\b`, "i").test(resumeText));
+    // Extract skills mentioned in text using safe string inclusion
+    const commonSkills = ["JavaScript", "TypeScript", "Python", "React", "Node.js", "SQL", "PostgreSQL", "Solidity", "Rust", "Go", "Docker", "AWS", "CSS", "HTML", "C++", "Java", "Next.js", "Express", "Tailwind", "Git"];
+    const textLower = resumeText.toLowerCase();
+    const foundSkills = commonSkills.filter(s => textLower.includes(s.toLowerCase()));
 
     return {
       candidateName: candidateName,

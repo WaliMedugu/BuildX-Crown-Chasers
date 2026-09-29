@@ -97,20 +97,45 @@ async function handleVerifyResume(filePath) {
 
   let content = "";
   if (filePath && fs.existsSync(filePath)) {
-    content = fs.readFileSync(filePath, "utf8");
-    console.log(`${C.cyan}[Resume Fact-Checker]${C.reset} Read candidate document from: ${C.bold}${filePath}${C.reset}`);
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === ".pdf" || filePath.toLowerCase().includes(".pdf")) {
+      try {
+        const pdfModule = require("pdf-parse");
+        const dataBuffer = fs.readFileSync(filePath);
+        if (pdfModule.PDFParse) {
+          const parser = new pdfModule.PDFParse({ data: dataBuffer });
+          const textResult = await parser.getText();
+          content = textResult.text || "";
+        } else if (typeof pdfModule === "function") {
+          const pdfData = await pdfModule(dataBuffer);
+          content = pdfData.text || "";
+        }
+        console.log(`${C.cyan}[Resume Fact-Checker]${C.reset} Extracted ${content.length} characters from PDF: ${C.bold}${filePath}${C.reset}`);
+      } catch (pdfErr) {
+        console.warn("PDF parsing notice:", pdfErr.message);
+        content = fs.readFileSync(filePath, "utf8");
+      }
+    } else {
+      content = fs.readFileSync(filePath, "utf8");
+      console.log(`${C.cyan}[Resume Fact-Checker]${C.reset} Read candidate document from: ${C.bold}${filePath}${C.reset}`);
+    }
   } else if (filePath && !filePath.startsWith("--")) {
     content = filePath;
     console.log(`${C.cyan}[Resume Fact-Checker]${C.reset} Evaluating input profile text...`);
   } else {
     console.log(`${C.ruby}Notice:${C.reset} No resume file provided. Usage:`);
-    console.log(`  node kilikoro.js verify-resume path/to/resume.txt [--github <username>] [--nacos <id>]\n`);
+    console.log(`  node kilikoro.js verify-resume path/to/resume.pdf [--github <username>] [--nacos <id>]\n`);
     console.log(`Example:`);
-    console.log(`  node kilikoro.js verify-resume "Wali Medugu - Full Stack Engineer, UNILAG CS. Built BMONI escrow and AST analyzer." --github WaliMedugu\n`);
+    console.log(`  node kilikoro.js verify-resume "C:\\Code\\Resources\\wali_medugu_cv.docx.pdf"\n`);
     return;
   }
 
-  console.log(`${C.dim}• Auditing claims with Claude Haiku 4.5 against engineering realities...${C.reset}`);
+  if (!content || !content.trim()) {
+    console.log(`${C.ruby}Error:${C.reset} No readable text could be extracted from '${filePath}'.\n`);
+    return;
+  }
+
+  console.log(`${C.dim}• Auditing credentials & projects with Claude Haiku 4.5...${C.reset}`);
   const result = await claudeService.verifyCandidateResume(content, nacosId, githubUser);
 
   console.log(`\n${C.bold}=============== CANDIDATE VERIFICATION ===============${C.reset}`);

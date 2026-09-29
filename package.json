@@ -30,5 +30,8 @@
     "fintech"
   ],
   "author": "Team Crown Chasers",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "pdf-parse": "^2.4.5"
+  }
 }
