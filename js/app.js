@@ -538,9 +538,133 @@ function cacheResolver(entries, threshold) {
     this.switchView("view-contracts");
     alert(`Success! $${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for: "${title}".`);
   }
+
+  // =========================================================================
+  // ONBOARDING & PROFILE CONTROLS (REAL DB & USER IDENTITY)
+  // =========================================================================
+
+  initProfile() {
+    let profile = this.db.getProfile();
+    if (!profile) {
+      // Default to authentic student profile
+      profile = {
+        role: "student",
+        name: "Wali Medugu",
+        university: "University of Lagos (UNILAG) • Node #04",
+        nacosId: "UNILAG-CS-2026-0482",
+        github: "WaliMedugu",
+        walletAddress: "0x9b4bed22...7ad5",
+        cardNumber: "5399 4812 8391 4892",
+        cardCvv: "834",
+        balanceUsdc: 150.00
+      };
+      this.db.saveProfile(profile);
+    }
+    this.applyProfile(profile);
+  }
+
+  applyProfile(profile) {
+    this.activeProfile = profile;
+    const initials = profile.name.split(" ").map(w => w.charAt(0)).join("").toUpperCase() || "WM";
+
+    // Sidebar Info
+    const avatarEl = document.getElementById("sidebarAvatar");
+    const nameEl = document.getElementById("sidebarUserName");
+    const subEl = document.getElementById("sidebarUserSub");
+    if (avatarEl) avatarEl.textContent = initials;
+    if (nameEl) nameEl.textContent = profile.name;
+    if (subEl) subEl.textContent = profile.role === "student" ? profile.university : "Enterprise Client";
+
+    // BMONI Virtual Mastercard
+    const holderEl = document.getElementById("walletCardHolderName");
+    const numEl = document.getElementById("walletCardNumber");
+    const cvvEl = document.getElementById("walletCardCvv");
+    if (holderEl) holderEl.textContent = profile.name.toUpperCase();
+    if (numEl) numEl.textContent = profile.cardNumber || "5399 •••• •••• 4892";
+    if (cvvEl) cvvEl.textContent = profile.cardCvv || "834";
+
+    // Inputs in Verifier & Onboarding
+    const verifierRepo = document.getElementById("verifierRepoUrl");
+    const verifierNacos = document.getElementById("verifierNacosId");
+    if (verifierRepo && profile.github) verifierRepo.value = `https://github.com/${profile.github}/BuildX-Crown-Chasers`;
+    if (verifierNacos && profile.nacosId) verifierNacos.value = profile.nacosId;
+  }
+
+  openOnboardingModal() {
+    const modal = document.getElementById("onboardingModal");
+    if (modal) {
+      modal.style.display = "flex";
+      if (this.activeProfile) {
+        document.getElementById("onboardName").value = this.activeProfile.name || "";
+        document.getElementById("onboardUniv").value = this.activeProfile.university || "";
+        document.getElementById("onboardNacosId").value = this.activeProfile.nacosId || "";
+        document.getElementById("onboardGithub").value = this.activeProfile.github || "";
+        this.setOnboardingRole(this.activeProfile.role || "student");
+      }
+    }
+  }
+
+  closeOnboardingModal() {
+    const modal = document.getElementById("onboardingModal");
+    if (modal) modal.style.display = "none";
+  }
+
+  setOnboardingRole(role) {
+    this.onboardingRole = role;
+    const btnStudent = document.getElementById("onboardRoleStudent");
+    const btnEmployer = document.getElementById("onboardRoleEmployer");
+    const univGroup = document.getElementById("onboardUnivGroup");
+    const nacosGroup = document.getElementById("onboardNacosGroup");
+
+    if (role === "student") {
+      btnStudent.classList.add("active");
+      btnEmployer.classList.remove("active");
+      if (univGroup) univGroup.style.display = "block";
+      if (nacosGroup) nacosGroup.style.display = "block";
+    } else {
+      btnEmployer.classList.add("active");
+      btnStudent.classList.remove("active");
+      if (univGroup) univGroup.style.display = "none";
+      if (nacosGroup) nacosGroup.style.display = "none";
+    }
+  }
+
+  async saveOnboardingProfile() {
+    const name = document.getElementById("onboardName").value.trim() || "Wali Medugu";
+    const univ = document.getElementById("onboardUniv").value.trim();
+    const nacosId = document.getElementById("onboardNacosId").value.trim();
+    const github = document.getElementById("onboardGithub").value.trim();
+
+    const profile = {
+      role: this.onboardingRole || "student",
+      name: name,
+      university: univ,
+      nacosId: nacosId,
+      github: github,
+      walletAddress: "0x" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join(""),
+      cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
+      cardCvv: String(Math.floor(100 + Math.random() * 900)),
+      balanceUsdc: 150.00
+    };
+
+    await this.db.saveProfile(profile);
+    this.applyProfile(profile);
+    this.closeOnboardingModal();
+    alert(`🎉 Profile connected! BMONI Virtual Mastercard generated for ${profile.name}.`);
+  }
+
+  async loadLiveContracts() {
+    const live = await this.db.getContracts();
+    if (live && live.length > 0) {
+      this.contracts = live;
+      this.renderContracts();
+    }
+  }
 }
 
 // Initialize on DOM ready
 window.addEventListener("DOMContentLoaded", () => {
   window.app = new KilikoroSaaSApp();
+  window.app.initProfile();
+  window.app.loadLiveContracts();
 });
