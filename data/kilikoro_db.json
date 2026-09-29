@@ -104,5 +104,14 @@
     }
   ],
   "audits": [],
-  "settlements": []
+  "settlements": [
+    {
+      "transactionHash": "0xbmoni_144f0d0a6826",
+      "attestationId": "OFFRAMP-NGN-7890",
+      "settledAmountUSDC": -8095808870,
+      "status": "Bank Settled",
+      "timestamp": "2026-09-29T06:45:30.300Z",
+      "id": "cc145882-e913-4813-8b8a-048b50d3d4ed"
+    }
+  ]
 }

@@ -1035,10 +1035,20 @@ function cacheResolver(entries, threshold) {
       this.showToast("Title Required", "Contract title must be between 3 and 120 characters.", "warning");
       return;
     }
-    if (isNaN(amount) || amount < 10 || amount > 50000) {
-      this.showToast("Amount Boundary", "Contract bounty must be between $10 and $50,000 USDC.", "warning");
+    if (isNaN(amount) || amount < 1 || amount > 50000) {
+      this.showToast("Amount Boundary", "Contract bounty must be between $1 and $50,000 USDC.", "warning");
       return;
     }
+
+    const totalRequired = amount * 1.025; // 2.5% protocol fee
+    const available = this.activeProfile?.balanceUsdc || 0;
+
+    // STRICT BALANCE ENFORCEMENT: Users cannot transfer or use money they don't have
+    if (totalRequired > available) {
+      this.showToast("Insufficient Balance", `Cannot fund contract: you have $${available.toFixed(2)} USDC (≈ ₦${Math.round(available * 1600).toLocaleString()} cNGN). Required with 2.5% fee: $${totalRequired.toFixed(2)} USDC.`, "error", 6000);
+      return;
+    }
+
     if (this.modalVisibility === "private" && (!studentId || studentId.length < 3 || studentId.length > 50)) {
       this.showToast("Candidate ID Required", "Please enter a valid candidate NACOS ID (3-50 characters) for this direct private contract.", "warning");
       return;
@@ -1059,6 +1069,7 @@ function cacheResolver(entries, threshold) {
       id: contractId,
       type: this.modalVisibility,
       sponsor: this.activeProfile?.name || "Verified Client",
+      sponsorEmail: this.activeProfile?.email || "",
       avatar: (this.activeProfile?.name || "C").charAt(0).toUpperCase(),
       avatarColor: "var(--accent-terracotta)",
       title: title,
@@ -1071,6 +1082,11 @@ function cacheResolver(entries, threshold) {
       bmoniTxHash: escrowRes?.transactionHash || `0xbmoni_lock_${Date.now().toString().slice(-6)}`
     };
 
+    // Deduct escrow amount + fee from employer balance
+    this.activeProfile.balanceUsdc = Math.max(0, available - totalRequired);
+    await this.db.saveProfile(this.activeProfile);
+    this.applyProfile(this.activeProfile);
+
     this.contracts.unshift(newContract);
     // Persist contract to Supabase & local DB
     await this.db.saveContract(newContract);
@@ -1078,7 +1094,7 @@ function cacheResolver(entries, threshold) {
     this.closeNewContractModal();
     this.setContractType(this.modalVisibility);
     this.switchView("view-contracts");
-    this.showToast("Escrow Locked", `$${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for: "${title}".\nOracle Reference: ${newContract.bmoniTxHash}`, "success", 5000);
+    this.showToast("Escrow Locked", `$${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for: "${title}".\nOracle Reference: ${newContract.bmoniTxHash}\nRemaining Balance: $${this.activeProfile.balanceUsdc.toFixed(2)} USDC`, "success", 5000);
   }
 
   // =========================================================================

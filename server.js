@@ -279,6 +279,8 @@ const server = http.createServer(async (req, res) => {
 
       const isStudent = role === "student";
       const formattedBmoni = bmoniPhone ? formatBmoniAccount(bmoniPhone) : null;
+      // All employers receive a ₦10,000 cNGN ($6.25 USDC) bonus gift to fund contracts
+      const initialBalance = isStudent ? 0.00 : 6.25;
 
       const profile = {
         id: crypto.randomUUID(),
@@ -295,7 +297,8 @@ const server = http.createServer(async (req, res) => {
         employerCredentials: !isStudent ? {
           company: company.trim(),
           regNumber: (regNumber || "RC-" + Math.floor(100000 + Math.random() * 900000)).trim(),
-          department: (department || "Engineering & Procurement").trim()
+          department: (department || "Engineering & Procurement").trim(),
+          location: "Nigeria / Remote"
         } : null,
         university: isStudent ? university.trim() : company.trim(),
         nacosId: isStudent ? nacosId.trim() : null,
@@ -304,12 +307,25 @@ const server = http.createServer(async (req, res) => {
         walletAddress,
         cardNumber,
         cardCvv,
-        balanceUsdc: 0.00,
+        balanceUsdc: initialBalance,
         bmoniConnected: Boolean(formattedBmoni),
         bmoniPhone: formattedBmoni,
         bmoniTag: formattedBmoni && formattedBmoni.includes(".bmoni") ? formattedBmoni : `${name.toLowerCase().replace(/[^a-z0-9]/g, "")}.bmoni`,
         createdAt: new Date().toISOString()
       };
+
+      // If employer, record the ₦10,000 cNGN ($6.25 USDC) welcome grant in settlements ledger
+      if (!isStudent) {
+        db.settlements.unshift({
+          id: crypto.randomUUID(),
+          transactionHash: `0xbmoni_grant_${Date.now().toString().slice(-6)}`,
+          attestationId: "NACOS-SPONSOR-GRANT-10K",
+          settledAmountUSDC: 6.25,
+          status: "Welcome Bonus Credited",
+          timestamp: new Date().toISOString(),
+          recipient: profile.email
+        });
+      }
 
       // 1. Register into Supabase Auth via Admin API
       try {
@@ -585,6 +601,20 @@ const server = http.createServer(async (req, res) => {
           location: (credentials.location && typeof credentials.location === "string") ? credentials.location.trim().slice(0, 100) : "Nigeria / Remote"
         };
         user.role = "employer";
+        // If user didn't have employer bonus yet, credit ₦10,000 cNGN ($6.25 USDC)
+        if (!user.employerBonusCredited && (!user.balanceUsdc || user.balanceUsdc === 0)) {
+          user.balanceUsdc = (user.balanceUsdc || 0) + 6.25;
+          user.employerBonusCredited = true;
+          db.settlements.unshift({
+            id: crypto.randomUUID(),
+            transactionHash: `0xbmoni_grant_${Date.now().toString().slice(-6)}`,
+            attestationId: "NACOS-SPONSOR-GRANT-10K",
+            settledAmountUSDC: 6.25,
+            status: "Welcome Bonus Credited",
+            timestamp: new Date().toISOString(),
+            recipient: user.email
+          });
+        }
       } else if (targetRole === "student") {
         if (!credentials.university || typeof credentials.university !== "string" || credentials.university.trim().length < 2 || credentials.university.trim().length > 100) {
           return sendJson(res, 400, { error: "University name must be between 2 and 100 characters." });
@@ -619,7 +649,8 @@ const server = http.createServer(async (req, res) => {
                 hasStudentProfile: user.hasStudentProfile,
                 hasEmployerProfile: user.hasEmployerProfile,
                 studentCredentials: user.studentCredentials,
-                employerCredentials: user.employerCredentials
+                employerCredentials: user.employerCredentials,
+                bmoni_balance_usdc: user.balanceUsdc
               }
             })
           });
@@ -686,7 +717,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // 6. CONTRACTS (GET & POST)
+  // 6. CONTRACTS (GET & POST - STRICT ESCROW FUNDING BALANCE ENFORCEMENT)
   if (pathname === "/api/contracts") {
     const db = readDb();
     if (req.method === "GET") {
@@ -702,6 +733,28 @@ const server = http.createServer(async (req, res) => {
         if (isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 1000000) {
           return sendJson(res, 400, { error: "Contract amount must be a positive number up to 1,000,000 USDC." });
         }
+
+        const totalRequiredUsdc = parsedAmount * 1.025; // 2.5% protocol fee
+        
+        // Find employer / sponsor in DB to verify balance
+        const sponsorEmail = contract.sponsorEmail || "";
+        const sponsorName = contract.sponsor || "";
+        const employer = db.users.find(u => 
+          (sponsorEmail && u.email.toLowerCase() === sponsorEmail.toLowerCase()) ||
+          (sponsorName && u.name.toLowerCase() === sponsorName.toLowerCase())
+        );
+
+        if (employer) {
+          const available = employer.balanceUsdc || 0;
+          if (available < totalRequiredUsdc) {
+            return sendJson(res, 400, {
+              error: `Insufficient BMONI Balance: You have $${available.toFixed(2)} USDC (≈ ₦${Math.round(available * 1600).toLocaleString()} cNGN). Required with 2.5% protocol fee: $${totalRequiredUsdc.toFixed(2)} USDC.`
+            });
+          }
+          // Deduct escrow amount + fee from employer's balance
+          employer.balanceUsdc = Math.max(0, employer.balanceUsdc - totalRequiredUsdc);
+        }
+
         contract.title = contract.title.trim();
         contract.amount = parsedAmount;
         contract.desc = (contract.desc && typeof contract.desc === "string") ? contract.desc.trim().slice(0, 1000) : "";
@@ -733,7 +786,7 @@ const server = http.createServer(async (req, res) => {
           });
         } catch (e) {}
 
-        return sendJson(res, 201, { success: true, contract });
+        return sendJson(res, 201, { success: true, contract, remainingBalance: employer ? employer.balanceUsdc : undefined });
       } catch (err) {
         return sendJson(res, 500, { error: "Failed to save contract: " + err.message });
       }

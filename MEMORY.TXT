@@ -1216,6 +1216,41 @@ GIT DIFF SUMMARY:
   * Added server-side validation helpers and input sanitization for `/api/auth/signup`, `/api/user/upgrade-role`, `/api/user/connect-bmoni`, and `/api/contracts`.
 
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T07:50:00+01:00
+================================================================================
+
+USER PROMPT:
+USERS CANNOT TRANSFER OR USE MONEY THEY DONT HAVE
+Starting off all employers get a 10,000 naira bonus gift
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Starting ₦10,000 cNGN ($6.25 USDC) Employer Welcome Bonus:
+   - All newly registered employers (and users upgrading to employer) receive an automatic ₦10,000 cNGN ($6.25 USDC at ₦1600/USDC exchange rate) welcome grant credited directly to their BMONI Virtual Mastercard.
+   - Recorded as an official attestation in the platform settlements ledger (`NACOS-SPONSOR-GRANT-10K`).
+2. Strict Zero-Balance & Insufficient Funds Enforcement:
+   - Creating Contracts / Locking Escrow: Contract creation requires sufficient balance (`bmoni_balance_usdc >= amount * 1.025`). Attempting to lock escrow with insufficient funds is rejected with a clear toast/HTTP 400 error indicating available vs required funds. Upon successful contract creation, the bounty + 2.5% protocol fee is deducted immediately from the employer's BMONI balance.
+   - Bank Off-Ramp / Withdrawals: Withdrawing to commercial bank accounts requires sufficient balance. Attempting to withdraw more than available is rejected immediately.
+3. Updated Contract Creation Boundaries:
+   - Adjusted `#modalContractAmount` min boundary to $1 so employers can test creating bounties immediately with their ₦10,000 welcome gift.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `server.js`:
+  * Added initial balance `6.25` ($6.25 USDC = ₦10,000 cNGN) for employers in `/api/auth/signup` and `/api/user/upgrade-role`.
+  * Added `NACOS-SPONSOR-GRANT-10K` welcome grant record to `db.settlements`.
+  * Enforced balance check and balance deduction in `POST /api/contracts`.
+- `js/app.js`:
+  * Added pre-flight balance check and deduction in `submitNewContract()`.
+  * Added pre-flight balance verification in `submitBankWithdrawal()`.
+- `index.html`:
+  * Updated `#modalContractAmount` `min="1"` and helper text.
+- `scripts/test-end-to-end.js`:
+  * Added automated test cases for ₦10,000 welcome bonus, insufficient balance rejection, valid contract funding with deduction, and off-ramp rejection when exceeding balance.
+
+================================================================================
 
 
 
