@@ -1,10 +1,10 @@
-# Kilikoro Protocol — User Direction, Voice Transcripts & System Solution
+# Kilikoro Protocol — User Vision & Implementation Plan
 
 ---
 
-## 1. User Voice Transcripts (Verbatim)
+## 1. User Voice Transcripts
 
-### Audio 1: Problem Diagnosis & Live GitHub/Resume Verification
+### Audio File 1: Resume Fraud & Real GitHub Analysis
 > *"Okay, okay. Now, something that I have to talk to you about. This looks like a vibe-coded website. Like the standard vibe-coded website itself. So let me not even talk.*
 > 
 > *What you're going to do is that: I love the idea, yeah, I love the solution, but how you're implementing it, I absolutely hate it from the bottom of my heart.*
@@ -17,7 +17,7 @@
 > 
 > *Okay, number 1: how are we solving the 'companies want to hire student developers, but resumes are filled with copy-pasted ChatGPT code'?*
 > 
-> *This is not how we handle it. This is not how we handle it at all. How this will be handled will be through the CLI thing we're working on. And the CLI thing will be able to do this test on GitHub repos. So any GitHub repo, the test can be done through it. And we're not doing demos here. We're using live actual stuff. I'm going to drop my Claude API key in the chat now. Hold on...*
+> *This is not how we handle it. This is not how we handle it at all. How this will be handled will be through the CLI thing we're working on. And the CLI thing will be able to do this test on GitHub repos. So any GitHub repo, the test can be done through it. And we're not doing demos here. We're using live actual stuff. I'm going to drop my Claude API key in the chat now...*
 > 
 > *So I just put my Claude API key in the chat. Yeah, so it should be able to do this thing that we're talking about on GitHub repos. So, yeah.*
 > 
@@ -25,7 +25,7 @@
 
 ---
 
-### Audio 2: Private Contracts & BMONI / NACOS Integration
+### Audio File 2: Public vs. Private Milestone Contracts & BMONI
 > *"So yeah, that's how we can solve that problem. That's one way.*
 > 
 > *As for the terminal GitHub repo one, we can make it a terminal command: `kilikoro [something]` and then it will run a full analysis on that GitHub repo for the company.*
@@ -49,86 +49,86 @@
 
 ---
 
-### Audio 3: KISS Principle & Simple Human UI
-> *"And as you're doing this, don't forget the rule:*
-> *Keep it simple, stupid. Keep the UI simple and intuitive.*
-> *Remove anything that production ready websites and applications do not have. For example, explanations of what each screen does (no meta-explanations like 'This screen is for...'), complex words for things that can be said in more layman terms, etc.*
-> *Also you might have to redo the entire website, cause I am seeing... you have to redo the entire website with this new information.*
-> *And focus on what I told you. Don't go branching into other things unless, well, unless it's necessary."*
+### Audio File 3: Simplicity & Real Production UX (KISS Principle)
+> *"And as you're doing this, don't forget the rule: Keep It Simple, Stupid. Keep the UI simple and intuitive. Remove anything that production-ready websites and applications do not have — for example, explanations of what each screen does, complex words for things that can be said in layman's terms, etc.*
+> 
+> *Also, you might have to redo the entire website with this new information. Focus on what I told you. Don't go breaching into other things unless necessary."*
 
 ---
 
-## 2. The Plain-English System Solution
+## 2. Real-World Solution Architecture
 
-We are solving the two exact problems from the problem statement without any gimmicks, complex jargon, or fake demo screens.
+Kilikoro is a **dual-tool system** built specifically for hiring companies and Nigerian student developers:
 
 ```
 +-----------------------------------------------------------------------------------+
-|                                KILIKORO SYSTEM                                    |
-|                                                                                   |
-|  PROBLEM 1: Resume Fraud & ChatGPT Boilerplate                                    |
-|  - CLI Tool (`node kilikoro.js audit <repo-url>`): Calls live Claude API to      |
-|    audit real GitHub repositories for authenticity, code origin, and quality.     |
-|  - Web Resume Auditor: Employer pastes or uploads a student CV/GitHub. System    |
-|    evaluates claimed projects, live repos, and verifies NACOS student membership. |
-|                                                                                   |
-|  PROBLEM 2: Unpaid Student Work, Delayed Disputes & Bank Fees                     |
-|  - Two Contract Types:                                                            |
-|      1. Direct / Private Contract (assigned directly to one student freelancer)   |
-|      2. Public Bounty (open to all students to compete)                           |
-|  - BMONI Smart Escrow: Client locks funds upfront; once work passes automated     |
-|    contract checks, funds release instantly to the student's BMONI Virtual        |
-|    Mastercard with near-zero transfer fees.                                       |
+|                                 KILIKORO SYSTEM                                   |
++-----------------------------------------------------------------------------------+
+|  1. CANDIDATE VERIFIER (CLI & WEB)         |  2. CONTRACT ESCROW (PUBLIC & PRIVATE)|
+|  - Real GitHub Repo Analyzer               |  - Private Contracts (Direct Hire)    |
+|  - Deep Resume & Portfolio Fact-Checker    |  - Public Bounties (Open Challenges)  |
+|  - Powered by Claude 3.7 API & AST Engine  |  - Instant BMONI Card Settlement      |
+|  - NACOS Student ID Verification           |  - Low Transaction Fees (cNGN / USD)  |
 +-----------------------------------------------------------------------------------+
 ```
 
 ---
 
-### Solution for Problem 1: Eliminating Resume Fraud & Boilerplate Code
+### Solution 1: Solving Resume & Code Trust (No More ChatGPT Copies)
 
-#### 1. Live Terminal GitHub Auditor (`kilikoro audit <repo-url>`)
-* **How it works**: The employer or student runs `node kilikoro.js audit https://github.com/username/repository`.
-* **Real Engine**: Connects directly to the Anthropic Claude API using the provided key. It fetches repository files and runs a deep code analysis:
-  1. Identifies if the code was blindly copy-pasted from AI templates or authentically written.
-  2. Evaluates architecture, edge cases, algorithmic efficiency, and commit progression.
-  3. Outputs a clean score (0–100%) and bulletproof verification summary in seconds.
+1. **Terminal Command (`kilikoro scan <github-url>`)**:
+   - Takes any live GitHub repository URL.
+   - Fetches repository files and commits via GitHub API.
+   - Runs code inspection using Claude API (`claude-3-7-sonnet-20250219`):
+     - Detects copy-pasted AI boilerplate vs. authentic architectural design.
+     - Inspects commit frequency, branch hygiene, and author authenticity.
+     - Produces a clear **Integrity & Skill Score (0–100%)**.
 
-#### 2. Web Resume & Portfolio Auditor (for Employers)
-* **How it works**: An employer pastes a student's resume text, GitHub username, or project links.
-* **Verification Checks**:
-  1. **NACOS Campus Membership**: Checks student ID against the NACOS university database (e.g. UNILAG, FUTA, ABU, UNN).
-  2. **Project Legitimacy**: Scans claimed repositories to confirm the student actually authored the code rather than forking a tutorial.
-  3. **BMONI Verified Payout Badge**: Shows total freelance earnings successfully settled on BMONI rails without disputes.
-
----
-
-### Solution for Problem 2: Guaranteed Payouts for Student Freelancers
-
-#### 1. Direct / Private Contracts (1-on-1 Freelance Work)
-* An employer hires a specific student (e.g., via their NACOS student handle).
-* The employer deposits the contract amount into BMONI Escrow upfront.
-* **Privacy**: The contract is private between the client and that specific student — no other students see it or compete for it.
-* **Instant Settlement**: As soon as the student submits the code and it satisfies the automated test criteria, funds disburse instantly to the student's BMONI Virtual Mastercard.
-
-#### 2. Public Bounties (Open Challenges)
-* Employers post open tasks for any verified student to attempt.
-* The first valid submission that passes automated verification and client spec wins the escrowed bounty.
-
-#### 3. Low-Fee Borderless Payouts via BMONI
-* Payouts settle in BMONI stablecoins (USDC / cNGN equivalent).
-* Students spend directly via virtual Mastercard or withdraw to local Nigerian bank accounts in seconds at standard interchange rates, bypassing foreign wire charges and currency bottlenecks.
+2. **Web Resume Fact-Checker (Employer Portal)**:
+   - Employers upload a PDF/text resume or paste a student's GitHub link and NACOS Matric number.
+   - Claude API extracts claimed skills, project links, and repositories.
+   - Verifies links, tests project repositories, and generates a simple, 1-page **Verification Report**:
+     - *NACOS Verification*: Confirms active student status.
+     - *Repo Authenticity*: Verifies the student actually wrote the code (not just forked/cloned).
+     - *Skill Level*: Evaluates algorithm structure, error handling, and clean code.
 
 ---
 
-## 3. UI/UX Simplification Principles (KISS)
+### Solution 2: Solving Freelance Payment Delays & Bank Fees
 
-1. **Zero Meta-Explanations**: No "This screen is designed to..." or artificial tutorial text. If a user is on the contracts page, show the contracts. If they are on the wallet page, show the wallet.
-2. **Simple, Natural Labels**:
-   - Use *"Contracts & Jobs"* instead of *"Programmable Milestone Escrows"*.
-   - Use *"Verify Candidate"* instead of *"Deterministic AST Asymptotic Sandboxing"*.
-   - Use *"Card & Wallet"* instead of *"Liquid Stablecoin Reserve & Biometric Yield"*.
-   - Use *"Student Profile"* instead of *"Decentralized Institutional Identity Ledger"*.
-3. **Clean, Fast Navigation**:
-   - **Contracts**: Switch between *Direct Contracts (Private)* and *Public Bounties*.
-   - **Hire & Verify**: Paste a candidate's GitHub or Resume to run an instant Claude-powered authenticity audit.
-   - **Wallet & Card**: View balance, see transaction history, flip card for CVV.
+1. **Two Contract Modes**:
+   - **Private Direct Contract**: An employer hires a specific student directly. The project is locked between the two parties (hidden from public view). When the student delivers the work and tests pass, funds release instantly.
+   - **Public Bounty**: An open competition where any verified student can solve a milestone and claim the reward upon automated verification.
+
+2. **BMONI Stablecoin Escrow Rails**:
+   - Employer locks funds in escrow (USDC / cNGN).
+   - Once automated criteria or client sign-off is complete, funds disburse in **under 3 seconds** to the student's **BMONI Virtual Mastercard**.
+   - Zero international wire delays, zero high bank transfer cuts.
+
+---
+
+## 3. Implementation Plan (Simple & Actionable)
+
+```
+[Phase 1] CLI Scanner & Claude API Integration
+  |-- Connect Claude API (sk-ant-api03-...)
+  |-- Add `kilikoro scan <repo-url>` command
+  `-- Add `kilikoro verify-resume <file>` command
+
+[Phase 2] Web App Clean Redesign (Simple, Intuitive, No Explanatory Fluff)
+  |-- Clean, modern UI (GitHub + Linear simplicity, Claude color palette)
+  |-- Screen 1: Candidate Verification (Resume Upload & GitHub Scanner)
+  |-- Screen 2: Contracts & Escrow (Public Bounties vs. Private Direct Hire)
+  |-- Screen 3: BMONI Wallet & Virtual Mastercard
+  `-- Screen 4: Verified Student Profiles (NACOS ID Badge)
+
+[Phase 3] Live Verification & Testing
+  |-- Test real GitHub repo scanning
+  |-- Test Private Contract escrow creation & release
+  `-- Verify zero console errors & push to GitHub
+```
+
+### Key Design Rules Applied:
+- **No explanatory text boxes** ("This screen does xyz..."). The UI speaks for itself.
+- **No complex academic jargon**. Plain words like "Scan Repository", "Create Private Job", "Release Payment".
+- **Zero fake browser terminals**. The CLI lives in the terminal; the web app is a sleek dashboard.
