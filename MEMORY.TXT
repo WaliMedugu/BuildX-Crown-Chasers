@@ -1507,6 +1507,30 @@ GIT DIFF SUMMARY:
 - `vercel.json`:
   * Set catch-all rewrite `/(.*)` -> `/api/index.js`.
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T08:52:00+01:00
+================================================================================
+
+USER PROMPT:
+[System Task Report & Verification]
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Fixed Vercel Rewrite Path Passing:
+   - Root Cause: Vercel serverless rewrites change `req.url` to `/api/index.js`, obscuring the original route requested.
+   - Solution: Configured `vercel.json` rewrites to pass the original path explicitly via query parameter `?path=/$1`.
+   - Updated `server.js` pathname resolution to check `parsedUrl.searchParams.get("path")` before falling back to Vercel headers.
+   - Verified that HTML, CSS, and `/api/contracts` all return 200 OK with correct MIME types.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `vercel.json`:
+  * Configured rewrites with explicit `?path=/$1` query parameter.
+- `server.js`:
+  * Updated pathname extractor to parse `searchParams.get("path")`.
+================================================================================
+
 
 
 

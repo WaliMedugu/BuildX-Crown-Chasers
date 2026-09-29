@@ -247,7 +247,8 @@ async function handleRequest(req, res) {
   }
 
   const parsedUrl = new URL(req.url, `http://${req.headers.host || "localhost:3000"}`);
-  const pathname = parsedUrl.pathname;
+  const rawPath = parsedUrl.searchParams.get("path") || req.headers["x-matched-path"] || req.headers["x-forwarded-uri"] || parsedUrl.pathname;
+  const pathname = (rawPath || "/").split("?")[0] || "/";
 
   // =========================================================================
   // API ROUTING
