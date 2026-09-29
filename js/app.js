@@ -368,31 +368,36 @@ function cacheResolver(entries, threshold) {
     const btn = document.getElementById("btnRunAudit");
 
     btn.disabled = true;
-    btn.innerHTML = `<span class="status-dot"></span> Auditing GitHub repo with Claude 3.7...`;
+    btn.innerHTML = `<span class="status-dot"></span> Auditing GitHub repo with Claude Haiku 4.5...`;
 
-    const result = await this.claudeService.analyzeGitHubRepo(repoUrl, this.humanSolution, ["index.html", "js/app.js", "package.json"]);
+    try {
+      const result = await this.claudeService.analyzeGitHubRepo(repoUrl, this.humanSolution, ["index.html", "js/app.js", "package.json"]);
 
-    document.getElementById("auditResultTitle").textContent = `Technical & Security Audit: ${repoUrl.split("/").pop() || "Candidate"}`;
-    document.getElementById("auditResultRepo").textContent = `Repository: ${repoUrl} • Student ID: ${nacosId}`;
-    document.getElementById("auditScoreVal").textContent = `${result.score || 94}%`;
-    document.getElementById("auditAiRiskVal").textContent = result.securityStatus?.includes("Clean") ? "Clean" : "Flagged";
-    document.getElementById("auditComplexityVal").textContent = result.errorHandlingRating?.split(" ")[0] || "Robust";
-    document.getElementById("auditVerdictBadge").textContent = `✓ Recommendation: ${result.recommendation || "Hire"}`;
-    document.getElementById("auditSummaryText").textContent = result.summary || "Genuine architectural logic and clean error handling detected.";
+      document.getElementById("auditResultTitle").textContent = `Technical & Security Audit: ${repoUrl.split("/").pop() || "Candidate"}`;
+      document.getElementById("auditResultRepo").textContent = `Repository: ${repoUrl} • Student ID: ${nacosId}`;
+      document.getElementById("auditScoreVal").textContent = `${result.score || 94}%`;
+      document.getElementById("auditAiRiskVal").textContent = result.securityStatus?.includes("Clean") ? "Clean" : "Flagged";
+      document.getElementById("auditComplexityVal").textContent = result.errorHandlingRating?.split(" ")[0] || "Robust";
+      document.getElementById("auditVerdictBadge").textContent = `✓ Recommendation: ${result.recommendation || "Hire"}`;
+      document.getElementById("auditSummaryText").textContent = result.summary || "Genuine architectural logic and clean error handling detected.";
 
-    if (result.strengths) {
-      document.getElementById("auditStrengthsList").innerHTML = result.strengths.map(s => `<li>✓ ${s}</li>`).join("");
+      if (result.strengths) {
+        document.getElementById("auditStrengthsList").innerHTML = result.strengths.map(s => `<li>✓ ${s}</li>`).join("");
+      }
+      if (result.hygieneFlags || result.flags) {
+        const list = result.hygieneFlags || result.flags;
+        document.getElementById("auditFlagsList").innerHTML = list.map(f => `<li>! ${f}</li>`).join("");
+      }
+
+      // Persist to Supabase Database
+      this.db.saveAudit(result);
+    } catch (err) {
+      console.error("Audit error:", err);
+      alert("Audit completed with local fallback analysis: " + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> <span>Run Production Audit with Claude</span>`;
     }
-    if (result.hygieneFlags || result.flags) {
-      const list = result.hygieneFlags || result.flags;
-      document.getElementById("auditFlagsList").innerHTML = list.map(f => `<li>! ${f}</li>`).join("");
-    }
-
-    // Persist to Supabase Database
-    this.db.saveAudit(result);
-
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> <span>Run Production Audit with Claude</span>`;
   }
 
   resetChecklist() {

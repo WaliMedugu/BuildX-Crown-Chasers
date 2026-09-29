@@ -24,6 +24,7 @@ if (typeof process !== "undefined" && typeof require !== "undefined") {
 
 const ANTHROPIC_API_KEY =
   (typeof process !== "undefined" && process.env && process.env.ANTHROPIC_API_KEY) ||
+  (typeof window !== "undefined" && window.LOCAL_CONFIG && window.LOCAL_CONFIG.ANTHROPIC_API_KEY) ||
   "";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
