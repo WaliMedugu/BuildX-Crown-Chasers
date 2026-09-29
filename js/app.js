@@ -1,17 +1,18 @@
 /**
  * ==========================================================================
- * KILIKORO PROTOCOL: MASTER FRONTEND CONTROLLER
- * Connects AST engine, BMONI escrow simulator, Monaco-style editor & confetti
+ * KILIKORO PROTOCOL: SAAS APPLICATION CONTROLLER
+ * Full Linear/GitHub style navigation, automated verification checklist,
+ * BMONI wallet transactions, 3D card controls, and cryptographic passport.
  * ==========================================================================
  */
 
-class KilikoroApp {
+class KilikoroSaaSApp {
   constructor() {
     this.astEngine = new KilikoroASTEngine();
     this.escrowEngine = new BmoniEscrowEngine();
 
-    // Standard Authentic Solution (O(N log N) - Passes all benchmarks)
-    this.authenticSolution = `/**
+    // Default Authentic Solution (O(N log N))
+    this.humanSolution = `/**
  * Kilikoro Verified Implementation
  * Task #104: High-Throughput Cache Expiry Resolver
  * Target Complexity: O(N log N)
@@ -34,7 +35,7 @@ function cacheResolver(entries, threshold) {
 }`;
 
     // AI Boilerplate Trap Solution (High entropy, bloated, O(N^2) loop)
-    this.aiBoilerplateTrap = `/**
+    this.aiSolutionTrap = `/**
  * Generated Solution with Redundant Boilerplate & O(N^2) Loop
  */
 function cacheResolver(entries, threshold) {
@@ -88,223 +89,216 @@ function cacheResolver(entries, threshold) {
 
     this.initDOM();
     this.bindEvents();
-    this.loadInitialState();
   }
 
   initDOM() {
-    this.codeEditor = document.getElementById("codeEditor");
-    this.lineNumbers = document.getElementById("lineNumbers");
-    this.consoleOutput = document.getElementById("consoleOutput");
-    this.consoleStatus = document.getElementById("consoleStatusText");
-    this.cardBalanceDisplay = document.getElementById("cardBalanceDisplay");
-    this.cardBalanceNaira = document.getElementById("cardBalanceNaira");
-    this.bmoniCard = document.getElementById("bmoniCard");
-    this.bigOBadge = document.getElementById("bigOBadge");
-    this.valCyclomatic = document.getElementById("valCyclomatic");
-    this.valAiScore = document.getElementById("valAiScore");
-    this.astTreeDisplay = document.getElementById("astTreeDisplay");
-    this.testSummaryPill = document.getElementById("testSummaryPill");
+    this.solutionInput = document.getElementById("solutionInput");
+    this.breadcrumbCurrent = document.getElementById("breadcrumbCurrent");
+    this.walletVirtualCard = document.getElementById("walletVirtualCard");
 
-    this.testBars = [
-      { bar: document.getElementById("test1Bar"), status: document.getElementById("test1Status") },
-      { bar: document.getElementById("test2Bar"), status: document.getElementById("test2Status") },
-      { bar: document.getElementById("test3Bar"), status: document.getElementById("test3Status") }
-    ];
+    // Checklist elements
+    this.checkSyntax = document.getElementById("checkSyntax");
+    this.checkEntropy = document.getElementById("checkEntropy");
+    this.checkComplexity = document.getElementById("checkComplexity");
+    this.checkEscrow = document.getElementById("checkEscrow");
+
+    // Pre-populate editor with authentic solution
+    if (this.solutionInput) {
+      this.solutionInput.value = this.humanSolution;
+    }
   }
 
   bindEvents() {
-    // Navigation Tabs
-    document.querySelectorAll(".nav-tab-btn").forEach((btn) => {
+    // Sidebar Navigation
+    document.querySelectorAll(".nav-item").forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        const targetView = e.currentTarget.dataset.view;
-        this.switchView(targetView);
+        const view = e.currentTarget.dataset.view;
+        this.switchView(view);
       });
     });
 
-    // Editor Line Numbers sync
-    this.codeEditor.addEventListener("input", () => {
-      this.updateLineNumbers();
-      localStorage.setItem("kilikoro_code_draft", this.codeEditor.value);
-    });
-
-    // Indentation with Tab key
-    this.codeEditor.addEventListener("keydown", (e) => {
-      if (e.key === "Tab") {
-        e.preventDefault();
-        const start = this.codeEditor.selectionStart;
-        const end = this.codeEditor.selectionEnd;
-        this.codeEditor.value =
-          this.codeEditor.value.substring(0, start) + "  " + this.codeEditor.value.substring(end);
-        this.codeEditor.selectionStart = this.codeEditor.selectionEnd = start + 2;
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-        e.preventDefault();
-        this.runLocalTests();
-      }
-    });
-
-    // Sample Code Buttons
-    document.getElementById("btnLoadSample").addEventListener("click", () => {
-      this.codeEditor.value = this.authenticSolution;
-      this.updateLineNumbers();
-      this.logConsole("[Editor] Loaded Authentic Human Solution.", "info");
-    });
-
-    document.getElementById("btnLoadChatGPT").addEventListener("click", () => {
-      this.codeEditor.value = this.aiBoilerplateTrap;
-      this.updateLineNumbers();
-      this.logConsole("[Editor] Loaded AI Boilerplate Trap Code.", "info");
-    });
-
-    // Test & Submit Action Buttons
-    document.getElementById("btnRunTests").addEventListener("click", () => this.runLocalTests());
-    document.getElementById("btnSubmitSolution").addEventListener("click", () => this.submitAndClaimPayout());
-
-    // Virtual Card Controls
-    document.getElementById("btnFlipCard").addEventListener("click", () => {
-      this.bmoniCard.classList.toggle("flipped");
-    });
-
-    document.getElementById("btnFreezeCard").addEventListener("click", (e) => {
-      const isFrozen = this.escrowEngine.toggleFreeze();
-      e.target.textContent = isFrozen ? "Unfreeze Card" : "Freeze Card";
-      e.target.style.color = isFrozen ? "var(--status-ruby)" : "var(--text-secondary)";
-      this.logConsole(`[BMONI] Card status updated: ${isFrozen ? "FROZEN" : "ACTIVE"}`, "info");
-    });
-
-    // Employer View Actions
-    const rewardInput = document.getElementById("empRewardAmount");
-    if (rewardInput) {
-      rewardInput.addEventListener("input", (e) => {
-        const amt = parseFloat(e.target.value) || 0;
-        const fee = amt * 0.025;
-        const total = amt + fee;
-        document.getElementById("empTotalDeposit").textContent = `$${total.toFixed(2)} USDC`;
+    // Preset Buttons
+    const btnHuman = document.getElementById("btnPresetHuman");
+    if (btnHuman) {
+      btnHuman.addEventListener("click", () => {
+        this.solutionInput.value = this.humanSolution;
+        this.resetChecklist();
       });
     }
 
-    const btnDeposit = document.getElementById("btnDepositEscrow");
+    const btnAi = document.getElementById("btnPresetAi");
+    if (btnAi) {
+      btnAi.addEventListener("click", () => {
+        this.solutionInput.value = this.aiSolutionTrap;
+        this.resetChecklist();
+      });
+    }
+
+    // Run Verification Button
+    const btnRun = document.getElementById("btnRunVerification");
+    if (btnRun) {
+      btnRun.addEventListener("click", () => this.executeVerificationPipeline());
+    }
+
+    // Wallet 3D Card Flip
+    const btnFlip = document.getElementById("btnFlipWalletCard");
+    if (btnFlip && this.walletVirtualCard) {
+      btnFlip.addEventListener("click", () => {
+        this.walletVirtualCard.classList.toggle("flipped");
+      });
+    }
+
+    // Wallet Freeze Card
+    const btnFreeze = document.getElementById("btnFreezeWalletCard");
+    if (btnFreeze) {
+      btnFreeze.addEventListener("click", (e) => {
+        const isFrozen = this.escrowEngine.toggleFreeze();
+        e.target.textContent = isFrozen ? "Unfreeze Card" : "Freeze Card";
+        e.target.style.color = isFrozen ? "var(--status-ruby)" : "var(--text-secondary)";
+        alert(`BMONI Virtual Mastercard status: ${isFrozen ? "FROZEN (Transactions Blocked)" : "ACTIVE"}`);
+      });
+    }
+
+    // Employer Fee Calculator
+    const bountyAmountInput = document.getElementById("newBountyAmount");
+    if (bountyAmountInput) {
+      bountyAmountInput.addEventListener("input", (e) => {
+        const principal = parseFloat(e.target.value) || 0;
+        const fee = principal * 0.025;
+        const total = principal + fee;
+        document.getElementById("calcPrincipal").textContent = `$${principal.toFixed(2)}`;
+        document.getElementById("calcFee").textContent = `$${fee.toFixed(2)}`;
+        document.getElementById("calcTotal").textContent = `$${total.toFixed(2)} USDC`;
+      });
+    }
+
+    const btnDeposit = document.getElementById("btnConfirmDeposit");
     if (btnDeposit) {
       btnDeposit.addEventListener("click", () => {
-        alert("Success! $256.25 USDC locked into BMONI Escrow Vault for Task #105.");
+        const title = document.getElementById("newBountyTitle").value;
+        const total = document.getElementById("calcTotal").textContent;
+        alert(`Success! ${total} locked in BMONI Smart Escrow Vault for: "${title}". Milestone is now active.`);
+        this.switchView("view-marketplace");
       });
     }
 
-    // Public Verifier Search
-    const btnSearchVerifier = document.getElementById("btnSearchVerifier");
-    if (btnSearchVerifier) {
-      btnSearchVerifier.addEventListener("click", () => {
-        const query = document.getElementById("searchVerifierInput").value.trim();
-        if (query) {
-          alert(`Cryptographic Proof Verified for ${query}!\nIssuer: NACOS National Root Node #04\nStatus: 100% Authentic`);
-        }
+    // CLI Token Helper
+    const btnCli = document.getElementById("btnSyncCli");
+    if (btnCli) {
+      btnCli.addEventListener("click", () => {
+        alert("Developer CLI Token:\nkili_live_sec_99482_unilag_node04\n\nRun 'node kilikoro.js test' in your terminal to inspect code locally!");
       });
     }
-  }
 
-  loadInitialState() {
-    const saved = localStorage.getItem("kilikoro_code_draft");
-    this.codeEditor.value = saved || this.authenticSolution;
-    this.updateLineNumbers();
+    // Marketplace Search & Filters
+    const searchInput = document.getElementById("bountySearchInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll(".bounty-card").forEach((card) => {
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(term) ? "flex" : "none";
+        });
+      });
+    }
+
+    document.querySelectorAll(".filter-pill").forEach((pill) => {
+      pill.addEventListener("click", (e) => {
+        document.querySelectorAll(".filter-pill").forEach((p) => p.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+        const filter = e.currentTarget.dataset.filter;
+        document.querySelectorAll(".bounty-card").forEach((card) => {
+          if (filter === "all") {
+            card.style.display = "flex";
+          } else {
+            const hasTag = card.textContent.toLowerCase().includes(filter);
+            card.style.display = hasTag ? "flex" : "none";
+          }
+        });
+      });
+    });
   }
 
   switchView(viewId) {
-    document.querySelectorAll(".nav-tab-btn").forEach((b) => b.classList.remove("active"));
-    document.querySelectorAll(".view-section").forEach((s) => s.classList.remove("active"));
+    document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
+    document.querySelectorAll(".app-view").forEach((view) => view.classList.remove("active"));
 
-    const activeBtn = document.querySelector(`[data-view="${viewId}"]`);
-    const activeSection = document.getElementById(viewId);
+    const activeNav = document.querySelector(`[data-view="${viewId}"]`);
+    const activeView = document.getElementById(viewId);
 
-    if (activeBtn) activeBtn.classList.add("active");
-    if (activeSection) activeSection.classList.add("active");
-  }
+    if (activeNav) activeNav.classList.add("active");
+    if (activeView) activeView.classList.add("active");
 
-  updateLineNumbers() {
-    const lines = this.codeEditor.value.split("\n").length;
-    let numbers = "";
-    for (let i = 1; i <= Math.max(lines, 12); i++) {
-      numbers += i + "<br>";
+    // Update Breadcrumb
+    const titles = {
+      "view-marketplace": "Explore Bounties",
+      "view-workspace": "Active Milestone / TASK-BMONI-104",
+      "view-wallet": "BMONI Financial Wallet & Cards",
+      "view-passport": "Skill Passport & Verifications",
+      "view-employer": "Employer Escrow Hub"
+    };
+    if (this.breadcrumbCurrent) {
+      this.breadcrumbCurrent.textContent = titles[viewId] || "Platform";
     }
-    this.lineNumbers.innerHTML = numbers;
   }
 
-  logConsole(message, type = "info") {
-    const line = document.createElement("div");
-    line.className = `console-line ${type}`;
-    const timestamp = new Date().toLocaleTimeString();
-    line.innerHTML = `<span style="color: var(--text-muted); font-size: 0.72rem;">[${timestamp}]</span> ${message}`;
-    this.consoleOutput.appendChild(line);
-    this.consoleOutput.scrollTop = this.consoleOutput.scrollHeight;
+  openMilestone(taskId) {
+    this.switchView("view-workspace");
   }
 
-  clearConsole() {
-    this.consoleOutput.innerHTML = "";
-  }
-
-  async runLocalTests() {
-    this.clearConsole();
-    this.consoleStatus.textContent = "Executing Sandbox...";
-    this.logConsole("[Sandbox] Spawning isolated Web Worker context...", "info");
-
-    const code = this.codeEditor.value;
-    const evalResult = await this.astEngine.evaluateSubmission(code, this.testCases);
-
-    // Update AST visual metrics
-    this.valCyclomatic.textContent = `M = ${evalResult.cyclomaticComplexity}`;
-    this.valAiScore.textContent = `${evalResult.entropy.aiConfidenceScore}%`;
-    this.bigOBadge.textContent = evalResult.execution.asymptoticComplexity || "O(N log N)";
-
-    if (evalResult.entropy.isAiDetected) {
-      this.valAiScore.style.color = "var(--status-ruby)";
-      this.bigOBadge.style.color = "var(--status-ruby)";
-      this.logConsole(`[AST Alert] High AI boilerplate template detected (${evalResult.entropy.aiConfidenceScore}% confidence).`, "fail");
-    } else {
-      this.valAiScore.style.color = "var(--status-emerald)";
-      this.bigOBadge.style.color = "var(--accent-terracotta)";
-      this.logConsole(`[AST Pass] Syntax entropy optimal (${evalResult.entropy.entropyValue} bits). Human structure verified.`, "pass");
-    }
-
-    // Display AST Tree
-    this.astTreeDisplay.innerHTML = `<pre>${JSON.stringify(evalResult.ast.stats, null, 2)}</pre>`;
-
-    // Update Test Assertion Bars
-    let passedCount = 0;
-    evalResult.execution.testResults.forEach((t, idx) => {
-      const item = this.testBars[idx];
-      if (item) {
-        if (t.passed) {
-          passedCount++;
-          item.bar.className = "assertion-bar-fill";
-          item.bar.style.width = "100%";
-          item.status.innerHTML = `<span style="color: var(--status-emerald);">✓ Pass (${t.elapsedMs}ms)</span>`;
-          this.logConsole(`[Test #${t.testId}] ${t.title} ... PASSED (${t.elapsedMs}ms)`, "pass");
-        } else {
-          item.bar.className = "assertion-bar-fill fail";
-          item.bar.style.width = "100%";
-          item.status.innerHTML = `<span style="color: var(--status-ruby);">✗ Fail</span>`;
-          this.logConsole(`[Test #${t.testId}] ${t.title} ... FAILED (Expected: ${JSON.stringify(t.expected)}, Got: ${JSON.stringify(t.actual)})`, "fail");
-        }
+  resetChecklist() {
+    [this.checkSyntax, this.checkEntropy, this.checkComplexity, this.checkEscrow].forEach((el) => {
+      if (el) {
+        el.className = "check-item";
+        el.querySelector(".check-icon").textContent = "•";
       }
     });
-
-    this.testSummaryPill.textContent = `${passedCount} / ${this.testCases.length} Passed`;
-    this.testSummaryPill.style.color = passedCount === 3 ? "var(--status-emerald)" : "var(--status-ruby)";
-
-    this.consoleStatus.textContent = evalResult.overallPass ? "Tests Passed • Ready for Settlement" : "Execution Finished with Warnings";
-    this.logConsole(`[Memory Profile] Peak Heap: ${evalResult.execution.estimatedHeapMb} MB • Execution: ${evalResult.execution.totalTimeMs}ms`, "ast");
-
-    return evalResult;
   }
 
-  async submitAndClaimPayout() {
-    const evalResult = await this.runLocalTests();
+  async executeVerificationPipeline() {
+    const code = this.solutionInput.value;
+    this.resetChecklist();
 
-    if (!evalResult.overallPass) {
-      alert("Cannot claim payout: Solution must pass all test assertions and pass the anti-AI entropy check!");
+    const btnRun = document.getElementById("btnRunVerification");
+    btnRun.disabled = true;
+    btnRun.textContent = "Running Pipeline...";
+
+    // Step 1: Syntax & AST Parsing
+    await new Promise((r) => setTimeout(r, 400));
+    const evalResult = await this.astEngine.evaluateSubmission(code, this.testCases);
+
+    this.checkSyntax.classList.add("passed");
+    this.checkSyntax.querySelector(".check-icon").textContent = "✓";
+
+    // Step 2: Anti-AI Boilerplate Entropy
+    await new Promise((r) => setTimeout(r, 500));
+    if (evalResult.entropy.isAiDetected) {
+      this.checkEntropy.classList.remove("passed");
+      this.checkEntropy.querySelector(".check-icon").textContent = "✗";
+      this.checkEntropy.style.color = "var(--status-ruby)";
+      alert(`[Verification Failed]\nHigh AI Boilerplate Detected (${evalResult.entropy.aiConfidenceScore}% match).\n\nKilikoro's AST normalizer flagged cookie-cutter LLM guard patterns and redundant wrappers. Please write an authentic algorithmic implementation!`);
+      btnRun.disabled = false;
+      btnRun.textContent = "Run Verification & Release Payout";
       return;
     }
+    this.checkEntropy.classList.add("passed");
+    this.checkEntropy.querySelector(".check-icon").textContent = "✓";
 
-    this.logConsole("[Kilikoro Core] Initiating programmatic BMONI Escrow settlement...", "ast");
+    // Step 3: Complexity & Assertions
+    await new Promise((r) => setTimeout(r, 500));
+    if (!evalResult.execution.success) {
+      this.checkComplexity.querySelector(".check-icon").textContent = "✗";
+      this.checkComplexity.style.color = "var(--status-ruby)";
+      alert(`[Verification Failed]\nCode did not pass all 3 assertion suites or violated the O(N log N) asymptotic speed constraint!`);
+      btnRun.disabled = false;
+      btnRun.textContent = "Run Verification & Release Payout";
+      return;
+    }
+    this.checkComplexity.classList.add("passed");
+    this.checkComplexity.querySelector(".check-icon").textContent = "✓";
+
+    // Step 4: BMONI Oracle Settlement
+    await new Promise((r) => setTimeout(r, 600));
     const attestation = this.escrowEngine.generateAttestation(
       "UNILAG-CS-2026-0482",
       "TASK-BMONI-104",
@@ -316,65 +310,27 @@ function cacheResolver(entries, threshold) {
       }
     );
 
-    const payout = await this.escrowEngine.triggerPayout(attestation, (phase, msg) => {
-      this.logConsole(`[BMONI Escrow] ${msg}`, "info");
-    });
+    const payout = await this.escrowEngine.triggerPayout(attestation);
+    this.checkEscrow.classList.add("passed");
+    this.checkEscrow.querySelector(".check-icon").textContent = "✓";
 
-    // Update Virtual Card Balance
-    this.cardBalanceDisplay.textContent = `$${payout.newBalanceUSDC.toFixed(2)} USDC`;
-    this.cardBalanceNaira.textContent = `≈ ₦${payout.newBalanceCNGN.toLocaleString()} cNGN`;
-    this.cardBalanceDisplay.classList.add("updated");
+    // Update Wallet Balances across all pages
+    document.getElementById("walletTotalUsdc").textContent = `$${payout.newBalanceUSDC.toFixed(2)} USDC`;
+    document.getElementById("walletTotalNaira").textContent = `≈ ₦${payout.newBalanceCNGN.toLocaleString()} cNGN`;
+    document.getElementById("walletCardBalance").textContent = `$${payout.newBalanceUSDC.toFixed(2)} USDC`;
 
-    // Trigger celebration confetti
-    this.launchConfetti();
-    alert(`🎉 Congratulations! Milestone Escrow Released!\n+$${payout.settledAmountUSDC.toFixed(2)} USDC credited to your BMONI Virtual Mastercard (**** 4892) in 1.8 seconds!`);
-  }
+    btnRun.disabled = false;
+    btnRun.textContent = "Verified & Paid ✓";
+    btnRun.style.background = "var(--status-emerald)";
 
-  launchConfetti() {
-    const canvas = document.getElementById("confettiCanvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const pieces = Array.from({ length: 80 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height - canvas.height,
-      size: Math.random() * 8 + 4,
-      color: ["#D97757", "#4E937A", "#D4A373", "#FAF9F5"][Math.floor(Math.random() * 4)],
-      speed: Math.random() * 3 + 2,
-      rotation: Math.random() * 360
-    }));
-
-    let animationFrames = 0;
-    function render() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (const p of pieces) {
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate((p.rotation * Math.PI) / 180);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-        ctx.restore();
-        p.y += p.speed;
-        p.rotation += 2;
-      }
-      animationFrames++;
-      if (animationFrames < 150) {
-        requestAnimationFrame(render);
-      } else {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-    }
-    render();
-  }
-
-  viewCertificate(attestId) {
-    this.switchView("verifier-view");
-    document.getElementById("searchVerifierInput").value = attestId;
+    alert(`🎉 Milestone Verified & Settled!\n+$${payout.settledAmountUSDC.toFixed(2)} USDC credited to your BMONI Virtual Mastercard in 1.8 seconds!\n\nTransaction Hash: ${payout.transactionHash}\nAttestation ID: ${attestation.attestationId}`);
+    
+    // Automatically switch to wallet view to show the result
+    this.switchView("view-wallet");
   }
 }
 
-// Initialize on page load
+// Initialize on DOM ready
 window.addEventListener("DOMContentLoaded", () => {
-  window.app = new KilikoroApp();
+  window.app = new KilikoroSaaSApp();
 });
