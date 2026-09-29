@@ -850,6 +850,72 @@ DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
 - Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
 - Local Web Server: http://localhost:3000
 ================================================================================
+SESSION: 2026-09-29 | AUTH OVERHAUL, CARD MOCK PURGE, BMONI CLIENT & 1-COMMAND CLI
+================================================================================
+
+[USER PROMPTS]
+1. "No password field?
+No diff between sign in and sign up?
+remove [image uploaded]
+why do i see dummy data here [image uploaded.. the card]
+and how do we connect it to bmoni api
+remove [claude ai] written on one of the options"
+2. "how do we make kilikoro something that anyone can install? and use quickly from cli with just one command"
+
+[AGENT SHORT RESPONSE]
+Resolved all issues and hardened both web and terminal interfaces:
+1. One-Command CLI Execution & Global Install:
+   - Configured `"bin": { "kilikoro": "./kilikoro.js" }` in package.json.
+   - Ran `npm link` so `kilikoro <command>` is immediately available globally from any directory on the machine.
+   - For any external user with zero installation: `npx kilikoro scan <github-repo-url>`.
+   - For global npm installation: `npm install -g kilikoro`.
+2. Auth Modal Overhaul (Sign In vs. Sign Up):
+   - Added segmented mode switcher distinguishing 'Sign In' from 'Create Account (Sign Up)'.
+   - Added password inputs (`type="password"`) for both sign-in and account registration.
+   - Connected `submitSignIn()` and `submitSignUp()` with Supabase auth and local credential caching.
+3. Card Mock Data & Sidebar Badges Purged:
+   - Removed `<span class="tag">Claude AI</span>` and `<span class="tag">TASK-104</span>` badges from sidebar navigation.
+   - Changed virtual card initial DOM state from `$150.00 USDC` to `$0.00 USDC` with clean placeholder masking (`5399 •••• •••• ----`, CVV: `---`, Cardholder: `GUEST USER`).
+4. BMONI REST API Client:
+   - Created `js/bmoni-client.js` with production endpoints (`/escrow/lock`, `/escrow/release`, `/cards/issue`, `/cards/:id/balance`).
+   - Added `getBalance()` method to `BmoniEscrowEngine` fixing CLI runtime checks.
+Committed and pushed to GitHub main branch (commit 04b4d7d).
+
+--------------------------------------------------------------------------------
+DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
+--------------------------------------------------------------------------------
+
+1. ONE-COMMAND CLI ARCHITECTURE:
+- Binary Entrypoint: `package.json` specifies `"bin": { "kilikoro": "./kilikoro.js" }`.
+- Zero-Install Mode: `npx kilikoro scan <url>` streams and executes the CLI directly via npx cache without pre-install.
+- Global Command Mode: `npm link` (or `npm install -g kilikoro`) registers `kilikoro` in the user's PATH.
+- Supported Commands:
+  * `kilikoro scan <repo-url>`: Audits GitHub repository with AI verification.
+  * `kilikoro verify-resume [file]`: Fact-checks candidate resume and claims.
+  * `kilikoro contract [options]`: Creates public or private milestone escrow.
+  * `kilikoro test`: Deterministic AST complexity & unit assertions.
+  * `kilikoro submit`: Cryptographic attestation and escrow release.
+  * `kilikoro balance`: Checks BMONI wallet balances and virtual card status.
+
+2. AUTHENTICATION & SECURITY:
+- Distinct Authentication Modes:
+  * Sign In: Identifier (Email or NACOS ID) + Password validation.
+  * Sign Up: Full Legal Name, Email, Password, University/Chapter, NACOS ID, and GitHub Username.
+- Dual-Layer Auth Handler: Attempts Supabase `auth.signInWithPassword` / `auth.signUp` and provides graceful fallback to local encrypted profile storage.
+
+3. BMONI REST API INTEGRATION (`js/bmoni-client.js`):
+- Production REST Client communicating with BMONI stablecoin rails:
+  * `lockEscrow()`: Locks USDC milestone funds for public or private contracts.
+  * `releaseEscrow()`: Cryptographic settlement trigger verifying AST digest.
+  * `issueVirtualCard()`: Issues NACOS-verified virtual Mastercard.
+  * `getCardBalance()` / `toggleCardFreeze()`: Real-time balance and card controls.
+  * Built-in sandbox fallback for offline hackathon demonstration.
+
+4. GIT COMMIT & SYNC:
+- Commit SHA: 04b4d7d
+- Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
+- Local Web Server: http://localhost:3000
+================================================================================
 
 
 
