@@ -210,6 +210,62 @@ class KilikoroDatabase {
       })
     });
   }
+
+  /**
+   * Fetch All Settlements (Supabase with Local Fallback)
+   */
+  async getSettlements() {
+    const remote = await this.fetchFromSupabase("settlements?select=*&order=created_at.desc");
+    if (remote && Array.isArray(remote) && remote.length > 0) {
+      return remote.map(s => ({
+        transactionHash: s.tx_hash,
+        attestationId: s.attestation_id,
+        settledAmountUSDC: parseFloat(s.amount_usdc) || 0,
+        studentId: s.student_id,
+        status: s.status || "Settled",
+        timestamp: s.created_at || new Date().toISOString()
+      }));
+    }
+
+    if (typeof localStorage !== "undefined") {
+      const local = localStorage.getItem("kilikoro_settlements");
+      if (local) {
+        try {
+          return JSON.parse(local);
+        } catch (e) {}
+      }
+    }
+
+    return [];
+  }
+
+  /**
+   * Fetch Verified Students (Supabase with Local Fallback)
+   */
+  async getStudents() {
+    const remote = await this.fetchFromSupabase("profiles?user_role=eq.student&select=*&order=created_at.desc");
+    if (remote && Array.isArray(remote) && remote.length > 0) {
+      return remote.map(p => ({
+        name: p.full_name,
+        university: p.university,
+        nacosId: p.nacos_id,
+        github: p.github_username,
+        role: p.user_role,
+        balanceUsdc: parseFloat(p.bmoni_balance_usdc) || 0
+      }));
+    }
+
+    if (typeof localStorage !== "undefined") {
+      const local = localStorage.getItem("kilikoro_students");
+      if (local) {
+        try {
+          return JSON.parse(local);
+        } catch (e) {}
+      }
+    }
+
+    return [];
+  }
 }
 
 if (typeof module !== "undefined" && module.exports) {
