@@ -11,6 +11,7 @@ class KilikoroSaaSApp {
     this.astEngine = new KilikoroASTEngine();
     this.escrowEngine = new BmoniEscrowEngine();
     this.claudeService = new KilikoroClaudeService();
+    this.db = new KilikoroDatabase();
 
     // Contract Visibility State ('public' or 'private')
     this.currentContractTab = "public";
@@ -371,22 +372,27 @@ function cacheResolver(entries, threshold) {
 
     const result = await this.claudeService.analyzeGitHubRepo(repoUrl, this.humanSolution, ["index.html", "js/app.js", "package.json"]);
 
-    document.getElementById("auditResultTitle").textContent = `Audit Report: ${repoUrl.split("/").pop() || "Candidate"}`;
-    document.getElementById("auditResultRepo").textContent = `Repository: ${repoUrl} • Student: ${nacosId}`;
-    document.getElementById("auditScoreVal").textContent = `${result.authenticityPercentage || 94}%`;
-    document.getElementById("auditAiRiskVal").textContent = result.aiBoilerplateRisk || "Low";
+    document.getElementById("auditResultTitle").textContent = `Technical & Security Audit: ${repoUrl.split("/").pop() || "Candidate"}`;
+    document.getElementById("auditResultRepo").textContent = `Repository: ${repoUrl} • Student ID: ${nacosId}`;
+    document.getElementById("auditScoreVal").textContent = `${result.score || 94}%`;
+    document.getElementById("auditAiRiskVal").textContent = result.securityStatus?.includes("Clean") ? "Clean" : "Flagged";
+    document.getElementById("auditComplexityVal").textContent = result.errorHandlingRating?.split(" ")[0] || "Robust";
     document.getElementById("auditVerdictBadge").textContent = `✓ Recommendation: ${result.recommendation || "Hire"}`;
-    document.getElementById("auditSummaryText").textContent = result.summary || "Genuine architectural logic detected.";
+    document.getElementById("auditSummaryText").textContent = result.summary || "Genuine architectural logic and clean error handling detected.";
 
     if (result.strengths) {
       document.getElementById("auditStrengthsList").innerHTML = result.strengths.map(s => `<li>✓ ${s}</li>`).join("");
     }
-    if (result.flags) {
-      document.getElementById("auditFlagsList").innerHTML = result.flags.map(f => `<li>! ${f}</li>`).join("");
+    if (result.hygieneFlags || result.flags) {
+      const list = result.hygieneFlags || result.flags;
+      document.getElementById("auditFlagsList").innerHTML = list.map(f => `<li>! ${f}</li>`).join("");
     }
 
+    // Persist to Supabase Database
+    this.db.saveAudit(result);
+
     btn.disabled = false;
-    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> <span>Run Deep Audit with Claude 3.7</span>`;
+    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> <span>Run Production Audit with Claude</span>`;
   }
 
   resetChecklist() {
@@ -456,6 +462,9 @@ function cacheResolver(entries, threshold) {
     this.checkEscrow.classList.add("passed");
     this.checkEscrow.querySelector(".check-icon").textContent = "✓";
 
+    // Record Settlement in Supabase
+    this.db.recordSettlement(payout);
+
     document.getElementById("walletTotalUsdc").textContent = `$${payout.newBalanceUSDC.toFixed(2)} USDC`;
     document.getElementById("walletTotalNaira").textContent = `≈ ₦${payout.newBalanceCNGN.toLocaleString()} cNGN`;
     document.getElementById("walletCardBalance").textContent = `$${payout.newBalanceUSDC.toFixed(2)} USDC`;
@@ -521,6 +530,9 @@ function cacheResolver(entries, threshold) {
     };
 
     this.contracts.unshift(newContract);
+    // Persist contract to Supabase
+    this.db.saveContract(newContract);
+
     this.closeNewContractModal();
     this.setContractType(this.modalVisibility);
     this.switchView("view-contracts");

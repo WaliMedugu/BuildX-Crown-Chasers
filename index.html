@@ -105,13 +105,13 @@
       <main class="page-content">
 
         <!-- ===================================================================== -->
-        <!-- VIEW 1: CANDIDATE VERIFIER (GITHUB REPO & RESUME AUDITOR)             -->
+        <!-- VIEW 1: CANDIDATE VERIFIER (CODE QUALITY & SECURITY AUDITOR)          -->
         <!-- ===================================================================== -->
         <section class="app-view active" id="view-verifier">
           <div class="marketplace-header">
-            <h1 class="headline-large">Candidate Code & Resume Auditor</h1>
+            <h1 class="headline-large">Candidate Code Quality & Security Auditor</h1>
             <p class="subheadline">
-              Verify student GitHub repositories, detect copy-pasted ChatGPT code, and confirm active NACOS member status.
+              Audit student GitHub repositories for production readiness: scan for exposed API keys, verify robust error handling, and confirm active NACOS member status.
             </p>
           </div>
 
@@ -136,7 +136,7 @@
             <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
               <button class="btn btn-primary" id="btnRunAudit" style="padding: 0.65rem 1.5rem;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                <span>Run Deep Audit with Claude 3.7</span>
+                <span>Run Production Audit with Claude</span>
               </button>
             </div>
           </div>
@@ -146,7 +146,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.25rem;">
               <div>
                 <span class="tag" style="color: var(--status-emerald);">Audit Completed</span>
-                <h2 style="font-family: var(--font-editorial); font-size: 1.5rem; margin-top: 0.35rem;" id="auditResultTitle">Chidi Okonkwo — GitHub & Resume Audit</h2>
+                <h2 style="font-family: var(--font-editorial); font-size: 1.5rem; margin-top: 0.35rem;" id="auditResultTitle">Chidi Okonkwo — Technical & Security Audit</h2>
                 <span style="font-size: 0.8rem; color: var(--text-muted);" id="auditResultRepo">Repository: https://github.com/WaliMedugu/BuildX-Crown-Chasers</span>
               </div>
               <div style="text-align: right;">
@@ -159,24 +159,24 @@
             <!-- 4 Metrics Row -->
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem;">
               <div class="stat-box">
-                <span class="stat-label">Code Authenticity</span>
+                <span class="stat-label">Production Quality</span>
                 <span class="stat-val" style="color: var(--status-emerald);" id="auditScoreVal">94%</span>
-                <span style="font-size: 0.72rem; color: var(--text-muted);">Authentic Engineering</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Production Ready</span>
               </div>
               <div class="stat-box">
-                <span class="stat-label">AI Boilerplate Risk</span>
-                <span class="stat-val" style="color: var(--status-emerald);" id="auditAiRiskVal">Low</span>
-                <span style="font-size: 0.72rem; color: var(--text-muted);">&lt;6% LLM template match</span>
+                <span class="stat-label">Security & Secrets</span>
+                <span class="stat-val" style="color: var(--status-emerald);" id="auditAiRiskVal">Clean</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">0 Exposed API Keys</span>
               </div>
               <div class="stat-box">
-                <span class="stat-label">NACOS Student Status</span>
+                <span class="stat-label">Error Resilience</span>
+                <span class="stat-val" style="color: var(--text-primary);" id="auditComplexityVal">Robust</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Try/Catch & Bounds</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">NACOS Member Status</span>
                 <span class="stat-val" style="color: var(--accent-terracotta);" id="auditNacosVal">Verified</span>
                 <span style="font-size: 0.72rem; color: var(--text-muted);">UNILAG Chapter Node #04</span>
-              </div>
-              <div class="stat-box">
-                <span class="stat-label">Algorithmic Asymptotic</span>
-                <span class="stat-val" style="color: var(--text-primary);" id="auditComplexityVal">O(N log N)</span>
-                <span style="font-size: 0.72rem; color: var(--text-muted);">Stress tested N=5,000</span>
               </div>
             </div>
 
@@ -651,6 +651,7 @@ threshold = 20</pre>
   </div>
 
   <!-- Scripts -->
+  <script src="js/supabase-client.js"></script>
   <script src="js/claude-service.js"></script>
   <script src="js/ast-engine.js"></script>
   <script src="js/escrow-simulator.js"></script>

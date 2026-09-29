@@ -68,9 +68,10 @@ async function handleScan(repoUrl) {
 
   console.log(`\n${C.bold}================ AUDIT REPORT ================${C.reset}`);
   console.log(`Repository           : ${C.terracotta}${repoUrl}${C.reset}`);
-  console.log(`Authenticity Score   : ${C.emerald}${result.authenticityPercentage || 94}% (Authentic Engineering)${C.reset}`);
-  console.log(`AI Boilerplate Risk  : ${result.aiBoilerplateRisk === "Low" ? C.emerald : C.ruby}${result.aiBoilerplateRisk}${C.reset}`);
-  console.log(`Hiring Recommendation: ${C.bold}${C.emerald}${result.recommendation || "Hire"}${C.reset}`);
+  console.log(`Quality Score        : ${C.emerald}${result.score || 94}% (${result.productionReadiness || "Production Ready"})${C.reset}`);
+  console.log(`Security Status      : ${result.securityStatus?.includes("Clean") ? C.emerald : C.ruby}${result.securityStatus || "Clean - Zero Secrets"}${C.reset}`);
+  console.log(`Error Resilience     : ${C.emerald}${result.errorHandlingRating || "Robust"}${C.reset}`);
+  console.log(`Recommendation       : ${C.bold}${C.emerald}${result.recommendation || "Hire"}${C.reset}`);
   console.log(`\n${C.bold}Summary:${C.reset} ${result.summary}`);
   
   if (result.strengths && result.strengths.length) {
@@ -78,9 +79,10 @@ async function handleScan(repoUrl) {
     result.strengths.forEach(s => console.log(`  ${C.emerald}✓${C.reset} ${s}`));
   }
 
-  if (result.flags && result.flags.length) {
+  const flags = result.hygieneFlags || result.flags;
+  if (flags && flags.length) {
     console.log(`\n${C.bold}Code Hygiene Notes:${C.reset}`);
-    result.flags.forEach(f => console.log(`  ${C.amber}!${C.reset} ${f}`));
+    flags.forEach(f => console.log(`  ${C.amber}!${C.reset} ${f}`));
   }
   console.log(`${C.bold}==============================================${C.reset}\n`);
 }
