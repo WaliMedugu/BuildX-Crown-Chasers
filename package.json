@@ -8,7 +8,11 @@
   },
   "files": [
     "kilikoro.js",
-    "js/",
+    "js/ast-engine.js",
+    "js/bmoni-client.js",
+    "js/claude-service.js",
+    "js/escrow-simulator.js",
+    "js/supabase-client.js",
     "README.md"
   ],
   "scripts": {
