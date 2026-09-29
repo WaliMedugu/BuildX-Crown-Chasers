@@ -1374,3 +1374,19 @@ GIT DIFF SUMMARY:
 - `server.js`:
   * Updated static file path resolution to check `rootDir` (`process.cwd()`), `__dirname`, and `..` with fallback to `index.html`.
 ================================================================================
+
+================================================================================
+SESSION LOG ENTRY - 2026-09-29T08:28:44+01:00
+================================================================================
+
+USER PROMPT:
+so i shouold leave root directory and app preset as it is?
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Vercel Configuration Guidance:
+   - Root Directory: Keep as `./` (default).
+   - Application Preset: Can be left as `Node` or `Other` because `vercel.json` in the root repository now explicitly overrides and controls the build, file inclusion, and edge routing directly.
+================================================================================
+
