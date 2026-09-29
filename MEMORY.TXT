@@ -915,8 +915,11 @@ DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
 - Verified `kilikoro` name availability on npm registry (HTTP 404 - available).
 - Updated `package.json` with `"name": "kilikoro"` and `"files": ["kilikoro.js", "js/", "README.md"]`.
 - Relinked globally with `npm link` so `kilikoro` is ready for instant `npm publish --access public`.
-- Commit SHA: 981de22
-- Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
+6. OFFICIAL NPM PACKAGE RELEASE (LIVE):
+- Package: `kilikoro@1.0.0` published to global NPM registry (https://registry.npmjs.org/kilikoro).
+- Access: Public (`--access public`).
+- Execution: Anyone worldwide can now run `npx kilikoro scan <repo-url>` with zero pre-installation or `npm install -g kilikoro`.
+- Maintainer: w_wali_i <blueparticlestudios@gmail.com>.
 ================================================================================
 
 
