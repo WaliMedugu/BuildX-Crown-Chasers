@@ -17,87 +17,8 @@ class KilikoroSaaSApp {
     this.currentContractTab = "public";
     this.modalVisibility = "private";
 
-    // Repository of Contracts (Public Bounties & Private 1-on-1s)
-    this.contracts = [
-      {
-        id: "TASK-BMONI-104",
-        type: "public",
-        sponsor: "BMONI Labs",
-        avatar: "B",
-        avatarColor: "var(--accent-terracotta)",
-        title: "High-Throughput Cache Expiry Resolver",
-        desc: "Implement an asymptotic O(N log N) cache cleanup pipeline for high-concurrency payment auth tokens.",
-        amount: 150.00,
-        tags: ["JavaScript", "O(N log N)", "Algorithms"],
-        status: "Escrow Locked",
-        studentId: null
-      },
-      {
-        id: "TASK-HELIX-202",
-        type: "public",
-        sponsor: "Helix AI",
-        avatar: "H",
-        avatarColor: "#6088A8",
-        title: "Quantized Matrix Dot-Product SIMD Wrapper",
-        desc: "Build an 8-bit quantized integer matrix multiplication kernel for edge neural inference.",
-        amount: 250.00,
-        tags: ["Wasm", "Systems", "Edge AI"],
-        status: "Escrow Locked",
-        studentId: null
-      },
-      {
-        id: "TASK-PAY-303",
-        type: "public",
-        sponsor: "Vivest App",
-        avatar: "V",
-        avatarColor: "var(--status-emerald)",
-        title: "Idempotent Webhook Replay Deduplicator",
-        desc: "Design a sliding-window Bloom Filter deduplication module rejecting duplicate merchant webhooks.",
-        amount: 180.00,
-        tags: ["TypeScript", "FinTech", "O(1)"],
-        status: "Escrow Locked",
-        studentId: null
-      },
-      {
-        id: "TASK-NACOS-404",
-        type: "public",
-        sponsor: "NACOS National",
-        avatar: "N",
-        avatarColor: "var(--status-amber)",
-        title: "Federated Chapter Key Verification Protocol",
-        desc: "Lightweight cryptographic ECDSA signature validator verifying student identities across 36 states.",
-        amount: 120.00,
-        tags: ["Cryptography", "Identity", "Security"],
-        status: "Escrow Locked",
-        studentId: null
-      },
-      {
-        id: "PRIV-UNILAG-101",
-        type: "private",
-        sponsor: "PayPulse Africa",
-        avatar: "P",
-        avatarColor: "var(--accent-terracotta)",
-        title: "Direct Hire: Core POS Gateway Settlement Module",
-        desc: "Private 1-on-1 milestone assigned directly to Chidi Okonkwo (UNILAG #04). Hidden from public marketplace.",
-        amount: 300.00,
-        tags: ["Private Hire", "Direct Escrow", "FinTech"],
-        status: "Escrow Locked",
-        studentId: "UNILAG-CS-2026-0482"
-      },
-      {
-        id: "PRIV-ABU-102",
-        type: "private",
-        sponsor: "Apex Infrastructure",
-        avatar: "A",
-        avatarColor: "#6088A8",
-        title: "Direct Hire: Micro-Kernel SIMD Optimization",
-        desc: "Direct private contract assigned to Amina Bello (ABU #12). Automatic release on verification.",
-        amount: 400.00,
-        tags: ["Private Hire", "Direct Escrow", "Wasm"],
-        status: "Escrow Locked",
-        studentId: "ABU-CS-2025-0112"
-      }
-    ];
+    // Repository of Contracts (Loaded dynamically from database)
+    this.contracts = [];
 
     // Default Code Solutions
     this.humanSolution = `/**
@@ -317,20 +238,48 @@ function cacheResolver(entries, threshold) {
 
   renderContracts() {
     const grid = document.getElementById("contractListGrid");
+    const pubCountEl = document.getElementById("pubCount");
+    const privCountEl = document.getElementById("privCount");
+
+    const pubContracts = this.contracts.filter(c => c.type === "public");
+    const privContracts = this.contracts.filter(c => c.type === "private");
+
+    if (pubCountEl) pubCountEl.textContent = pubContracts.length;
+    if (privCountEl) privCountEl.textContent = privContracts.length;
+
     if (!grid) return;
 
-    const filtered = this.contracts.filter(c => c.type === this.currentContractTab);
+    const filtered = this.currentContractTab === "public" ? pubContracts : privContracts;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state-card" style="grid-column: 1 / -1; padding: 3.5rem 1.5rem; text-align: center;">
+          <div class="empty-state-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          <h3 class="empty-state-title">No ${this.currentContractTab === "public" ? "Public Bounties" : "Private Contracts"} Active</h3>
+          <p class="empty-state-desc" style="max-width: 460px; margin: 0.5rem auto 1.25rem auto;">
+            ${this.currentContractTab === "public" 
+              ? "No open bounty challenges exist currently. Click '+ New Contract' to deposit funds and launch a challenge." 
+              : "No direct 1-on-1 private contracts assigned. Click '+ New Contract' to hire a verified student directly."}
+          </p>
+          <button class="btn btn-primary" onclick="app.openNewContractModal()">+ Create Milestone Contract</button>
+        </div>
+      `;
+      return;
+    }
+
     grid.innerHTML = filtered.map(c => `
       <article class="bounty-card" onclick="app.openMilestone('${c.id}')">
         <div class="bounty-card-top">
           <div class="company-badge">
-            <div class="company-avatar" style="background: ${c.avatarColor}; color: white;">${c.avatar}</div>
+            <div class="company-avatar" style="background: ${c.avatarColor || 'var(--accent-terracotta)'}; color: white;">${c.avatar || 'C'}</div>
             <div>
-              <div class="company-name">${c.sponsor}</div>
-              <span style="font-size: 0.7rem; color: var(--text-muted);">${c.type === "private" ? "Direct Private Hire (" + c.studentId + ")" : "Verified Sponsor"}</span>
+              <div class="company-name">${c.sponsor || 'Client'}</div>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">${c.type === "private" ? "Direct Private Hire (" + (c.studentId || "Candidate") + ")" : "Verified Sponsor"}</span>
             </div>
           </div>
-          <div class="reward-pill">$${c.amount.toFixed(2)} USDC</div>
+          <div class="reward-pill">$${(c.amount || 0).toFixed(2)} USDC</div>
         </div>
 
         <div>
@@ -340,11 +289,11 @@ function cacheResolver(entries, threshold) {
 
         <div class="bounty-card-footer">
           <div class="tag-list">
-            ${c.tags.map(t => `<span class="tag">${t}</span>`).join("")}
+            ${(c.tags || []).map(t => `<span class="tag">${t}</span>`).join("")}
           </div>
           <span class="status-badge">
             <span class="status-dot"></span>
-            ${c.status}
+            ${c.status || "Escrow Locked"}
           </span>
         </div>
       </article>
@@ -352,12 +301,21 @@ function cacheResolver(entries, threshold) {
   }
 
   openMilestone(taskId) {
-    const task = this.contracts.find(c => c.id === taskId) || this.contracts[0];
+    const task = this.contracts.find(c => c.id === taskId);
+    if (!task) return;
+
+    this.activeMilestone = task;
+    const wsEmpty = document.getElementById("wsEmptyState");
+    const wsContent = document.getElementById("wsContent");
+    if (wsEmpty) wsEmpty.style.display = "none";
+    if (wsContent) wsContent.style.display = "block";
+
     document.getElementById("wsTaskId").textContent = task.id;
     document.getElementById("wsTitle").textContent = task.title;
     document.getElementById("wsSponsor").innerHTML = `Sponsor: <b>${task.sponsor}</b> • Escrow Model: <b>${task.type === "private" ? "Direct 1-on-1 Settlement" : "Automated Milestone Release"}</b>`;
     document.getElementById("wsAmount").textContent = `$${task.amount.toFixed(2)} USDC`;
     document.getElementById("wsNaira").textContent = `≈ ₦${(task.amount * 1600).toLocaleString()} cNGN`;
+    document.getElementById("wsDescription").textContent = task.desc;
     this.switchView("view-workspace");
   }
 
@@ -565,9 +523,22 @@ function cacheResolver(entries, threshold) {
       return;
     }
 
-    const title = document.getElementById("modalContractTitle").value;
-    const amount = parseFloat(document.getElementById("modalContractAmount").value) || 150;
-    const studentId = this.modalVisibility === "private" ? document.getElementById("modalStudentId").value : null;
+    const title = document.getElementById("modalContractTitle").value.trim();
+    const amount = parseFloat(document.getElementById("modalContractAmount").value) || 0;
+    const studentId = this.modalVisibility === "private" ? document.getElementById("modalStudentId").value.trim() : null;
+
+    if (!title) {
+      alert("Please enter a contract title or deliverable.");
+      return;
+    }
+    if (amount <= 0) {
+      alert("Please enter a valid reward amount in USDC.");
+      return;
+    }
+    if (this.modalVisibility === "private" && !studentId) {
+      alert("Please enter the candidate's NACOS ID for this direct private contract.");
+      return;
+    }
 
     const newContract = {
       id: `CONTRACT-${Date.now().toString().slice(-4)}`,
@@ -601,17 +572,14 @@ function cacheResolver(entries, threshold) {
     const modal = document.getElementById("certificateModal");
     if (!modal) return;
 
-    const audit = this.latestAudit || {
-      repo: document.getElementById("verifierRepoUrl")?.value.trim() || "github.com/WaliMedugu/BuildX-Crown-Chasers",
-      nacosId: document.getElementById("verifierNacosId")?.value.trim() || (this.activeProfile?.nacosId || "UNILAG-CS-2026-0482"),
-      score: 96,
-      securityStatus: "Clean (0 Secrets Exposed)",
-      errorHandlingRating: "Robust (Try/Catch & Guards)",
-      recommendation: "Hire"
-    };
+    if (!this.latestAudit) {
+      alert("Please run a Candidate Audit on a GitHub repository first before generating an official NACOS certificate.");
+      return;
+    }
 
-    const candidateName = this.activeProfile?.name || "Wali Medugu";
-    const repoName = audit.repo.replace(/^https?:\/\/github\.com\//, "");
+    const audit = this.latestAudit;
+    const candidateName = this.activeProfile?.name || document.getElementById("verifierNacosId")?.value.trim() || "Audited Candidate";
+    const repoName = audit.repo ? audit.repo.replace(/^https?:\/\/github\.com\//, "") : "Audited Repository";
 
     const certCandidate = document.getElementById("certCandidateName");
     const certDid = document.getElementById("certCandidateDid");
@@ -624,10 +592,10 @@ function cacheResolver(entries, threshold) {
     const certTimestamp = document.getElementById("certTimestamp");
 
     if (certCandidate) certCandidate.textContent = candidateName;
-    if (certDid) certDid.textContent = audit.nacosId || this.activeProfile?.nacosId || "UNILAG-CS-2026-0482";
+    if (certDid) certDid.textContent = audit.nacosId || this.activeProfile?.nacosId || "NACOS-VERIFIED-NODE";
     if (certRepo) certRepo.textContent = repoName;
-    if (certArch) certArch.textContent = `${audit.score || 96}% (AST Verified)`;
-    if (certSec) certSec.textContent = audit.securityStatus?.includes("Clean") ? "Clean Git History (0 Secrets)" : "Flagged";
+    if (certArch) certArch.textContent = `${audit.score || 94}% (AST Verified)`;
+    if (certSec) certSec.textContent = audit.securityStatus?.includes("Clean") ? "Clean Git History (0 Secrets)" : "Security Flagged";
     if (certErr) certErr.textContent = audit.errorHandlingRating || "Robust Guards";
 
     const randomHash = Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
@@ -774,28 +742,41 @@ function cacheResolver(entries, threshold) {
   // =========================================================================
 
   initProfile() {
-    let profile = this.db.getProfile();
-    if (!profile) {
-      // Default initial profile for developer session
-      profile = {
-        role: "student",
-        name: "Wali Medugu",
-        university: "University of Lagos (UNILAG) • Node #04",
-        nacosId: "UNILAG-CS-2026-0482",
-        github: "WaliMedugu",
-        walletAddress: "0x9b4bed22...7ad5",
-        cardNumber: "5399 4812 8391 4892",
-        cardCvv: "834",
-        balanceUsdc: 0.00
-      };
-      this.db.saveProfile(profile);
+    const profile = this.db.getProfile();
+    if (profile && profile.name) {
+      this.applyProfile(profile);
+    } else {
+      this.applyGuestMode();
     }
-    this.applyProfile(profile);
+  }
+
+  applyGuestMode() {
+    this.activeProfile = null;
+    const avatarEl = document.getElementById("sidebarAvatar");
+    const nameEl = document.getElementById("sidebarUserName");
+    const subEl = document.getElementById("sidebarUserSub");
+    const authLabel = document.getElementById("headerAuthLabel");
+    const holderEl = document.getElementById("walletCardHolderName");
+    const numEl = document.getElementById("walletCardNumber");
+    const cvvEl = document.getElementById("walletCardCvv");
+
+    if (avatarEl) avatarEl.textContent = "G";
+    if (nameEl) nameEl.textContent = "Guest Mode";
+    if (subEl) subEl.textContent = "Sign in to create contracts";
+    if (authLabel) authLabel.textContent = "Sign In / Register";
+    if (holderEl) holderEl.textContent = "GUEST USER";
+    if (numEl) numEl.textContent = "5399 •••• •••• ----";
+    if (cvvEl) cvvEl.textContent = "---";
+
+    const verifierRepo = document.getElementById("verifierRepoUrl");
+    const verifierNacos = document.getElementById("verifierNacosId");
+    if (verifierRepo) verifierRepo.value = "";
+    if (verifierNacos) verifierNacos.value = "";
   }
 
   applyProfile(profile) {
     this.activeProfile = profile;
-    const initials = profile.name.split(" ").map(w => w.charAt(0)).join("").toUpperCase().slice(0, 2) || "WM";
+    const initials = profile.name.split(" ").map(w => w.charAt(0)).join("").toUpperCase().slice(0, 2) || "U";
 
     // Sidebar Info
     const avatarEl = document.getElementById("sidebarAvatar");
@@ -805,7 +786,7 @@ function cacheResolver(entries, threshold) {
 
     if (avatarEl) avatarEl.textContent = initials;
     if (nameEl) nameEl.textContent = profile.name;
-    if (subEl) subEl.textContent = profile.role === "student" ? profile.university : "Enterprise Client";
+    if (subEl) subEl.textContent = profile.role === "student" ? (profile.university || "NACOS Member") : "Enterprise Client";
     if (authLabel) {
       authLabel.textContent = `${profile.name.split(" ")[0]} (${profile.role === "student" ? "Student" : "Employer"})`;
     }
@@ -817,25 +798,17 @@ function cacheResolver(entries, threshold) {
     if (holderEl) holderEl.textContent = profile.name.toUpperCase();
     if (numEl) numEl.textContent = profile.cardNumber || "5399 •••• •••• 4892";
     if (cvvEl) cvvEl.textContent = profile.cardCvv || "834";
-
-    // Inputs in Verifier & Onboarding
-    const verifierRepo = document.getElementById("verifierRepoUrl");
-    const verifierNacos = document.getElementById("verifierNacosId");
-    if (verifierRepo && profile.github) verifierRepo.value = `https://github.com/${profile.github}/BuildX-Crown-Chasers`;
-    if (verifierNacos && profile.nacosId) verifierNacos.value = profile.nacosId;
   }
 
   openOnboardingModal() {
     const modal = document.getElementById("onboardingModal");
     if (modal) {
       modal.style.display = "flex";
-      if (this.activeProfile) {
-        document.getElementById("onboardName").value = this.activeProfile.name || "";
-        document.getElementById("onboardUniv").value = this.activeProfile.university || "";
-        document.getElementById("onboardNacosId").value = this.activeProfile.nacosId || "";
-        document.getElementById("onboardGithub").value = this.activeProfile.github || "";
-        this.setOnboardingRole(this.activeProfile.role || "student");
-      }
+      document.getElementById("onboardName").value = this.activeProfile?.name || "";
+      document.getElementById("onboardUniv").value = this.activeProfile?.university || "";
+      document.getElementById("onboardNacosId").value = this.activeProfile?.nacosId || "";
+      document.getElementById("onboardGithub").value = this.activeProfile?.github || "";
+      this.setOnboardingRole(this.activeProfile?.role || "student");
     }
   }
 
@@ -865,16 +838,21 @@ function cacheResolver(entries, threshold) {
   }
 
   async saveOnboardingProfile() {
-    const name = document.getElementById("onboardName").value.trim() || "Wali Medugu";
+    const name = document.getElementById("onboardName").value.trim();
     const univ = document.getElementById("onboardUniv").value.trim();
     const nacosId = document.getElementById("onboardNacosId").value.trim();
     const github = document.getElementById("onboardGithub").value.trim();
 
+    if (!name) {
+      alert("Please enter your name.");
+      return;
+    }
+
     const profile = {
       role: this.onboardingRole || "student",
       name: name,
-      university: univ,
-      nacosId: nacosId,
+      university: univ || (this.onboardingRole === "student" ? "NACOS Member" : "Independent Client"),
+      nacosId: nacosId || (this.onboardingRole === "student" ? `NACOS-2026-${Math.floor(1000 + Math.random() * 9000)}` : null),
       github: github,
       walletAddress: "0x" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join(""),
       cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,

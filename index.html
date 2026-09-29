@@ -238,10 +238,10 @@
           <div class="filter-toolbar">
             <div style="display: flex; gap: 0.5rem; background: var(--bg-secondary); padding: 0.3rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
               <button class="filter-pill active" id="tabPublicContracts" onclick="app.setContractType('public')">
-                Public Bounties (4)
+                Public Bounties (<span id="pubCount">0</span>)
               </button>
               <button class="filter-pill" id="tabPrivateContracts" onclick="app.setContractType('private')">
-                Private Direct Contracts (2)
+                Private Direct Contracts (<span id="privCount">0</span>)
               </button>
             </div>
 
@@ -261,7 +261,19 @@
         <!-- VIEW 3: ACTIVE MILESTONE WORKSPACE & SUBMISSION                       -->
         <!-- ===================================================================== -->
         <section class="app-view" id="view-workspace">
-          <div class="workspace-container">
+          <!-- Empty State (No milestone selected) -->
+          <div class="empty-state-card" id="wsEmptyState" style="padding: 4rem 1.5rem; text-align: center;">
+            <div class="empty-state-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            </div>
+            <h3 class="empty-state-title">No Milestone Selected</h3>
+            <p class="empty-state-desc" style="max-width: 480px; margin: 0.5rem auto 1.5rem auto;">
+              Select an active contract from the Contracts & Escrows page to review the technical specification, test cases, and submit verified code.
+            </p>
+            <button class="btn btn-primary" onclick="app.switchView('view-contracts')">View Active Contracts</button>
+          </div>
+
+          <div class="workspace-container" id="wsContent" style="display: none;">
 
             <!-- Milestone Header -->
             <div class="milestone-banner">
@@ -536,31 +548,31 @@ threshold = 20</pre>
 
         <div id="modalRecipientGroup">
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Assigned Student NACOS ID</label>
-          <input type="text" id="modalStudentId" value="UNILAG-CS-2026-0482" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="modalStudentId" value="" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title / Deliverable</label>
-          <input type="text" id="modalContractTitle" value="High-Throughput Cache Expiry Resolver" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="modalContractTitle" value="" placeholder="e.g. Build payment webhook deduplicator" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Reward Amount (USDC)</label>
-          <input type="number" id="modalContractAmount" value="150" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="number" id="modalContractAmount" value="" placeholder="e.g. 150" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.82rem;">
           <div style="display: flex; justify-content: space-between;">
             <span style="color: var(--text-muted);">Payout Amount:</span>
-            <span style="font-family: var(--font-mono); font-weight: 600;" id="modalPrincipal">$150.00</span>
+            <span style="font-family: var(--font-mono); font-weight: 600;" id="modalPrincipal">$0.00</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-top: 0.25rem;">
             <span style="color: var(--text-muted);">Protocol Fee (2.5%):</span>
-            <span style="font-family: var(--font-mono); font-weight: 600;" id="modalFee">$3.75</span>
+            <span style="font-family: var(--font-mono); font-weight: 600;" id="modalFee">$0.00</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-top: 0.4rem; border-top: 1px solid var(--border-subtle); padding-top: 0.4rem;">
             <span style="font-weight: 600; color: var(--text-primary);">Total Escrow Deposit:</span>
-            <span style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-terracotta);" id="modalTotal">$153.75 USDC</span>
+            <span style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-terracotta);" id="modalTotal">$0.00 USDC</span>
           </div>
         </div>
 
@@ -600,22 +612,22 @@ threshold = 20</pre>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Full Name</label>
-          <input type="text" id="onboardName" value="Wali Medugu" placeholder="Your full name" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="onboardName" value="" placeholder="Your full name" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div id="onboardUnivGroup">
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">University & NACOS Chapter</label>
-          <input type="text" id="onboardUniv" value="University of Lagos (UNILAG) • Node #04" placeholder="e.g. UNILAG, ABU Zaria, FUTA" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="onboardUniv" value="" placeholder="e.g. UNILAG, ABU Zaria, FUTA" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div id="onboardNacosGroup">
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">NACOS Student ID / Matric Number</label>
-          <input type="text" id="onboardNacosId" value="UNILAG-CS-2026-0482" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="onboardNacosId" value="" placeholder="e.g. UNILAG-CS-2026-0482" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Username / Profile URL</label>
-          <input type="text" id="onboardGithub" value="WaliMedugu" placeholder="e.g. WaliMedugu" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <input type="text" id="onboardGithub" value="" placeholder="e.g. octocat" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
         </div>
 
         <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
@@ -683,15 +695,15 @@ threshold = 20</pre>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.82rem;">
           <div>
             <span style="color: var(--text-muted); display: block; font-size: 0.7rem; text-transform: uppercase;">Candidate Name</span>
-            <span style="font-weight: 600; color: var(--text-primary);" id="certCandidateName">Wali Medugu</span>
+            <span style="font-weight: 600; color: var(--text-primary);" id="certCandidateName">--</span>
           </div>
           <div>
             <span style="color: var(--text-muted); display: block; font-size: 0.7rem; text-transform: uppercase;">NACOS Student DID / Matric</span>
-            <span style="font-family: var(--font-mono); color: var(--accent-terracotta);" id="certCandidateDid">UNILAG-CS-2026-0482</span>
+            <span style="font-family: var(--font-mono); color: var(--accent-terracotta);" id="certCandidateDid">--</span>
           </div>
           <div>
             <span style="color: var(--text-muted); display: block; font-size: 0.7rem; text-transform: uppercase;">Audited Codebase Repository</span>
-            <span style="font-family: var(--font-mono); color: var(--text-primary);" id="certRepoUrl">github.com/WaliMedugu/BuildX-Crown-Chasers</span>
+            <span style="font-family: var(--font-mono); color: var(--text-primary);" id="certRepoUrl">--</span>
           </div>
           <div>
             <span style="color: var(--text-muted); display: block; font-size: 0.7rem; text-transform: uppercase;">Auditing Engine / Model</span>
