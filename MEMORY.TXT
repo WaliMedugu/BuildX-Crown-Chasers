@@ -1287,25 +1287,25 @@ GIT DIFF SUMMARY:
 
 ================================================================================
 
+================================================================================
+SESSION LOG ENTRY - 2026-09-29T07:56:00+01:00
+================================================================================
 
+USER PROMPT:
+I DONT SEE SHIT
 
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Clarification & View Navigation:
+   - Explained that by default the app opens on Candidate Verifier (`#view-verifier`). The cards are displayed on the "BMONI Wallet & Cards" tab (`#view-wallet`) on the left sidebar.
+   - Fixed a CSS parser blocker in `css/claude-theme.css` at `.passport-container` and balanced all CSS brackets to 207 opens / 207 closes.
+   - Instructed user on hard-refreshing (`Ctrl + F5` / `Ctrl + Shift + R`) to bust browser cache.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `css/claude-theme.css`:
+  * Fixed syntax error before `.passport-container` ensuring full stylesheet parsing.
+  * Verified 100% bracket balance across all 1,719 lines.
+================================================================================
