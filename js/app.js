@@ -94,6 +94,63 @@ function cacheResolver(entries, threshold) {
     this.renderContracts();
   }
 
+  // =========================================================================
+  // IN-APP NOTIFICATION & TOAST CONTROLLER (NO BROWSER ALERTS)
+  // =========================================================================
+  showNotification(message, type = "info", title = null, durationMs = 4500) {
+    const container = document.getElementById("toastContainer");
+    if (!container) {
+      console.log(`[Notification - ${type}]:`, message);
+      return;
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `in-app-toast toast-${type}`;
+
+    const icons = {
+      success: "✓",
+      info: "ℹ",
+      warning: "⚠",
+      error: "✕"
+    };
+
+    const defaultTitles = {
+      success: "Success",
+      info: "Notification",
+      warning: "Attention Required",
+      error: "Action Failed"
+    };
+
+    const iconChar = icons[type] || "ℹ";
+    const headerTitle = title || defaultTitles[type] || "Notice";
+
+    toast.innerHTML = `
+      <div class="toast-icon-wrap">${iconChar}</div>
+      <div class="toast-content">
+        <div class="toast-title">${headerTitle}</div>
+        <div class="toast-body">${message}</div>
+      </div>
+      <button class="toast-close-btn" title="Dismiss">✕</button>
+      <div class="toast-progress-bar"></div>
+    `;
+
+    const closeBtn = toast.querySelector(".toast-close-btn");
+    let dismissed = false;
+
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
+      toast.classList.add("toast-closing");
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 260);
+    };
+
+    closeBtn.addEventListener("click", dismiss);
+    setTimeout(dismiss, durationMs);
+    container.appendChild(toast);
+  }
+
   initDOM() {
     this.solutionInput = document.getElementById("solutionInput");
     this.breadcrumbCurrent = document.getElementById("breadcrumbCurrent");
@@ -162,7 +219,11 @@ function cacheResolver(entries, threshold) {
         const isFrozen = this.escrowEngine.toggleFreeze();
         e.target.textContent = isFrozen ? "Unfreeze Card" : "Freeze Card";
         e.target.style.color = isFrozen ? "var(--status-ruby)" : "var(--text-secondary)";
-        alert(`BMONI Virtual Mastercard status: ${isFrozen ? "FROZEN (Transactions Blocked)" : "ACTIVE"}`);
+        this.showNotification(
+          `BMONI Virtual Mastercard status: ${isFrozen ? "FROZEN (Transactions Blocked)" : "ACTIVE"}`,
+          isFrozen ? "warning" : "success",
+          "Card Security Status"
+        );
       });
     }
 
@@ -170,7 +231,12 @@ function cacheResolver(entries, threshold) {
     const btnCli = document.getElementById("btnCliToken");
     if (btnCli) {
       btnCli.addEventListener("click", () => {
-        alert("Kilikoro Developer CLI Token:\nkili_live_sec_99482_unilag_node04\n\nRun in terminal:\nnode kilikoro.js scan https://github.com/WaliMedugu/BuildX-Crown-Chasers");
+        this.showNotification(
+          "CLI Token: kili_live_sec_99482_unilag_node04\n\nRun in your terminal:\nnpx kilikoro scan <github-repo-url>",
+          "info",
+          "Kilikoro Developer CLI Token",
+          7000
+        );
       });
     }
 
@@ -325,7 +391,7 @@ function cacheResolver(entries, threshold) {
     const nacosId = document.getElementById("verifierNacosId").value.trim();
     const btn = document.getElementById("btnRunAudit");
     if (!repoUrl) {
-      alert("Please enter a GitHub repository URL to audit.");
+      this.showNotification("Please enter a GitHub repository URL to audit.", "warning", "Repository Required");
       return;
     }
 
@@ -362,7 +428,7 @@ function cacheResolver(entries, threshold) {
       await this.db.saveAudit(result);
     } catch (err) {
       console.error("Audit error:", err);
-      alert("Audit completed with local fallback analysis: " + err.message);
+      this.showNotification("Audit completed with local fallback analysis: " + err.message, "info", "Audit Engine Notice");
     } finally {
       btn.disabled = false;
       btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> <span>Run Production Audit with Claude</span>`;
@@ -404,7 +470,11 @@ function cacheResolver(entries, threshold) {
     if (evalResult.entropy.isAiDetected) {
       this.checkEntropy.querySelector(".check-icon").textContent = "✗";
       this.checkEntropy.style.color = "var(--status-ruby)";
-      alert(`[Verification Rejected]\nHigh AI Boilerplate Detected (${evalResult.entropy.aiConfidenceScore}% match).\nKilikoro flagged ChatGPT boilerplate template signatures.`);
+      this.showNotification(
+        `High AI Boilerplate Detected (${evalResult.entropy.aiConfidenceScore}% match).\nKilikoro flagged ChatGPT boilerplate template signatures.`,
+        "error",
+        "Verification Rejected"
+      );
       btnRun.disabled = false;
       btnRun.textContent = "Verify & Release Payout";
       return;
@@ -417,7 +487,11 @@ function cacheResolver(entries, threshold) {
     if (!evalResult.execution.success) {
       this.checkComplexity.querySelector(".check-icon").textContent = "✗";
       this.checkComplexity.style.color = "var(--status-ruby)";
-      alert(`[Verification Rejected]\nFailed assertion test cases or exceeded O(N log N) limit!`);
+      this.showNotification(
+        "Failed assertion test cases or exceeded O(N log N) runtime limit!",
+        "error",
+        "Assertions Failed"
+      );
       btnRun.disabled = false;
       btnRun.textContent = "Verify & Release Payout";
       return;
@@ -465,7 +539,12 @@ function cacheResolver(entries, threshold) {
     btnRun.textContent = "Verified & Paid ✓";
     btnRun.style.background = "var(--status-emerald)";
 
-    alert(`🎉 Milestone Verified & Released!\n+$${payout.settledAmountUSDC.toFixed(2)} USDC credited to your BMONI Virtual Mastercard in 1.8 seconds!\n\nAttestation: ${attestation.attestationId}`);
+    this.showNotification(
+      `+$${payout.settledAmountUSDC.toFixed(2)} USDC credited to your BMONI Virtual Mastercard in 1.8s.\nAttestation: ${attestation.attestationId}`,
+      "success",
+      "Milestone Verified & Released",
+      6500
+    );
     this.switchView("view-wallet");
   }
 
@@ -478,7 +557,11 @@ function cacheResolver(entries, threshold) {
   }
 
   promptAuth(action) {
-    alert(`Account Required: You must sign in or register your student/employer identity to ${action}.\nOpening account setup...`);
+    this.showNotification(
+      `You must sign in or register your student/employer identity to ${action}.`,
+      "warning",
+      "Account Required"
+    );
     this.openOnboardingModal();
   }
 
@@ -547,7 +630,11 @@ function cacheResolver(entries, threshold) {
     this.renderContracts();
 
     const roleName = newRole === "employer" ? "Employer / Client" : "Student Developer";
-    alert(`Switched active perspective to: ${roleName}.\nAll views and capabilities adjusted.`);
+    this.showNotification(
+      `Switched active perspective to: ${roleName}.\nAll views and capabilities adjusted.`,
+      "success",
+      "Role Switched"
+    );
 
     // Refresh account modal if open
     const modal = document.getElementById("userAccountModal");
@@ -563,7 +650,7 @@ function cacheResolver(entries, threshold) {
     this.applyGuestMode();
     this.closeUserAccountModal();
     this.renderTransactions();
-    alert("You have signed out. Platform returned to Guest View.");
+    this.showNotification("You have signed out. Platform returned to Guest View.", "info", "Signed Out");
   }
 
   // Contract Modal Controls
@@ -649,15 +736,15 @@ function cacheResolver(entries, threshold) {
     const studentId = this.modalVisibility === "private" ? (studentInput?.value || "").trim() : null;
 
     if (!title) {
-      alert("Please enter a contract title or deliverable.");
+      this.showNotification("Please enter a contract title or deliverable.", "warning", "Title Required");
       return;
     }
     if (amount <= 0) {
-      alert("Please enter a valid reward amount in USDC.");
+      this.showNotification("Please enter a valid reward amount in USDC.", "warning", "Amount Required");
       return;
     }
     if (this.modalVisibility === "private" && !studentId) {
-      alert("Please enter the candidate's NACOS ID for this direct private contract.");
+      this.showNotification("Please enter the candidate's NACOS ID for this direct private contract.", "warning", "NACOS ID Required");
       return;
     }
 
@@ -695,7 +782,12 @@ function cacheResolver(entries, threshold) {
     this.closeNewContractModal();
     this.setContractType(this.modalVisibility);
     this.switchView("view-contracts");
-    alert(`🎉 Success! $${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for: "${title}".\nOracle Reference: ${newContract.bmoniTxHash}`);
+    this.showNotification(
+      `$${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for: "${title}".\nOracle Reference: ${newContract.bmoniTxHash}`,
+      "success",
+      "Escrow Contract Locked",
+      6000
+    );
   }
 
   // =========================================================================
@@ -762,7 +854,7 @@ function cacheResolver(entries, threshold) {
     const accountNumber = (acctInput?.value || "").trim();
 
     if (!accountNumber || accountNumber.length < 10) {
-      alert("Please enter a valid 10-digit Nigerian NUBAN account number.");
+      this.showNotification("Please enter a valid 10-digit Nigerian NUBAN account number.", "warning", "Invalid NUBAN");
       return;
     }
 
@@ -795,17 +887,17 @@ function cacheResolver(entries, threshold) {
     const available = this.activeProfile?.balanceUsdc || 0;
 
     if (amount <= 0) {
-      alert("Please enter a valid withdrawal amount.");
+      this.showNotification("Please enter a valid withdrawal amount.", "warning", "Invalid Amount");
       return;
     }
 
     if (amount > available && available > 0) {
-      alert(`Requested amount ($${amount} USDC) exceeds current wallet balance ($${available} USDC).`);
+      this.showNotification(`Requested amount ($${amount} USDC) exceeds current wallet balance ($${available} USDC).`, "error", "Insufficient Balance");
       return;
     }
 
     if (acct.length < 10) {
-      alert("Please enter and resolve your 10-digit NUBAN before submitting.");
+      this.showNotification("Please enter and resolve your 10-digit NUBAN before submitting.", "warning", "Account Verification Needed");
       return;
     }
 
@@ -866,7 +958,12 @@ function cacheResolver(entries, threshold) {
       await this.renderTransactions();
       setTimeout(() => {
         this.closeBankWithdrawalModal();
-        alert(`🎉 Bank Withdrawal Succeeded!\n₦${Math.round(amount * 1600 - 50).toLocaleString()} cNGN sent to ${acct} (${bankName}).`);
+        this.showNotification(
+          `₦${Math.round(amount * 1600 - 50).toLocaleString()} cNGN dispatched to ${acct} (${bankName}).`,
+          "success",
+          "Bank Withdrawal Dispatched",
+          6000
+        );
       }, 1500);
 
     } catch (err) {
@@ -890,7 +987,11 @@ function cacheResolver(entries, threshold) {
     if (!modal) return;
 
     if (!this.latestAudit) {
-      alert("Please run a Candidate Audit on a GitHub repository first before generating an official NACOS certificate.");
+      this.showNotification(
+        "Please run a Candidate Audit on a GitHub repository first before generating an official NACOS certificate.",
+        "warning",
+        "Audit Required First"
+      );
       return;
     }
 
@@ -975,7 +1076,7 @@ function cacheResolver(entries, threshold) {
     const local = localStorage.getItem("kilikoro_settlements");
     const settlements = local ? JSON.parse(local) : [];
     if (!settlements || settlements.length === 0) {
-      alert("No settlements recorded yet to export.");
+      this.showNotification("No settlements recorded yet to export.", "info", "No Transactions");
       return;
     }
     const csv = "Transaction ID,Attestation ID,Amount USDC,Status,Timestamp\n" +
@@ -1190,7 +1291,7 @@ function cacheResolver(entries, threshold) {
     const pass = (document.getElementById("loginPassword")?.value || document.getElementById("signInPassword")?.value || "").trim();
 
     if (!ident || !pass) {
-      alert("Please provide both your Email/ID and password to sign in.");
+      this.showNotification("Please provide both your Email/ID and password to sign in.", "warning", "Credentials Required");
       return;
     }
 
@@ -1205,7 +1306,7 @@ function cacheResolver(entries, threshold) {
           const profile = await this.db.getProfile();
           if (profile) this.applyProfile(profile);
           this.closeOnboardingModal();
-          alert(`Welcome back, ${this.activeProfile?.name || ident}!`);
+          this.showNotification(`Welcome back, ${this.activeProfile?.name || ident}!`, "success", "Signed In");
           return;
         }
       } catch (e) {
@@ -1218,7 +1319,7 @@ function cacheResolver(entries, threshold) {
     if (stored && (stored.email === ident || stored.nacosId === ident || stored.name?.toLowerCase() === ident.toLowerCase())) {
       this.applyProfile(stored);
       this.closeOnboardingModal();
-      alert(`Welcome back, ${stored.name}!`);
+      this.showNotification(`Welcome back, ${stored.name}!`, "success", "Signed In");
       return;
     }
 
@@ -1237,7 +1338,7 @@ function cacheResolver(entries, threshold) {
     await this.db.saveProfile(newProfile);
     this.applyProfile(newProfile);
     this.closeOnboardingModal();
-    alert(`Signed in as ${newProfile.name}.`);
+    this.showNotification(`Signed in as ${newProfile.name}.`, "success", "Signed In");
   }
 
   async submitSignUp() {
@@ -1249,11 +1350,11 @@ function cacheResolver(entries, threshold) {
     const github = document.getElementById("onboardGithub")?.value.trim();
 
     if (!name) {
-      alert("Please enter your legal name.");
+      this.showNotification("Please enter your legal name.", "warning", "Name Required");
       return;
     }
     if (pass && pass.length < 6) {
-      alert("Password must be at least 6 characters.");
+      this.showNotification("Password must be at least 6 characters.", "warning", "Password Too Short");
       return;
     }
 
@@ -1286,7 +1387,12 @@ function cacheResolver(entries, threshold) {
     this.applyProfile(profile);
     await this.renderStudents();
     this.closeOnboardingModal();
-    alert(`🎉 Account Created!\nIdentity: ${profile.name} (${profile.role})\nBMONI Virtual Mastercard activated.`);
+    this.showNotification(
+      `Identity: ${profile.name} (${profile.role})\nBMONI Virtual Mastercard activated.`,
+      "success",
+      "Account Created!",
+      6000
+    );
   }
 
   async loadLiveContracts() {
@@ -1297,6 +1403,30 @@ function cacheResolver(entries, threshold) {
     }
   }
 }
+
+// Globally intercept and replace browser native alert dialogs with in-app floating cards
+window.alert = function(msg) {
+  if (window.app && typeof window.app.showNotification === "function") {
+    const lower = String(msg).toLowerCase();
+    let type = "info";
+    let title = "Notification";
+
+    if (lower.includes("success") || lower.includes("🎉") || lower.includes("✓") || lower.includes("credited") || lower.includes("created") || lower.includes("dispatched")) {
+      type = "success";
+      title = "Success";
+    } else if (lower.includes("rejected") || lower.includes("error") || lower.includes("failed") || lower.includes("exceeds")) {
+      type = "error";
+      title = "Action Failed";
+    } else if (lower.includes("required") || lower.includes("please enter") || lower.includes("provide")) {
+      type = "warning";
+      title = "Attention Required";
+    }
+
+    window.app.showNotification(msg, type, title);
+  } else {
+    console.log("[In-App Notice]:", msg);
+  }
+};
 
 // Initialize on DOM ready
 window.addEventListener("DOMContentLoaded", async () => {
