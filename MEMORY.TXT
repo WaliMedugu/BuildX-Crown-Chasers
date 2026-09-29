@@ -920,6 +920,21 @@ DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
 - Access: Public (`--access public`).
 - Execution: Anyone worldwide can now run `npx kilikoro scan <repo-url>` with zero pre-installation or `npm install -g kilikoro`.
 - Maintainer: w_wali_i <blueparticlestudios@gmail.com>.
+7. OFFICIAL BMONI EMBEDDED DEVELOPER API INTEGRATION:
+- Official Documentation: `https://embedded-docs.bmoni.com/markets/nigeria/`
+- Sandbox Base URL: `https://embedded-dev.bmoni.com`
+- Production Base URL: `https://embedded.bmoni.com`
+- Official Developer Shared Sandbox API Key: `pk_a025cacbf33a_76fb864113f3540909de5b1da39cc146906e35b1c6d4d1e4`
+- Authentication Header: `x-api-key: <key>`
+- Implemented Full Nigerian Banking Rails in `js/bmoni-client.js`:
+  * `getNigerianBanks()`: Resolves Nigerian commercial banks & codes (`GET /banks?country=NG`).
+  * `verifyBankAccount()`: Account name enquiry (`POST /accounts/resolve`).
+  * `registerWithdrawalAccount()`: Registers NGN recipient account (`POST /recipients`).
+  * `createWithdrawalProposal()`: Creates idempotent offramp proposal (`POST /transfers/proposals`).
+  * `signProposal()`: Cryptographic execution signing (`POST /transfers/sign`).
+- Configured in `.env` and `js/local-config.js` with fail-safe local sandbox fallback.
+- Commit SHA: 523ae6f
+- Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
 ================================================================================
 
 
