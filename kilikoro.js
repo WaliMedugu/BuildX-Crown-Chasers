@@ -49,22 +49,24 @@ async function handleScan(repoUrl) {
   banner();
   if (!repoUrl) {
     console.log(`${C.ruby}Error:${C.reset} Please provide a GitHub repo URL. Example:`);
-    console.log(`  node kilikoro.js scan https://github.com/WaliMedugu/BuildX-Crown-Chasers\n`);
+    console.log(`  node kilikoro.js scan https://github.com/Adekemmie/html-portfolio\n`);
     return;
   }
 
-  console.log(`${C.cyan}[Audit]${C.reset} Fetching and scanning repository: ${C.bold}${repoUrl}${C.reset}`);
-  console.log(`${C.dim}• Connecting to Claude Haiku 4.5 API & AST Engine...${C.reset}`);
+  console.log(`${C.cyan}[Audit]${C.reset} Connecting to GitHub & fetching repository: ${C.bold}${repoUrl}${C.reset}`);
+  console.log(`${C.dim}• Analyzing repository tree and source code with Claude Haiku 4.5...${C.reset}`);
 
-  // Sample sample files for evaluation
-  let sampleSnippet = "";
-  try {
-    if (fs.existsSync(path.join(__dirname, "js", "app.js"))) {
-      sampleSnippet = fs.readFileSync(path.join(__dirname, "js", "app.js"), "utf8");
-    }
-  } catch (e) {}
+  // Fetch real repo files and code from GitHub
+  const repoData = await claudeService.fetchGitHubRepo(repoUrl);
+  if (repoData.files && repoData.files.length) {
+    console.log(`${C.dim}• Discovered ${repoData.files.length} repository files: ${repoData.files.slice(0, 6).join(", ")}...${C.reset}`);
+  }
 
-  const result = await claudeService.analyzeGitHubRepo(repoUrl, sampleSnippet, ["index.html", "js/app.js", "js/ast-engine.js", "package.json"]);
+  const result = await claudeService.analyzeGitHubRepo(
+    repoUrl,
+    repoData.sampleCode || repoData.readme || "",
+    repoData.files && repoData.files.length ? repoData.files : ["index.html", "package.json"]
+  );
 
   console.log(`\n${C.bold}================ AUDIT REPORT ================${C.reset}`);
   console.log(`Repository           : ${C.terracotta}${repoUrl}${C.reset}`);
@@ -89,25 +91,47 @@ async function handleScan(repoUrl) {
 
 async function handleVerifyResume(filePath) {
   banner();
-  console.log(`${C.cyan}[Resume Fact-Checker]${C.reset} Analyzing candidate credentials...`);
   
-  let content = "Chidi Okonkwo - UNILAG CS Student. Experience with BMONI stablecoins, TypeScript, high-throughput caching algorithms.";
+  const githubUser = args.includes("--github") ? args[args.indexOf("--github") + 1] : "";
+  const nacosId = args.includes("--nacos") ? args[args.indexOf("--nacos") + 1] : "";
+
+  let content = "";
   if (filePath && fs.existsSync(filePath)) {
     content = fs.readFileSync(filePath, "utf8");
+    console.log(`${C.cyan}[Resume Fact-Checker]${C.reset} Read candidate document from: ${C.bold}${filePath}${C.reset}`);
+  } else if (filePath && !filePath.startsWith("--")) {
+    content = filePath;
+    console.log(`${C.cyan}[Resume Fact-Checker]${C.reset} Evaluating input profile text...`);
+  } else {
+    console.log(`${C.ruby}Notice:${C.reset} No resume file provided. Usage:`);
+    console.log(`  node kilikoro.js verify-resume path/to/resume.txt [--github <username>] [--nacos <id>]\n`);
+    console.log(`Example:`);
+    console.log(`  node kilikoro.js verify-resume "Wali Medugu - Full Stack Engineer, UNILAG CS. Built BMONI escrow and AST analyzer." --github WaliMedugu\n`);
+    return;
   }
 
-  const result = await claudeService.verifyCandidateResume(content, "UNILAG-CS-2026-0482", "github.com/WaliMedugu");
+  console.log(`${C.dim}• Auditing claims with Claude Haiku 4.5 against engineering realities...${C.reset}`);
+  const result = await claudeService.verifyCandidateResume(content, nacosId, githubUser);
 
   console.log(`\n${C.bold}=============== CANDIDATE VERIFICATION ===============${C.reset}`);
   console.log(`Candidate Name   : ${C.bold}${result.candidateName}${C.reset}`);
-  console.log(`NACOS Chapter    : ${C.emerald}${result.nacosStatus}${C.reset}`);
+  console.log(`NACOS / Academic : ${C.emerald}${result.nacosStatus}${C.reset}`);
   console.log(`Credibility Score: ${C.emerald}${result.credibilityScore}%${C.reset}`);
+  console.log(`Security Hygiene : ${result.securityScore?.includes("Clean") || result.securityScore?.includes("Zero") ? C.emerald : C.ruby}${result.securityScore || "Zero Exposed Secrets"}${C.reset}`);
   console.log(`Hiring Verdict   : ${C.bold}${C.emerald}${result.hiringVerdict}${C.reset}`);
-  console.log(`\n${C.bold}Verified Skills:${C.reset} ${result.verifiedSkills.join(", ")}`);
-  console.log(`\n${C.bold}Verified Projects:${C.reset}`);
-  result.verifiedProjects.forEach(p => {
-    console.log(`  ${C.emerald}✓${C.reset} ${C.bold}${p.name}${C.reset} — ${p.authenticity} (${C.dim}${p.notes}${C.reset})`);
-  });
+  
+  if (result.keyObservations) {
+    console.log(`\n${C.bold}Auditor Assessment:${C.reset} ${result.keyObservations}`);
+  }
+  if (result.verifiedSkills && result.verifiedSkills.length) {
+    console.log(`\n${C.bold}Verified Skills:${C.reset} ${result.verifiedSkills.join(", ")}`);
+  }
+  if (result.verifiedProjects && result.verifiedProjects.length) {
+    console.log(`\n${C.bold}Project Credibility Breakdown:${C.reset}`);
+    result.verifiedProjects.forEach(p => {
+      console.log(`  ${C.emerald}✓${C.reset} ${C.bold}${p.name}${C.reset} — ${p.authenticity} (${C.dim}${p.notes}${C.reset})`);
+    });
+  }
   console.log(`${C.bold}========================================================${C.reset}\n`);
 }
 

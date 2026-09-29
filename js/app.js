@@ -419,10 +419,16 @@ function cacheResolver(entries, threshold) {
     }
 
     btn.disabled = true;
-    btn.innerHTML = `<span class="status-dot"></span> Auditing GitHub repo with Claude Haiku 4.5...`;
+    btn.innerHTML = `<span class="status-dot"></span> Fetching GitHub repo & auditing with Claude Haiku 4.5...`;
 
     try {
-      const result = await this.claudeService.analyzeGitHubRepo(repoUrl, this.humanSolution, ["index.html", "js/app.js", "package.json"], resumeText);
+      const repoData = await this.claudeService.fetchGitHubRepo(repoUrl);
+      const result = await this.claudeService.analyzeGitHubRepo(
+        repoUrl,
+        repoData.sampleCode || repoData.readme || "",
+        repoData.files && repoData.files.length ? repoData.files : ["index.html", "package.json"],
+        resumeText
+      );
       this.latestAudit = { ...result, repo: repoUrl, nacosId: nacosId };
 
       // Switch view from empty card to result card
