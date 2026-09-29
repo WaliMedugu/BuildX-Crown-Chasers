@@ -1251,6 +1251,41 @@ GIT DIFF SUMMARY:
   * Added automated test cases for ₦10,000 welcome bonus, insufficient balance rejection, valid contract funding with deduction, and off-ramp rejection when exceeding balance.
 
 ================================================================================
+SESSION LOG ENTRY - 2026-09-29T07:55:00+01:00
+================================================================================
+
+USER PROMPT:
+make this the exact UI of the virtual mastercard. EXACTTTTT
+AS FOR THE bmONNI LIQUID BALANCE CARD UI, MAKE IT LOOK AS CLOSE TO THE SECOND IMAGE AS POSSIBLE
+
+--------------------------------------------------------------------------------
+SHORT AGENT RESPONSE SUMMARY (NO FULL CODE):
+--------------------------------------------------------------------------------
+1. Exact Virtual Mastercard UI (Image 1 Replication):
+   - Background: Deep rich purple `#48004f` with diagonal repeating watermark pattern (`"VIRTUAL VIRTUAL VIRTUAL"` at -38deg angle).
+   - Top-Right: Official Mastercard overlapping circles (Red `#EB001B` & Amber `#F79E1B` with screen blend).
+   - Bottom-Right: Bold white vertical brand logo (`"BMONI"` with `writing-mode: vertical-rl; transform: rotate(180deg)`).
+   - Gold chip, embossed card number (`5399 •••• •••• 4892`), cardholder name, and 3D flip card to back with black magstripe and CVV strip (`834`).
+2. Exact BMONI Liquid Balance Card UI (Image 2 Replication):
+   - Outer frame container with deep aubergine/purple tone (`#1e0223`) and top `"BMONI"` header logo.
+   - Banknote Layer: Realistic Nigerian ₦1000 Bank of Nigeria banknote ("BANK OF NIGERIA 1000") peeking out from the top of the pocket.
+   - Stitched Leather Pocket Sleeve: Deep magenta-purple sleeve (`#6c0074`) with dashed white seam stitching along borders and left/right metal rivets.
+   - Dynamic balance (`₦10,000.00` or live cNGN balance) with eye privacy toggle (`👁`).
+   - Bank & Virtual Account: `9 Payment Service Bank` and `6176775063` with 1-click clipboard copy button.
+   - Footer: Rounded Nigerian flag pill badge and white circular `Info ⓘ` badge.
+
+--------------------------------------------------------------------------------
+GIT DIFF SUMMARY:
+--------------------------------------------------------------------------------
+- `css/claude-theme.css`:
+  * Added `.bmoni-liquid-card-frame`, `.bmoni-naira-layer`, `.bmoni-naira-bill`, `.bmoni-pocket-sleeve`, `.pocket-rivet`, `.bmoni-liquid-amount-val`, `.bmoni-eye-toggle-btn`, `.bmoni-flag-pill`, `.bmoni-info-pill-badge`.
+  * Added `.card-face.front` with diagonal `VIRTUAL` watermark background, `.card-mc-top-right`, `.mc-circles-pair`, `.card-bmoni-bottom-right`, `.bmoni-vertical-brand-text`.
+- `index.html`:
+  * Updated `#view-wallet` with the exact BMONI Liquid Balance Pocket Card (Image 2) and Virtual Mastercard (Image 1).
+- `js/app.js`:
+  * Added `renderLiquidBalance()`, `toggleBalancePrivacy()`, `copyBmoniAccountNumber()`, and `showBmoniRailInfo()`.
+
+================================================================================
 
 
 

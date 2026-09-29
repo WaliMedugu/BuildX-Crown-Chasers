@@ -388,43 +388,81 @@ threshold = 20</pre>
         <section class="app-view" id="view-wallet">
           <div class="wallet-grid">
 
-            <!-- Left: Balances & Transactions -->
+            <!-- Left: BMONI Liquid Balance Pocket Card (Image 2 Exact) & Transactions -->
             <div>
-              <div class="balance-overview-card">
-                <div class="balance-headline-row">
-                  <div>
-                    <span class="balance-title">BMONI Liquid Balance</span>
-                    <div class="balance-huge" id="walletTotalUsdc">$0.00 USDC</div>
-                    <div class="balance-naira-equiv" id="walletTotalNaira">≈ ₦0 cNGN (1 USD = ₦1,600)</div>
-                  </div>
-                  <span class="status-badge" style="background: var(--status-emerald-subtle); padding: 0.35rem 0.75rem; border-radius: 999px;">
-                    <span class="status-dot"></span>
-                    Mastercard Active
+              <!-- EXACT BMONI LIQUID BALANCE POCKET CARD (IMAGE 2) -->
+              <div class="bmoni-liquid-card-frame">
+                <!-- Top Brand Header -->
+                <div class="bmoni-frame-top">
+                  <span class="bmoni-brand-logo-txt">BMONI</span>
+                  <span class="status-badge" style="background: rgba(255,255,255,0.08); color: #ffffff; padding: 0.25rem 0.65rem; border-radius: 999px; font-size: 0.72rem;">
+                    <span class="status-dot" style="background: var(--status-emerald);"></span>
+                    9PSB Connected
                   </span>
                 </div>
 
-                <div class="stats-mini-grid">
-                  <div class="stat-box">
-                    <span class="stat-label">Active Escrow Locked</span>
-                    <span class="stat-val" id="statEscrowLocked">$0.00</span>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">Lifetime Earned</span>
-                    <span class="stat-val" id="statLifetimeEarned">$0.00</span>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">Payout Latency</span>
-                    <span class="stat-val" style="color: var(--status-emerald);">&lt;3.0s</span>
+                <!-- Realistic Nigerian ₦1000 Banknote Peeking from Pocket -->
+                <div class="bmoni-naira-layer">
+                  <div class="bmoni-naira-bill">
+                    <span class="naira-bill-title">CENTRAL BANK OF NIGERIA</span>
+                    <span class="naira-bill-denom">1000</span>
                   </div>
                 </div>
 
-                <div style="display: flex; gap: 0.6rem; margin-top: 1.25rem; flex-wrap: wrap;">
-                  <button class="btn btn-primary" onclick="app.openBankWithdrawalModal()" style="font-size: 0.82rem;">
+                <!-- Stitched Magenta Leather Pocket Sleeve -->
+                <div class="bmoni-pocket-sleeve">
+                  <!-- Pocket Rivets -->
+                  <div class="pocket-rivet left"></div>
+                  <div class="pocket-rivet right"></div>
+
+                  <!-- Dynamic Balance Row with Eye Privacy Toggle -->
+                  <div class="bmoni-balance-header-row">
+                    <div class="bmoni-liquid-amount-val" id="bmoniLiquidNaira">₦10,000.00</div>
+                    <button class="bmoni-eye-toggle-btn" id="btnToggleBalanceEye" onclick="app.toggleBalancePrivacy()" title="Toggle Balance Privacy">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="eyeIconSvg">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <!-- 9PSB Bank & Virtual Account Details -->
+                  <div class="bmoni-bank-details-block">
+                    <div class="bmoni-bank-name-label">9 Payment Service Bank</div>
+                    <div class="bmoni-acct-number-row">
+                      <span id="bmoniLiquidAcct">6176775063</span>
+                      <button class="bmoni-copy-icon-btn" onclick="app.copyBmoniAccountNumber()" title="Copy Account Number">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Pocket Footer: Nigerian Flag & Info Badge -->
+                  <div class="bmoni-pocket-footer-row">
+                    <div class="bmoni-flag-pill" title="Nigerian NGN Commercial Settlement Rails">
+                      <span class="flag-g"></span>
+                      <span class="flag-w"></span>
+                      <span class="flag-g"></span>
+                    </div>
+
+                    <div class="bmoni-info-pill-badge" onclick="app.showBmoniRailInfo()" title="View BMONI NIP Banking Rail Info">
+                      <span>Info</span>
+                      <span class="info-circle-glyph">i</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quick Action Buttons Below Pocket -->
+                <div style="display: flex; gap: 0.6rem; margin-top: 1.15rem; flex-wrap: wrap;">
+                  <button class="btn btn-primary" onclick="app.openBankWithdrawalModal()" style="font-size: 0.82rem; flex: 1; justify-content: center;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    Withdraw to Nigerian Bank (NGN)
+                    Withdraw to Bank (NGN)
                   </button>
-                  <button class="btn btn-secondary" onclick="app.openNewContractModal()" style="font-size: 0.82rem;">
-                    + Create & Lock Escrow
+                  <button class="btn btn-secondary" onclick="app.openNewContractModal()" style="font-size: 0.82rem; flex: 1; justify-content: center;">
+                    + Lock Escrow Bounty
                   </button>
                 </div>
               </div>
@@ -462,42 +500,42 @@ threshold = 20</pre>
               </div>
             </div>
 
-            <!-- Right: 3D Mastercard -->
+            <!-- Right: Exact BMONI Virtual Mastercard (Image 1) -->
             <div class="card-preview-column">
               <span class="panel-title">BMONI Virtual Mastercard</span>
 
               <div class="virtual-card-box">
                 <div class="interactive-card" id="walletVirtualCard">
-                  <!-- Front -->
+                  <!-- Front (Exact Image 1 Replication) -->
                   <div class="card-face front">
-                    <div class="card-top">
-                      <div class="card-chip"></div>
-                      <div class="card-brand-logo">bmoni</div>
-                    </div>
-                    <div class="card-balance-block">
-                      <div class="card-balance-label">Card Available Limit</div>
-                      <div class="card-balance-val" id="walletCardBalance">$0.00 USDC</div>
-                      <div class="card-balance-label">Linked to BMONI Escrow Vault</div>
-                    </div>
-                    <div class="card-bottom">
-                      <div>
-                        <div class="card-holder-name" id="walletCardHolderName">GUEST USER</div>
-                        <div class="card-number" id="walletCardNumber">5399 •••• •••• ----</div>
+                    <!-- Mastercard Top-Right Overlapping Circles -->
+                    <div class="card-mc-top-right">
+                      <div class="mc-circles-pair">
+                        <div class="mc-circle-red"></div>
+                        <div class="mc-circle-amber"></div>
                       </div>
-                      <div class="mastercard-circles">
-                        <div class="circle-red"></div>
-                        <div class="circle-yellow"></div>
-                      </div>
+                    </div>
+
+                    <!-- BMONI Bottom-Right Vertical Brand -->
+                    <div class="card-bmoni-bottom-right">
+                      <div class="bmoni-vertical-brand-text">BMONI</div>
+                    </div>
+
+                    <!-- Card Body & Chip -->
+                    <div class="card-details-overlay">
+                      <div class="card-chip-gold"></div>
+                      <div class="card-number-clean" id="walletCardNumber">5399 •••• •••• 4892</div>
+                      <div class="card-holder-clean" id="walletCardHolderName">WALI MEDUGU</div>
                     </div>
                   </div>
 
-                  <!-- Back -->
+                  <!-- Back (CVV & Magstripe) -->
                   <div class="card-face back">
-                    <div class="card-magstripe"></div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted); text-align: right; margin-bottom: 0.2rem;">CVV SECURITY CODE</div>
-                    <div class="card-cvv-strip" id="walletCardCvv">---</div>
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 1rem; line-height: 1.3;">
-                      Valid for POS terminals across Nigeria and international payments with zero bank transfer delays.
+                    <div class="card-magstripe-bar"></div>
+                    <div style="font-size: 0.72rem; color: rgba(255,255,255,0.7); text-align: right; margin-bottom: 0.35rem; font-weight: 600;">CVV SECURITY CODE</div>
+                    <div class="card-cvv-white-strip" id="walletCardCvv">834</div>
+                    <div style="font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 1.25rem; line-height: 1.4;">
+                      BMONI Embedded Mastercard. Valid for POS terminals, web transactions, and instant 3s stablecoin settlement.
                     </div>
                   </div>
                 </div>
@@ -512,9 +550,9 @@ threshold = 20</pre>
                 </button>
               </div>
 
-              <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1.25rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
+              <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.25rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
                 <span style="font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Direct Card Payouts</span>
-                Funds released from completed milestones go directly to your BMONI Mastercard in 3 seconds, ready to spend online or swipe on campus.
+                Funds released from verified milestones settle directly into this BMONI Mastercard in &lt;3 seconds, ready for instant spending across Nigeria.
               </div>
             </div>
 

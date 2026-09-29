@@ -1514,13 +1514,57 @@ function cacheResolver(entries, threshold) {
       roleLabel.textContent = `Role: ${profile.role === "student" ? "Student" : "Employer"}`;
     }
 
-    // BMONI Virtual Mastercard
+    // BMONI Virtual Mastercard (Exact Image 1)
     const holderEl = document.getElementById("walletCardHolderName");
     const numEl = document.getElementById("walletCardNumber");
     const cvvEl = document.getElementById("walletCardCvv");
     if (holderEl) holderEl.textContent = profile.name.toUpperCase();
     if (numEl) numEl.textContent = profile.cardNumber || "5399 •••• •••• 4892";
     if (cvvEl) cvvEl.textContent = profile.cardCvv || "834";
+
+    // BMONI Liquid Balance Pocket Card (Exact Image 2)
+    this.renderLiquidBalance();
+  }
+
+  renderLiquidBalance() {
+    const liquidNairaEl = document.getElementById("bmoniLiquidNaira");
+    const liquidAcctEl = document.getElementById("bmoniLiquidAcct");
+    const balUsdc = this.activeProfile?.balanceUsdc || 0;
+    const nairaAmt = Math.round(balUsdc * 1600);
+
+    if (liquidNairaEl) {
+      if (this.isBalanceHidden) {
+        liquidNairaEl.textContent = "₦ ••••••";
+      } else {
+        liquidNairaEl.textContent = `₦${nairaAmt.toLocaleString()}.00`;
+      }
+    }
+
+    if (liquidAcctEl) {
+      liquidAcctEl.textContent = this.activeProfile?.bmoniAccountNumber || "6176775063";
+    }
+  }
+
+  toggleBalancePrivacy() {
+    this.isBalanceHidden = !this.isBalanceHidden;
+    this.renderLiquidBalance();
+    const btn = document.getElementById("btnToggleBalanceEye");
+    if (btn) {
+      btn.style.opacity = this.isBalanceHidden ? "0.4" : "1";
+    }
+    this.showToast("Privacy Toggled", this.isBalanceHidden ? "Wallet balance hidden." : "Wallet balance visible.", "info", 2000);
+  }
+
+  copyBmoniAccountNumber() {
+    const acct = this.activeProfile?.bmoniAccountNumber || "6176775063";
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(acct).catch(() => {});
+    }
+    this.showToast("Account Number Copied", `${acct} (9 Payment Service Bank) copied to clipboard.`, "success", 3500);
+  }
+
+  showBmoniRailInfo() {
+    this.showToast("BMONI 9PSB Rails", "9 Payment Service Bank (9PSB) virtual NUBAN account. Instant 3-second credit & NIP commercial off-ramps with Sponsor Referral: NACOS.", "info", 5000);
   }
 
   openOnboardingModal() {
