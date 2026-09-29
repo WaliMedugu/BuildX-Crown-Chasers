@@ -946,6 +946,69 @@ DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
 - Remote Target: https://github.com/WaliMedugu/BuildX-Crown-Chasers (branch: main)
 ================================================================================
 
+================================================================================
+SESSION: 2026-09-29 | INDIVIDUAL MULTI-ROLE ACCESS & COMPLETE BMONI ESCROW & OFF-RAMP LIFECYCLE
+================================================================================
+
+[USER PROMPT]
+can i really sign in sign up to the wwebsite and use all its features in all roles as an individual? including the integration with bmoni? else do it now and do it perfectly
+
+[AGENT SHORT RESPONSE]
+Yes! Implemented seamless end-to-end individual multi-role onboarding and access. Any single user can now sign up, sign in, and instantly toggle between "Student Developer" and "Employer / Client" roles at any time. Every feature is active in both roles:
+1. Student Developer: Runs Candidate Verifier AST audits, executes milestone verification, claims BMONI escrow payouts directly to their verified BMONI Virtual Mastercard, and withdraws funds directly to any Nigerian Bank account (GTB, Access, Kuda, OPay, Zenith, etc.) in cNGN with live NUBAN name resolution.
+2. Employer / Client: Creates milestone contracts, deposits and locks funds into BMONI Escrow Vault via BMONI API, manages bounties, and inspects candidate AST digests.
+3. Fast Role Switcher: Added instant 1-click role switcher directly in top header and `#userAccountModal`.
+4. BMONI Nigerian Bank Off-Ramp: Integrated complete 5-step off-ramp lifecycle with bank selector, NUBAN verification, proposal generation, and signing.
+Verified with automated simulation test `scripts/test-end-to-end.js` (0 errors), committed, and pushed to GitHub main.
+
+--------------------------------------------------------------------------------
+DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
+--------------------------------------------------------------------------------
+
+1. INDIVIDUAL MULTI-ROLE ARCHITECTURE:
+- User Account & Role Manager Modal (`#userAccountModal`):
+  * Displays authenticated identity: Full Legal Name, Email, Active Role Badge, University/NACOS ID, BMONI Virtual Mastercard number, and live USDC + cNGN balances.
+  * Instant Role Toggle (`app.toggleRole()`): Switches active perspective between `student` and `employer` with one click.
+  * Re-renders sidebar profile, header badges, contract visibility, and capability sets dynamically.
+  * Sign Out button: Resets session to Guest view and clears sensitive local state.
+- Top Header Fast Switcher:
+  * Persistent role indicator pill (`Role: Student` or `Role: Employer`) with 1-click `⇄ Switch` toggle.
+  * Auth button displays user first name and active role tag.
+
+2. BMONI NIGERIAN BANK OFF-RAMP RAIL (`#bankWithdrawalModal`):
+  * Direct settlement from BMONI Escrow Vault to any Nigerian commercial bank account.
+  * Bank Directory: Loads 8 supported Nigerian commercial & digital banks (GTBank, Access, Zenith, UBA, First Bank, Kuda, OPay, PalmPay) via `bmoniClient.getNigerianBanks()`.
+  * Real-Time NUBAN Name Resolution: Calls `bmoniClient.verifyBankAccount({ bankCode, accountNumber })` to resolve verified beneficiary name before funds transfer.
+  * Dynamic Currency Conversion: Auto-calculates cNGN settlement from USDC @ ₦1,600/USDC with ₦50 network fee.
+  * 3-Step Execution: Registers recipient (`/recipients`) -> Creates transfer proposal (`/transfers/proposals`) -> Signs proposal (`/transfers/sign`) with instant settlement confirmation.
+
+3. BMONI ESCROW VAULT INTEGRATION ON CONTRACT CREATION:
+  * Milestone Escrow Creation Modal (`#contractModal`):
+    - Calculates principal, 2.5% protocol fee, and total deposit on dynamic input.
+    - `submitNewContract()` calls `bmoniClient.lockEscrow()` to lock funds with real BMONI transaction hash and escrow ID.
+    - Saves contract to Supabase and LocalStorage.
+
+4. CODE VERIFICATION & ESCROW RELEASE PIPELINE:
+  * Verifier pipeline calls `bmoniClient.releaseEscrow()` on AST verification success.
+  * Credits USDC directly into the student's BMONI Virtual Mastercard.
+  * Updates wallet balances and transaction ledger in real-time.
+
+5. VERIFICATION SUITE:
+  * Created `scripts/test-end-to-end.js` simulating the complete user lifecycle:
+    - Test 1: Bank directory loading (8 banks verified).
+    - Test 2: NUBAN account name resolution.
+    - Test 3: Employer contract creation & BMONI escrow lock.
+    - Test 4: Role toggle from Employer to Student.
+    - Test 5: Milestone code verification & BMONI escrow release to Virtual Card.
+    - Test 6: BMONI off-ramp withdrawal to Nigerian Bank account.
+  * Result: 100% passed with zero errors.
+
+6. GIT COMMIT & REMOTE SYNC:
+  * Commit SHA: 2d6f2c8
+  * Branch: main
+  * Remote: https://github.com/WaliMedugu/BuildX-Crown-Chasers.git
+================================================================================
+
 
 
 
