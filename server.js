@@ -260,6 +260,15 @@ async function handleRequest(req, res) {
   // API ROUTING
   // =========================================================================
 
+  if (pathname === "/api/debug" || req.url.includes("debug") || pathname === "/api/index.js") {
+    return sendJson(res, 200, {
+      url: req.url,
+      pathname,
+      headers: req.headers,
+      query: req.query
+    });
+  }
+
   // 1. SIGN UP (SUPABASE AUTH + PERSISTENT DB)
   if (pathname === "/api/auth/signup" && req.method === "POST") {
     try {
