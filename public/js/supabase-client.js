@@ -89,15 +89,18 @@ class KilikoroDatabase {
    * Fetch All Contracts (Persistent Backend + Supabase)
    */
   async getContracts() {
+    const legacyMockIds = ["TASK-BMONI-104", "TASK-HELIX-202", "TASK-PAY-303", "TASK-NACOS-404", "TASK-0460"];
+
     try {
       const res = await fetch(`${this.apiBase}/api/contracts`);
       if (res.ok) {
         const contracts = await res.json();
-        if (Array.isArray(contracts) && contracts.length > 0) {
+        if (Array.isArray(contracts)) {
+          const sanitized = contracts.filter(c => !legacyMockIds.includes(c.id));
           if (typeof localStorage !== "undefined") {
-            localStorage.setItem("kilikoro_contracts", JSON.stringify(contracts));
+            localStorage.setItem("kilikoro_contracts", JSON.stringify(sanitized));
           }
-          return contracts;
+          return sanitized;
         }
       }
     } catch (e) {}
@@ -106,7 +109,12 @@ class KilikoroDatabase {
       const local = localStorage.getItem("kilikoro_contracts");
       if (local) {
         try {
-          return JSON.parse(local);
+          const parsed = JSON.parse(local);
+          if (Array.isArray(parsed)) {
+            const sanitized = parsed.filter(c => !legacyMockIds.includes(c.id));
+            localStorage.setItem("kilikoro_contracts", JSON.stringify(sanitized));
+            return sanitized;
+          }
         } catch (e) {}
       }
     }

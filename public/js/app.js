@@ -1978,10 +1978,8 @@ function cacheResolver(entries, threshold) {
 
   async loadLiveContracts() {
     const live = await this.db.getContracts();
-    if (live && live.length > 0) {
-      this.contracts = live;
-      this.renderContracts();
-    }
+    this.contracts = Array.isArray(live) ? live : [];
+    this.renderContracts();
   }
 }
 
