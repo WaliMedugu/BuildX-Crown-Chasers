@@ -247,8 +247,14 @@ async function handleRequest(req, res) {
   }
 
   const parsedUrl = new URL(req.url, `http://${req.headers.host || "localhost:3000"}`);
-  const rawPath = (req.query && req.query.path) || parsedUrl.searchParams.get("path") || req.headers["x-matched-path"] || req.headers["x-forwarded-uri"] || parsedUrl.pathname;
-  const pathname = (rawPath || "/").split("?")[0] || "/";
+  let pathname = parsedUrl.pathname;
+  if (req.query && req.query.path) {
+    pathname = req.query.path.split("?")[0];
+  } else if (parsedUrl.searchParams.get("path")) {
+    pathname = parsedUrl.searchParams.get("path").split("?")[0];
+  } else if (req.headers["x-matched-path"] && !req.headers["x-matched-path"].includes("[")) {
+    pathname = req.headers["x-matched-path"].split("?")[0];
+  }
 
   // =========================================================================
   // API ROUTING
