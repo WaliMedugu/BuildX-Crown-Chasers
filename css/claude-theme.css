@@ -1739,3 +1739,197 @@ body {
   to { width: 0%; }
 }
 
+/* ==========================================================================
+   RESPONSIVE APPLICATION SHELL
+   ========================================================================== */
+
+.mobile-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mobile-menu-btn:hover {
+  background: var(--bg-surface);
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .top-header {
+    padding: 0.5rem;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .mobile-menu-btn {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .breadcrumbs {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .breadcrumbs .separator,
+  .breadcrumbs .current {
+    display: none;
+  }
+
+  .breadcrumbs a {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  /* Role switcher */
+  #btnRoleSwitcher {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  #btnRoleSwitcher span:not(.status-dot) {
+    display: none;
+  }
+
+  /* Sign In / Register */
+  #btnUserAuth {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  #btnUserAuth span {
+    display: none;
+  }
+
+  /* CLI Token */
+  #btnCliToken {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  #btnCliToken span {
+    display: none;
+  }
+
+  /* New Contract */
+  .header-actions .btn-primary {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .header-actions .btn-primary span {
+    display: none;
+  }
+
+  .page-content {
+    padding: 0.85rem 0.6rem;
+  }
+}
+@media (max-width: 767px) {
+  #mobileMenuBtn.mobile-menu-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(280px, 85vw);
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+  }
+  .mobile-menu-btn {
+  position: relative;
+  z-index: 1100;
+}
+}
+@media (max-width: 767px) {
+  .card-preview-column {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .virtual-card-box {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .interactive-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .card-face {
+    box-sizing: border-box;
+  }
+
+  .card-preview-column > div[style*="display: flex"] {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .card-preview-column > div[style*="background: var(--bg-secondary)"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 767px) {
+  .wallet-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    width: 100%;
+  }
+}
