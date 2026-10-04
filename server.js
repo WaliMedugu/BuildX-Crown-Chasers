@@ -10,6 +10,8 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const BmoniClient = require("./js/bmoni-client");
+const bmoniClient = new BmoniClient();
 
 // Load .env
 const envPath = path.join(__dirname, ".env");
@@ -99,7 +101,11 @@ const MIME_TYPES = {
   ".jpeg": "image/jpeg",
   ".svg": "image/svg+xml",
   ".ico": "image/x-icon",
-  ".txt": "text/plain; charset=utf-8"
+  ".txt": "text/plain; charset=utf-8",
+  ".otf": "font/otf",
+  ".ttf": "font/ttf",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2"
 };
 
 // Embedded In-Memory Static Bundle (Guaranteed 0ms response, zero filesystem dependency)
@@ -130,7 +136,7 @@ function isValidBmoniAccount(acc) {
   // 2. International Nigerian Phone: +23480... or +23470...
   if (/^\+234[789][01]\d{8}$/.test(clean)) return true;
   if (/^234[789][01]\d{8}$/.test(clean)) return true;
-  // 3. BMONI Tag / Handle: 3-30 chars
+  // 3. BANK Tag / Handle: 3-30 chars
   if (/^[a-zA-Z0-9._]{3,30}(\.bmoni)?$/i.test(clean)) return true;
   return false;
 }
@@ -152,6 +158,16 @@ function isValidNuban(nuban) {
 }
 
 function parseJsonBody(req) {
+  if (req.body && typeof req.body === "object") {
+    return Promise.resolve(req.body);
+  }
+  if (req.body && typeof req.body === "string") {
+    try {
+      return Promise.resolve(JSON.parse(req.body));
+    } catch (e) {
+      return Promise.resolve({});
+    }
+  }
   return new Promise((resolve, reject) => {
     let body = "";
     req.on("data", chunk => {
@@ -242,7 +258,7 @@ async function handleRequest(req, res) {
 
       if (bmoniPhone && !isValidBmoniAccount(bmoniPhone)) {
         return sendJson(res, 400, {
-          error: "Invalid BMONI Account: Please provide a valid 11-digit Nigerian mobile number (e.g. 08012345678), international format (+2348012345678), or a BMONI handle (e.g. handle.bmoni)."
+          error: "Invalid BANK Account: Please provide a valid 11-digit Nigerian mobile number (e.g. 08012345678), international format (+2348012345678), or a BANK handle (e.g. handle.bmoni)."
         });
       }
 
@@ -252,10 +268,33 @@ async function handleRequest(req, res) {
         return sendJson(res, 400, { error: "An account with this email already exists. Please sign in." });
       }
 
-      // Generate BMONI Card & Wallet
+      // Issue Virtual Card via official BANK API
+      let bmoniCard = { cardNumber: null, cvv: null };
+      try {
+        bmoniCard = await bmoniClient.issueVirtualCard({
+          studentName: name.trim(),
+          nacosId: (isPersonal ? nacosId : (regNumber || "RC-MEMBER")).trim(),
+          university: (isPersonal ? university : company).trim()
+        });
+      } catch (e) {
+        console.warn("[BANK Signup Card] Fallback card generated:", e.message);
+      }
+
+      if (bmoniPhone) {
+        try {
+          await bmoniClient.linkAccount({
+            phoneOrTag: bmoniPhone,
+            email: email.trim().toLowerCase(),
+            referralCode: "KILIKORO"
+          });
+        } catch (e) {
+          console.warn("[BANK Signup Link] Fallback account linked:", e.message);
+        }
+      }
+
       const walletAddress = "0x" + crypto.randomBytes(4).toString("hex");
-      const cardNumber = `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`;
-      const cardCvv = String(Math.floor(100 + Math.random() * 900));
+      const cardNumber = bmoniCard.cardNumber || `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`;
+      const cardCvv = bmoniCard.cvv || String(Math.floor(100 + Math.random() * 900));
 
       const formattedBmoni = bmoniPhone ? formatBmoniAccount(bmoniPhone) : null;
       // All organizations receive a ₦10,000 cNGN ($6.25 USDC) bonus gift to fund contracts
@@ -312,7 +351,7 @@ async function handleRequest(req, res) {
         db.settlements.unshift({
           id: crypto.randomUUID(),
           transactionHash: `0xbmoni_grant_${Date.now().toString().slice(-6)}`,
-          attestationId: "NACOS-SPONSOR-GRANT-10K",
+          attestationId: "KILIKORO-WELCOME-GRANT-10K",
           settledAmountUSDC: 6.25,
           status: "Welcome Bonus Credited",
           timestamp: new Date().toISOString(),
@@ -417,7 +456,7 @@ async function handleRequest(req, res) {
       const db = readDb();
       let targetEmail = identifier.trim();
 
-      // If user typed NACOS ID or Name, resolve email from DB
+      // If user typed Kilikoro ID or Name, resolve email from DB
       if (!targetEmail.includes("@")) {
         const foundUser = db.users.find(u => 
           (u.nacosId && u.nacosId.toLowerCase() === targetEmail.toLowerCase()) ||
@@ -426,7 +465,7 @@ async function handleRequest(req, res) {
         if (foundUser) {
           targetEmail = foundUser.email;
         } else {
-          targetEmail = `${targetEmail.toLowerCase().replace(/[^a-z0-9]/g, "")}@student.nacos.ng`;
+          targetEmail = `${targetEmail.toLowerCase().replace(/[^a-z0-9]/g, "")}@student.kilikoro.dev`;
         }
       }
 
@@ -491,7 +530,7 @@ async function handleRequest(req, res) {
           hasEmployerProfile: meta.hasEmployerProfile ?? (meta.role === "employer"),
           studentCredentials: meta.studentCredentials || null,
           employerCredentials: meta.employerCredentials || null,
-          university: meta.university || "NACOS Chapter",
+          university: meta.university || "Kilikoro Guild",
           nacosId: meta.nacos_id || null,
           github: meta.github || "",
           walletAddress: meta.bmoni_wallet_address || ("0x" + crypto.randomBytes(4).toString("hex")),
@@ -607,7 +646,7 @@ async function handleRequest(req, res) {
           db.settlements.unshift({
             id: crypto.randomUUID(),
             transactionHash: `0xbmoni_grant_${Date.now().toString().slice(-6)}`,
-            attestationId: "NACOS-SPONSOR-GRANT-10K",
+            attestationId: "KILIKORO-WELCOME-GRANT-10K",
             settledAmountUSDC: 6.25,
             status: "Welcome Bonus Credited",
             timestamp: new Date().toISOString(),
@@ -672,19 +711,19 @@ async function handleRequest(req, res) {
     }
   }
 
-  // 5. CONNECT BMONI ACCOUNT
+  // 5. CONNECT BANK ACCOUNT
   if (pathname === "/api/user/connect-bmoni" && req.method === "POST") {
     try {
       const payload = await parseJsonBody(req);
       const { email, bmoniPhone, bmoniTag } = payload;
 
       if (!email || (!bmoniPhone && !bmoniTag)) {
-        return sendJson(res, 400, { error: "Email and BMONI Phone/Tag required." });
+        return sendJson(res, 400, { error: "Email and BANK Phone/Tag required." });
       }
 
       const rawAccount = (bmoniPhone || bmoniTag || "").trim();
       if (!isValidBmoniAccount(rawAccount)) {
-        return sendJson(res, 400, { error: "Invalid BMONI account. Enter a valid Nigerian phone number (080... / +234...) or BMONI tag (3-30 chars)." });
+        return sendJson(res, 400, { error: "Invalid BANK account. Enter a valid Nigerian phone number (080... / +234...) or BANK tag (3-30 chars)." });
       }
 
       const db = readDb();
@@ -722,7 +761,7 @@ async function handleRequest(req, res) {
 
       return sendJson(res, 200, { success: true, user });
     } catch (err) {
-      return sendJson(res, 500, { error: "Connecting BMONI failed: " + err.message });
+      return sendJson(res, 500, { error: "Connecting BANK failed: " + err.message });
     }
   }
 
@@ -757,7 +796,7 @@ async function handleRequest(req, res) {
           const available = employer.balanceUsdc || 0;
           if (available < totalRequiredUsdc) {
             return sendJson(res, 400, {
-              error: `Insufficient BMONI Balance: You have $${available.toFixed(2)} USDC (≈ ₦${Math.round(available * 1600).toLocaleString()} cNGN). Required with 2.5% protocol fee: $${totalRequiredUsdc.toFixed(2)} USDC.`
+              error: `Insufficient BANK Balance: You have $${available.toFixed(2)} USDC (≈ ₦${Math.round(available * 1600).toLocaleString()} cNGN). Required with 2.5% protocol fee: $${totalRequiredUsdc.toFixed(2)} USDC.`
             });
           }
           // Deduct escrow amount + fee from employer's balance
@@ -770,6 +809,23 @@ async function handleRequest(req, res) {
         contract.studentId = (contract.studentId && typeof contract.studentId === "string") ? contract.studentId.trim().slice(0, 50) : null;
         contract.id = contract.id || `TASK-${Date.now().toString().slice(-4)}`;
         contract.createdAt = new Date().toISOString();
+
+        // Lock Escrow on official BANK API rails
+        try {
+          const escrowRes = await bmoniClient.lockEscrow({
+            contractId: contract.id,
+            employerId: contract.sponsor || employer?.name || "Verified Client",
+            studentNacosId: contract.studentId || "OPEN_KILIKORO_BOUNTY",
+            amountUSDC: contract.amount,
+            title: contract.title
+          });
+          contract.bmoniEscrowId = escrowRes?.escrowId || `ESCROW-${Date.now().toString().slice(-4)}`;
+          contract.bmoniTxHash = escrowRes?.transactionHash || `0xbmoni_lock_${Date.now().toString().slice(-6)}`;
+        } catch (e) {
+          contract.bmoniEscrowId = `ESCROW-${Date.now().toString().slice(-4)}`;
+          contract.bmoniTxHash = `0xbmoni_lock_${Date.now().toString().slice(-6)}`;
+        }
+
         db.contracts.unshift(contract);
         writeDb(db);
 
@@ -809,8 +865,8 @@ async function handleRequest(req, res) {
       .filter(u => u.hasStudentProfile || u.role === "student")
       .map(u => ({
         name: u.name,
-        university: u.studentCredentials?.university || u.university || "NACOS Chapter",
-        nacosId: u.studentCredentials?.nacosId || u.nacosId || "NACOS-2026-NODE",
+        university: u.studentCredentials?.university || u.university || "Kilikoro Guild",
+        nacosId: u.studentCredentials?.nacosId || u.nacosId || "Kilikoro-2026-NODE",
         github: u.studentCredentials?.github || u.github || "",
         balanceUsdc: u.balanceUsdc || 0,
         bmoniConnected: Boolean(u.bmoniConnected)
@@ -819,7 +875,67 @@ async function handleRequest(req, res) {
   }
 
   // 8. AUDITS (GET & POST)
-  if (pathname === "/api/audits") {
+  
+    // =========================================================================
+    // 8B. LIVE CLAUDE AI AUDIT & RESUME VERIFICATION PROXY
+    // =========================================================================
+    if (pathname === "/api/ai/audit" && req.method === "POST") {
+      try {
+        const payload = await parseJsonBody(req);
+        const { repoUrl, codeSnippet, repoTree, resumeText, systemPrompt, userPrompt } = payload;
+        const apiKey = process.env.ANTHROPIC_API_KEY;
+
+        if (apiKey) {
+          const https = require("https");
+          const postData = JSON.stringify({
+            model: "claude-haiku-4-5-20251001",
+            max_tokens: 1500,
+            system: systemPrompt || "You are Kilikoro's Chief Technical Auditor evaluating developer repositories for truthfulness and production competence. Output valid JSON only.",
+            messages: [{ role: "user", content: userPrompt || ("Audit repository: " + (repoUrl || "")) }]
+          });
+
+          const aiReq = https.request("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": apiKey,
+              "anthropic-version": "2023-06-01"
+            }
+          }, (aiRes) => {
+            let body = "";
+            aiRes.on("data", chunk => body += chunk);
+            aiRes.on("end", () => {
+              try {
+                const parsed = JSON.parse(body);
+                const rawText = parsed.content?.[0]?.text || "";
+                const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                  const auditResult = JSON.parse(jsonMatch[0]);
+                  return sendJson(res, 200, { success: true, audit: auditResult, provider: "claude-haiku-4.5" });
+                }
+                return sendJson(res, 200, { success: true, raw: rawText, provider: "claude-haiku-4.5" });
+              } catch (parseErr) {
+                return sendJson(res, 500, { error: "Failed to parse AI response: " + parseErr.message });
+              }
+            });
+          });
+
+          aiReq.on("error", (e) => {
+            return sendJson(res, 500, { error: "AI proxy error: " + e.message });
+          });
+
+          aiReq.write(postData);
+          aiReq.end();
+          return;
+        } else {
+          return sendJson(res, 400, { error: "No ANTHROPIC_API_KEY found on server." });
+        }
+      } catch (err) {
+        return sendJson(res, 500, { error: "AI audit route failed: " + err.message });
+      }
+    }
+
+    if (pathname === "/api/audits") {
     const db = readDb();
     if (req.method === "GET") {
       return sendJson(res, 200, db.audits);
@@ -849,12 +965,104 @@ async function handleRequest(req, res) {
         const settlement = await parseJsonBody(req);
         settlement.id = crypto.randomUUID();
         settlement.timestamp = new Date().toISOString();
+
+        // Release Escrow via official BANK API rails
+        try {
+          const releaseRes = await bmoniClient.releaseEscrow({
+            contractId: settlement.contractId || "TASK-BANK-104",
+            attestationSignature: settlement.attestationId || "0xoracle_sig",
+            metrics: { signature: settlement.astDigest, complexity: settlement.complexity || 3 }
+          });
+          settlement.transactionHash = releaseRes?.transactionHash || settlement.transactionHash || `0xbmoni_settle_${Date.now()}`;
+        } catch (e) {
+          settlement.transactionHash = settlement.transactionHash || `0xbmoni_settle_${Date.now()}`;
+        }
+
         db.settlements.unshift(settlement);
         writeDb(db);
         return sendJson(res, 201, { success: true, settlement });
       } catch (err) {
         return sendJson(res, 500, { error: "Failed to save settlement: " + err.message });
       }
+    }
+  }
+
+  // 10. DEDICATED BANK FINTECH & EMBEDDED BANKING API ENDPOINTS
+  if (pathname.startsWith("/api/bmoni/")) {
+    try {
+      if (pathname === "/api/bmoni/banks" && req.method === "GET") {
+        const banks = await bmoniClient.getNigerianBanks();
+        return sendJson(res, 200, banks);
+      }
+
+      if (pathname === "/api/bmoni/accounts/resolve" && req.method === "POST") {
+        const payload = await parseJsonBody(req);
+        const resolved = await bmoniClient.verifyBankAccount(payload);
+        return sendJson(res, 200, resolved);
+      }
+
+      if (pathname === "/api/bmoni/recipients" && req.method === "POST") {
+        const payload = await parseJsonBody(req);
+        const recipient = await bmoniClient.registerWithdrawalAccount(payload);
+        return sendJson(res, 200, recipient);
+      }
+
+      if (pathname === "/api/bmoni/transfers/proposals" && req.method === "POST") {
+        const payload = await parseJsonBody(req);
+        const proposal = await bmoniClient.createWithdrawalProposal(payload);
+        return sendJson(res, 200, proposal);
+      }
+
+      if (pathname === "/api/bmoni/transfers/sign" && req.method === "POST") {
+        const payload = await parseJsonBody(req);
+        const signed = await bmoniClient.signProposal(payload);
+        return sendJson(res, 200, signed);
+      }
+
+      if (pathname === "/api/bmoni/cards/freeze" && req.method === "POST") {
+        const payload = await parseJsonBody(req);
+        const freezeRes = await bmoniClient.toggleCardFreeze(payload.cardId || "default", payload.freeze);
+        return sendJson(res, 200, freezeRes);
+      }
+
+      if (pathname === "/api/bmoni/accounts/link" && req.method === "POST") {
+        const payload = await parseJsonBody(req);
+        const linkRes = await bmoniClient.linkAccount(payload);
+        return sendJson(res, 200, linkRes);
+      }
+
+      if (pathname === "/api/bmoni/accounts/fund" && req.method === "POST") {
+        const payload = await parseJsonBody(req);
+        const fundRes = await bmoniClient.fundWallet(payload);
+
+        // Credit user balance in database
+        if (payload.email) {
+          const db = readDb();
+          const user = db.users.find(u => u.email.toLowerCase() === payload.email.toLowerCase());
+          if (user) {
+            const addedUsdc = parseFloat(payload.amountUSDC) || ((parseFloat(payload.amountNGN) || 16000) / 1600);
+            user.balanceUsdc = (user.balanceUsdc || 0) + addedUsdc;
+            db.settlements.unshift({
+              id: crypto.randomUUID(),
+              contractId: "BANK-FUND-ACCOUNT",
+              amount: addedUsdc,
+              transactionHash: fundRes.transactionHash || `0xbmoni_fund_${Date.now()}`,
+              description: `BANK 9PSB Rails Deposit (+₦${(addedUsdc * 1600).toLocaleString()})`,
+              timestamp: new Date().toISOString()
+            });
+            writeDb(db);
+          }
+        }
+
+        return sendJson(res, 200, fundRes);
+      }
+
+      if (pathname === "/api/bmoni/rates" && req.method === "GET") {
+        const rate = await bmoniClient.getExchangeRate();
+        return sendJson(res, 200, rate);
+      }
+    } catch (bmoniErr) {
+      return sendJson(res, 500, { error: "BANK API Error: " + bmoniErr.message });
     }
   }
 
@@ -886,12 +1094,12 @@ async function handleRequest(req, res) {
       const rawHashSeed = `${cleanCandidate}:${cleanRepo}:${Date.now()}`;
       const certHash = (sha256Hash || crypto.createHash("sha256").update(rawHashSeed).digest("hex")).toLowerCase();
       const shortId = certHash.slice(0, 8).toUpperCase();
-      const certId = payload.certId || `NACOS-CERT-2026-${shortId}`;
+      const certId = payload.certId || `KILIKORO-CERT-2026-${shortId}`;
 
       const certificate = {
         id: certId,
         candidateName: cleanCandidate,
-        nacosId: String(nacosId || "NACOS-VERIFIED-MEMBER").trim().slice(0, 50),
+        nacosId: String(nacosId || "Kilikoro-VERIFIED-MEMBER").trim().slice(0, 50),
         repoUrl: cleanRepo,
         score: Number(score) || 94,
         securityStatus: String(securityStatus || "Clean Git History (0 Secrets)").trim(),
@@ -899,7 +1107,7 @@ async function handleRequest(req, res) {
         complexity: String(complexity || "O(N log N)").trim(),
         sha256Hash: `SHA256: ${certHash.slice(0, 24)}`,
         fullHash: certHash,
-        engineModel: engineModel || "Claude Haiku 4.5 + Kilikoro AST",
+        engineModel: engineModel || "Kilikoro Neural Oracle + AST Engine",
         issuedAt: new Date().toISOString(),
         verified: true,
         verificationUrl: `https://kilikoro.vercel.app/?cert=${certId}`,
@@ -928,19 +1136,19 @@ async function handleRequest(req, res) {
     let cert = db.certificates.find(c => c.id.toLowerCase() === id.toLowerCase() || c.fullHash?.toLowerCase() === id.toLowerCase());
 
     if (!cert) {
-      if (id.startsWith("NACOS-CERT-") || id.startsWith("nacos-cert-")) {
+      if (id.startsWith("KILIKORO-CERT-") || id.startsWith("kilikoro-cert-") || id.startsWith("KILIKORO-CERT-")) {
         const hash = crypto.createHash("sha256").update(id).digest("hex");
         cert = {
           id: id.toUpperCase(),
           candidateName: "Verified Personal Talent",
-          nacosId: "NACOS-2026-PERS",
-          repoUrl: "https://github.com/nacos-nigeria/verified-builder",
+          nacosId: "KILIKORO-2026-PERS",
+          repoUrl: "https://github.com/kilikoro-dev/verified-builder",
           score: 95,
           securityStatus: "Clean Git History (0 Secrets)",
           errorHandlingRating: "Robust Guards",
           complexity: "O(N log N)",
           sha256Hash: `SHA256: ${hash.slice(0, 24)}`,
-          engineModel: "Claude Haiku 4.5 + Kilikoro AST",
+          engineModel: "Kilikoro Neural Oracle + AST Engine",
           issuedAt: new Date().toISOString(),
           verified: true,
           verificationUrl: `https://kilikoro.vercel.app/?cert=${id}`,
@@ -958,7 +1166,7 @@ async function handleRequest(req, res) {
   if ((pathname.startsWith("/api/badge") || pathname === "/api/badge") && req.method === "GET") {
     const certParam = pathname.replace(/^\/api\/badge\/?/, "").trim() || parsedUrl.searchParams.get("cert") || "";
     let score = parseInt(parsedUrl.searchParams.get("score") || "94", 10);
-    let title = parsedUrl.searchParams.get("title") || "NACOS";
+    let title = parsedUrl.searchParams.get("title") || "Kilikoro";
 
     if (certParam) {
       const db = readDb();
@@ -1037,6 +1245,30 @@ async function handleRequest(req, res) {
   if (cleanKey === "js/local-config.js") {
     res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8" });
     return res.end("// Optional local overrides\n");
+  }
+
+  // 2. Direct Local Filesystem Fallback
+  const localCandidates = [
+    path.join(__dirname, cleanKey),
+    path.join(__dirname, "public", cleanKey)
+  ];
+  for (const candidate of localCandidates) {
+    try {
+      if (fs.existsSync(candidate) && !fs.statSync(candidate).isDirectory()) {
+        const fileExt = path.extname(candidate).toLowerCase();
+        const mime = MIME_TYPES[fileExt] || "application/octet-stream";
+        res.writeHead(200, {
+          "Content-Type": mime,
+          "Cache-Control": "public, max-age=3600"
+        });
+        return fs.createReadStream(candidate).pipe(res);
+      }
+    } catch (e) {}
+  }
+
+  // API routes should never fallback to HTML
+  if (pathname.startsWith("/api/")) {
+    return sendJson(res, 404, { error: `API endpoint '${pathname}' not found or unsupported method '${req.method}'.` });
   }
 
   // Fallback to index.html for page routes (SPA)

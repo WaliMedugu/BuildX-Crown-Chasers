@@ -108,22 +108,44 @@ Sample code:
 ${codeSnippet ? codeSnippet.slice(0, 2500) : "Reviewing repository architecture and commits."}
 \`\`\``;
 
+    // 1. Try secure backend server proxy first (avoids CORS and protects API keys)
+    try {
+      const serverProxyRes = await fetch("/api/ai/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          repoUrl,
+          codeSnippet,
+          repoTree,
+          resumeText,
+          systemPrompt,
+          userPrompt
+        })
+      });
+
+      if (serverProxyRes.ok) {
+        const proxyData = await serverProxyRes.json();
+        if (proxyData.audit) return proxyData.audit;
+      }
+    } catch (proxyErr) {
+      console.warn("Server AI proxy notice:", proxyErr.message);
+    }
+
+    // 2. Client-side direct call fallback if running with local config
     if (this.apiKey) {
       try {
         const headers = {
           "Content-Type": "application/json",
           "x-api-key": this.apiKey,
-          "anthropic-version": "2023-06-01"
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
         };
-        if (typeof window !== "undefined") {
-          headers["anthropic-dangerous-direct-browser-access"] = "true";
-        }
 
         const response = await fetch(ANTHROPIC_API_URL, {
           method: "POST",
           headers: headers,
           body: JSON.stringify({
-            model: this.model,
+            model: "claude-haiku-4-5-20251001",
             max_tokens: 1000,
             system: systemPrompt,
             messages: [{ role: "user", content: userPrompt }]
@@ -137,7 +159,7 @@ ${codeSnippet ? codeSnippet.slice(0, 2500) : "Reviewing repository architecture 
           if (jsonMatch) return JSON.parse(jsonMatch[0]);
         }
       } catch (err) {
-        console.warn("Claude API fallback:", err.message);
+        console.warn("Claude direct API fallback:", err.message);
       }
     }
 

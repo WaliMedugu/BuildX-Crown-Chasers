@@ -1,268 +1,439 @@
 {
   "users": [
     {
-      "id": "d15ec5e7-1cd4-4fe1-ac3e-a5d4b70a120a",
+      "id": "wali-medugu-solo-builder",
       "name": "Wali Medugu",
       "email": "blueparticlestudios@gmail.com",
-      "role": "organization",
+      "role": "personal",
+      "hasPersonalProfile": true,
       "hasStudentProfile": true,
+      "hasOrganizationProfile": true,
       "hasEmployerProfile": true,
+      "personalCredentials": {
+        "university": "Nile University of Nigeria",
+        "nacosId": "242120036",
+        "github": "https://github.com/WaliMedugu"
+      },
       "studentCredentials": {
         "university": "Nile University of Nigeria",
         "nacosId": "242120036",
         "github": "https://github.com/WaliMedugu"
       },
+      "organizationCredentials": {
+        "company": "Kilikoro Autonomous Labs",
+        "regNumber": "RC-781920",
+        "department": "Core Systems & Engineering",
+        "location": "Abuja, Nigeria"
+      },
       "employerCredentials": {
-        "company": "Beacora\\Dollara",
-        "regNumber": "Beacora\\Dollara",
-        "department": "gkjv;vvk;k",
-        "location": "Nigeria / Remote"
+        "company": "Kilikoro Autonomous Labs",
+        "regNumber": "RC-781920",
+        "department": "Core Systems & Engineering",
+        "location": "Abuja, Nigeria"
       },
       "university": "Nile University of Nigeria",
       "nacosId": "242120036",
       "github": "https://github.com/WaliMedugu",
-      "company": "Beacora\\Dollara",
+      "company": "Kilikoro Autonomous Labs",
       "walletAddress": "0x5815d72b",
       "cardNumber": "5399 8830 4317 7140",
       "cardCvv": "857",
-      "balanceUsdc": 6.25,
+      "balanceUsdc": 150,
       "bmoniConnected": true,
       "bmoniPhone": "+2349061950587",
-      "bmoniTag": "walimedugu.bmoni",
-      "createdAt": "2026-09-29T06:25:21.321Z",
-      "hasOrganizationProfile": true,
-      "organizationCredentials": {
-        "company": "Beacora\\Dollara",
-        "regNumber": "Beacora\\Dollara",
-        "department": "gkjv;vvk;k",
-        "location": "Nigeria / Remote"
-      },
+      "bmoniTag": "walimedugu.bank",
+      "createdAt": "2026-10-01T20:15:00.000Z",
       "employerBonusCredited": true
     },
     {
-      "id": "25a43675-563e-4f16-bb44-12f284949a84",
-      "name": "Tunde Oladipo",
-      "email": "test_pers_1790671231106@example.com",
-      "role": "organization",
+      "id": "amina-bello-ai-builder",
+      "name": "Amina Bello",
+      "email": "amina.bello@abu.edu.ng",
+      "role": "personal",
       "hasPersonalProfile": true,
-      "hasOrganizationProfile": true,
       "hasStudentProfile": true,
-      "hasEmployerProfile": true,
+      "hasOrganizationProfile": false,
+      "hasEmployerProfile": false,
       "personalCredentials": {
-        "university": "UNILAG",
-        "nacosId": "UNILAG-CS-2026-9999",
-        "github": "tunde-dev"
-      },
-      "organizationCredentials": {
-        "company": "Apex Labs Ltd",
-        "regNumber": "RC-998877",
-        "department": "Engineering",
-        "location": "Nigeria / Remote"
+        "university": "Ahmadu Bello University, Zaria",
+        "nacosId": "ABU-CS-2026-1184",
+        "github": "https://github.com/amina-ml-dev"
       },
       "studentCredentials": {
-        "university": "UNILAG",
-        "nacosId": "UNILAG-CS-2026-9999",
-        "github": "tunde-dev"
+        "university": "Ahmadu Bello University, Zaria",
+        "nacosId": "ABU-CS-2026-1184",
+        "github": "https://github.com/amina-ml-dev"
       },
-      "employerCredentials": {
-        "company": "Apex Labs Ltd",
-        "regNumber": "RC-998877",
-        "department": "Engineering",
-        "location": "Nigeria / Remote"
-      },
-      "university": "UNILAG",
-      "nacosId": "UNILAG-CS-2026-9999",
-      "github": "tunde-dev",
-      "company": "Apex Labs Ltd",
-      "walletAddress": "0x64c5bffb",
-      "cardNumber": "5399 1041 9286 1476",
-      "cardCvv": "914",
-      "balanceUsdc": 6.25,
-      "bmoniConnected": false,
-      "bmoniPhone": null,
-      "bmoniTag": "tundeoladipo.bmoni",
-      "createdAt": "2026-09-29T08:40:31.112Z",
-      "employerBonusCredited": true
-    },
-    {
-      "id": "44601f16-b6d5-44c0-aca9-21387ed99a64",
-      "name": "ihsirhhpf ihafeiphfaehpe",
-      "email": "w4t4qt4@gmail.com",
-      "role": "organization",
-      "hasPersonalProfile": true,
-      "hasOrganizationProfile": true,
-      "hasStudentProfile": true,
-      "hasEmployerProfile": true,
-      "personalCredentials": {
-        "university": "q4tq4t",
-        "nacosId": "qt4qt4",
-        "github": "qt4tq4"
-      },
-      "organizationCredentials": {
-        "company": "4wgqaw",
-        "regNumber": "RC-193891",
-        "department": "Engineering & Operations",
-        "location": "Nigeria / Remote"
-      },
-      "studentCredentials": {
-        "university": "q4tq4t",
-        "nacosId": "qt4qt4",
-        "github": "qt4tq4"
-      },
-      "employerCredentials": {
-        "company": "4wgqaw",
-        "regNumber": "RC-193891",
-        "department": "Engineering & Operations",
-        "location": "Nigeria / Remote"
-      },
-      "university": "q4tq4t",
-      "nacosId": "qt4qt4",
-      "github": "qt4tq4",
-      "company": "4wgqaw",
-      "walletAddress": "0x5cf3fb84",
-      "cardNumber": "5399 7558 2115 7246",
-      "cardCvv": "676",
-      "balanceUsdc": 4.2,
+      "university": "Ahmadu Bello University, Zaria",
+      "nacosId": "ABU-CS-2026-1184",
+      "github": "https://github.com/amina-ml-dev",
+      "walletAddress": "0x78a1bc23",
+      "cardNumber": "5399 4412 8901 3345",
+      "cardCvv": "492",
+      "balanceUsdc": 420,
       "bmoniConnected": true,
-      "bmoniPhone": "9061950587.bmoni",
-      "bmoniTag": "9061950587.bmoni",
-      "createdAt": "2026-09-29T20:41:56.418Z",
-      "employerBonusCredited": true
+      "bmoniPhone": "+2348031234567",
+      "bmoniTag": "aminabello.bank",
+      "createdAt": "2026-10-01T21:00:00.000Z"
+    },
+    {
+      "id": "chidi-okonkwo-systems",
+      "name": "Chidi Okonkwo",
+      "email": "chidi.okonkwo@unilag.edu.ng",
+      "role": "personal",
+      "hasPersonalProfile": true,
+      "hasStudentProfile": true,
+      "hasOrganizationProfile": false,
+      "hasEmployerProfile": false,
+      "personalCredentials": {
+        "university": "University of Lagos (UNILAG)",
+        "nacosId": "UNILAG-CS-2026-0482",
+        "github": "https://github.com/chidi-systems"
+      },
+      "studentCredentials": {
+        "university": "University of Lagos (UNILAG)",
+        "nacosId": "UNILAG-CS-2026-0482",
+        "github": "https://github.com/chidi-systems"
+      },
+      "university": "University of Lagos (UNILAG)",
+      "nacosId": "UNILAG-CS-2026-0482",
+      "github": "https://github.com/chidi-systems",
+      "walletAddress": "0x91d4e21a",
+      "cardNumber": "5399 7820 1194 6502",
+      "cardCvv": "319",
+      "balanceUsdc": 850,
+      "bmoniConnected": true,
+      "bmoniPhone": "+2348129876543",
+      "bmoniTag": "chidi.bank",
+      "createdAt": "2026-10-01T21:30:00.000Z"
+    },
+    {
+      "id": "zainab-alhassan-ui",
+      "name": "Zainab Al-Hassan",
+      "email": "zainab.alhassan@ui.edu.ng",
+      "role": "personal",
+      "hasPersonalProfile": true,
+      "hasStudentProfile": true,
+      "personalCredentials": {
+        "university": "University of Ibadan",
+        "nacosId": "UI-CS-2026-0791",
+        "github": "https://github.com/zainab-code"
+      },
+      "studentCredentials": {
+        "university": "University of Ibadan",
+        "nacosId": "UI-CS-2026-0791",
+        "github": "https://github.com/zainab-code"
+      },
+      "university": "University of Ibadan",
+      "nacosId": "UI-CS-2026-0791",
+      "github": "https://github.com/zainab-code",
+      "walletAddress": "0x44f128bc",
+      "cardNumber": "5399 6610 8821 9043",
+      "cardCvv": "228",
+      "balanceUsdc": 310,
+      "bmoniConnected": true,
+      "bmoniPhone": "+2348145556677",
+      "bmoniTag": "zainab.bank",
+      "createdAt": "2026-10-01T22:00:00.000Z"
+    },
+    {
+      "id": "david-mensah-sec",
+      "name": "David Mensah",
+      "email": "david.mensah@ashesi.edu.gh",
+      "role": "personal",
+      "hasPersonalProfile": true,
+      "hasStudentProfile": true,
+      "personalCredentials": {
+        "university": "Ashesi University",
+        "nacosId": "ASH-CS-2026-0312",
+        "github": "https://github.com/dmensah-dev"
+      },
+      "studentCredentials": {
+        "university": "Ashesi University",
+        "nacosId": "ASH-CS-2026-0312",
+        "github": "https://github.com/dmensah-dev"
+      },
+      "university": "Ashesi University",
+      "nacosId": "ASH-CS-2026-0312",
+      "github": "https://github.com/dmensah-dev",
+      "walletAddress": "0x33e590fa",
+      "cardNumber": "5399 2201 7749 8130",
+      "cardCvv": "671",
+      "balanceUsdc": 600,
+      "bmoniConnected": true,
+      "bmoniPhone": "+233541234567",
+      "bmoniTag": "mensah.bank",
+      "createdAt": "2026-10-01T22:30:00.000Z"
+    },
+    {
+      "id": "starlight-labs-sponsor",
+      "name": "Starlight FinTech Labs",
+      "email": "grants@starlightlabs.io",
+      "role": "organization",
+      "hasOrganizationProfile": true,
+      "hasEmployerProfile": true,
+      "organizationCredentials": {
+        "company": "Starlight FinTech Labs Inc.",
+        "regNumber": "RC-889900",
+        "department": "Open Banking & Developer Grants",
+        "location": "Lagos • London • Remote"
+      },
+      "employerCredentials": {
+        "company": "Starlight FinTech Labs Inc.",
+        "regNumber": "RC-889900",
+        "department": "Open Banking & Developer Grants",
+        "location": "Lagos • London • Remote"
+      },
+      "company": "Starlight FinTech Labs Inc.",
+      "walletAddress": "0xstarlight_treasury",
+      "cardNumber": "5399 9001 2234 5567",
+      "cardCvv": "991",
+      "balanceUsdc": 25000,
+      "bmoniConnected": true,
+      "bmoniPhone": "+2348020001111",
+      "bmoniTag": "starlight.bank",
+      "createdAt": "2026-10-01T19:00:00.000Z"
     }
   ],
   "contracts": [
     {
-      "id": "CT-PRIV-4203",
-      "type": "private",
-      "sponsor": "ihsirhhpf ihafeiphfaehpe",
-      "sponsorEmail": "w4t4qt4@gmail.com",
-      "avatar": "I",
+      "id": "TASK-BANK-101",
+      "type": "public",
+      "sponsor": "Kilikoro Foundation",
+      "sponsorEmail": "foundation@kilikoro.dev",
+      "avatar": "K",
       "avatarColor": "var(--accent-terracotta)",
-      "title": "ethht",
-      "desc": "wrhwrhwrhrwhr",
-      "amount": 2,
+      "title": "Implement AST Syntactic Entropy Analyzer for Anti-AI Verification",
+      "desc": "Develop an in-memory Abstract Syntax Tree parser that calculates cyclomatic complexity and detects repetitive synthetic token patterns in submitted solutions.",
+      "amount": 350,
       "tags": [
-        "Private Hire",
+        "Public Bounty",
+        "AST Engine",
+        "TypeScript",
         "Escrow Locked"
       ],
       "status": "Escrow Locked",
-      "studentId": "24210036",
-      "bmoniEscrowId": "ESCROW-654789",
-      "bmoniTxHash": "0xbmoni_f23e97de074e",
-      "createdAt": "2026-09-29T20:44:14.796Z"
+      "studentId": "OPEN_BOUNTY",
+      "bmoniEscrowId": "ESCROW-9921",
+      "bmoniTxHash": "0xbank_lock_ast_8829",
+      "createdAt": "2026-10-01T21:10:00.000Z"
+    },
+    {
+      "id": "TASK-BANK-102",
+      "type": "public",
+      "sponsor": "Starlight FinTech Labs",
+      "sponsorEmail": "grants@starlightlabs.io",
+      "avatar": "S",
+      "avatarColor": "var(--accent-gold)",
+      "title": "High-Throughput Concurrent Webhook Dispatcher",
+      "desc": "Build a bounded worker-pool queue in Node.js capable of delivering 5,000+ signed banking webhook event payloads per second with exponential backoff and retry jitter.",
+      "amount": 450,
+      "tags": [
+        "Public Bounty",
+        "FinTech Rails",
+        "Node.js",
+        "Escrow Locked"
+      ],
+      "status": "Escrow Locked",
+      "studentId": "OPEN_BOUNTY",
+      "bmoniEscrowId": "ESCROW-7741",
+      "bmoniTxHash": "0xbank_lock_whk_4410",
+      "createdAt": "2026-10-01T21:40:00.000Z"
+    },
+    {
+      "id": "TASK-BANK-103",
+      "type": "public",
+      "sponsor": "Nexus Robotics & AI",
+      "sponsorEmail": "engineering@nexusrobotics.ai",
+      "avatar": "N",
+      "avatarColor": "var(--status-emerald)",
+      "title": "Edge Telemetry Compression Engine (Big-O Assertion)",
+      "desc": "Implement a deterministic streaming compression filter maintaining sub-linear memory footprint O(log N) for embedded IoT telemetry arrays.",
+      "amount": 280,
+      "tags": [
+        "Public Bounty",
+        "Algorithms",
+        "Big-O Assertion",
+        "Escrow Locked"
+      ],
+      "status": "Escrow Locked",
+      "studentId": "OPEN_BOUNTY",
+      "bmoniEscrowId": "ESCROW-5510",
+      "bmoniTxHash": "0xbank_lock_iot_1932",
+      "createdAt": "2026-10-01T22:15:00.000Z"
+    },
+    {
+      "id": "CT-PRIV-401",
+      "type": "private",
+      "sponsor": "Starlight FinTech Labs",
+      "sponsorEmail": "grants@starlightlabs.io",
+      "avatar": "S",
+      "avatarColor": "var(--accent-gold)",
+      "title": "Direct Milestone: Virtual Card Ledger Reconciliation for Amina Bello",
+      "desc": "Private milestone contract to audit double-entry ledger transactions and verify zero balance discrepancies across 10,000 simulated accounts.",
+      "amount": 200,
+      "tags": [
+        "Private Contract",
+        "Ledger Engine",
+        "Escrow Locked"
+      ],
+      "status": "Escrow Locked",
+      "studentId": "ABU-CS-2026-1184",
+      "bmoniEscrowId": "ESCROW-3392",
+      "bmoniTxHash": "0xbank_lock_pvt_9041",
+      "createdAt": "2026-10-01T22:50:00.000Z"
+    },
+    {
+      "id": "CT-PRIV-402",
+      "type": "private",
+      "sponsor": "Kilikoro Autonomous Labs",
+      "sponsorEmail": "blueparticlestudios@gmail.com",
+      "avatar": "K",
+      "avatarColor": "var(--accent-terracotta)",
+      "title": "Direct Milestone: Cryptographic Student Credential Issuer for Chidi Okonkwo",
+      "desc": "Implement Ed25519 signature generation and decentralized ID (DID) claims for verified student portfolio attestations.",
+      "amount": 300,
+      "tags": [
+        "Private Contract",
+        "Cryptography",
+        "Escrow Locked"
+      ],
+      "status": "Escrow Locked",
+      "studentId": "UNILAG-CS-2026-0482",
+      "bmoniEscrowId": "ESCROW-2114",
+      "bmoniTxHash": "0xbank_lock_pvt_7712",
+      "createdAt": "2026-10-01T23:20:00.000Z"
+    },
+    {
+      "id": "CT-SETTLED-501",
+      "type": "public",
+      "sponsor": "Kilikoro Foundation",
+      "sponsorEmail": "foundation@kilikoro.dev",
+      "avatar": "K",
+      "avatarColor": "var(--accent-terracotta)",
+      "title": "Zero-Latency Client-Side View Router for Kilikoro",
+      "desc": "Engineered a zero-dependency vanilla JS routing engine with breadcrumb state persistence and sub-10ms transition latency.",
+      "amount": 150,
+      "tags": [
+        "Completed",
+        "Settled & Paid",
+        "Vanilla JS"
+      ],
+      "status": "Completed & Settled",
+      "studentId": "242120036",
+      "bmoniEscrowId": "ESCROW-1002",
+      "bmoniTxHash": "0xbank_settle_router_5592",
+      "createdAt": "2026-10-02T00:15:00.000Z"
     }
   ],
   "audits": [
     {
-      "repo": "https://github.com/WaliMedugu/BuildX-Crown-Chasers",
-      "score": 94,
+      "repo": "https://github.com/WaliMedugu/first-commit-hacathon-2026",
+      "score": 98,
       "securityStatus": "Clean - Zero Secrets Exposed",
       "productionReadiness": "Production Ready",
       "errorHandlingRating": "Robust (Try/Catch & Bounded Complexity)",
-      "summary": "Repository 'https://github.com/WaliMedugu/BuildX-Crown-Chasers' demonstrates clean architecture, zero hardcoded secrets, and solid input validation for production workloads.",
+      "summary": "Repository 'https://github.com/WaliMedugu/first-commit-hacathon-2026' demonstrates immaculate architectural separation, zero exposed secrets, sub-millisecond execution times, and comprehensive error handling.",
       "strengths": [
-        "Environment variable hygiene (No exposed API keys in Git)",
-        "Clear error handling and input null-checks",
-        "Deterministic memory allocation"
+        "Zero heavyweight framework bloat (Pure high-performance Vanilla JS)",
+        "Deterministic memory allocation in AST algorithmic sandbox",
+        "Clean, human-readable modular state management"
       ],
       "hygieneFlags": [
-        "Add continuous integration workflow for automated test runs"
+        "Continuous automated test pipeline recommended as codebase scales"
       ],
+      "recommendation": "Strong Hire & Grant Winner",
+      "verifiedClaims": [
+        "Verified AST Cyclomatic Complexity Parser",
+        "Integrated BANK Milestone Escrow Engine",
+        "3D Hardware-Accelerated Virtual Mastercard Physics"
+      ],
+      "unverifiedClaims": [],
+      "id": "audit-wali-medugu-core",
+      "createdAt": "2026-10-02T01:30:00.000Z"
+    },
+    {
+      "repo": "https://github.com/amina-ml-dev/distributed-ast",
+      "score": 95,
+      "securityStatus": "Clean - Zero Secrets Exposed",
+      "productionReadiness": "Production Ready",
+      "errorHandlingRating": "Robust (Boundary Checks)",
+      "summary": "High-efficiency AST parser with sub-linear memory footprint.",
+      "strengths": [
+        "Strong typing and algorithmic efficiency",
+        "Comprehensive assertion suite"
+      ],
+      "hygieneFlags": [],
       "recommendation": "Hire",
       "verifiedClaims": [],
       "unverifiedClaims": [],
-      "id": "e04a64b5-7389-4418-9641-c1b15fdb07b1",
-      "createdAt": "2026-09-29T20:38:30.523Z"
+      "id": "audit-amina-bello",
+      "createdAt": "2026-10-01T22:45:00.000Z"
     }
   ],
   "settlements": [
     {
-      "id": "6f90d020-b477-4351-a54d-9cb6a1f7aa1e",
-      "transactionHash": "0xbmoni_grant_562522",
-      "attestationId": "NACOS-SPONSOR-GRANT-10K",
-      "settledAmountUSDC": 6.25,
-      "status": "Welcome Bonus Credited",
-      "timestamp": "2026-09-29T20:42:42.522Z",
-      "recipient": "w4t4qt4@gmail.com"
-    },
-    {
-      "id": "207bdcac-2e55-4d52-a28c-f0cc0ecaca09",
-      "transactionHash": "0xbmoni_grant_550352",
-      "attestationId": "NACOS-SPONSOR-GRANT-10K",
-      "settledAmountUSDC": 6.25,
-      "status": "Welcome Bonus Credited",
-      "timestamp": "2026-09-29T17:39:10.352Z",
+      "id": "settle-welcome-wali",
+      "transactionHash": "0xbank_grant_150000",
+      "attestationId": "KILIKORO-WELCOME-GRANT-150",
+      "settledAmountUSDC": 150,
+      "status": "Welcome Grant Credited",
+      "timestamp": "2026-10-01T20:15:00.000Z",
       "recipient": "blueparticlestudios@gmail.com"
     },
     {
-      "id": "3cac0641-3ff9-4f68-8d5b-1855bba91029",
-      "transactionHash": "0xbmoni_grant_233355",
-      "attestationId": "NACOS-SPONSOR-GRANT-10K",
-      "settledAmountUSDC": 6.25,
-      "status": "Welcome Bonus Credited",
-      "timestamp": "2026-09-29T08:40:33.355Z",
-      "recipient": "test_pers_1790671231106@example.com"
+      "id": "settle-contract-501",
+      "transactionHash": "0xbank_settle_router_5592",
+      "attestationId": "KILIKORO-ESCROW-SETTLE-501",
+      "settledAmountUSDC": 150,
+      "status": "Milestone Escrow Released",
+      "timestamp": "2026-10-02T00:18:00.000Z",
+      "recipient": "blueparticlestudios@gmail.com"
     },
     {
-      "transactionHash": "0xbmoni_144f0d0a6826",
-      "attestationId": "OFFRAMP-NGN-7890",
-      "settledAmountUSDC": -8095808870,
-      "status": "Bank Settled",
-      "timestamp": "2026-09-29T06:45:30.300Z",
-      "id": "cc145882-e913-4813-8b8a-048b50d3d4ed"
+      "id": "settle-grant-amina",
+      "transactionHash": "0xbank_grant_420000",
+      "attestationId": "KILIKORO-DEV-GRANT-420",
+      "settledAmountUSDC": 420,
+      "status": "Bounty Winner Settled",
+      "timestamp": "2026-10-01T21:05:00.000Z",
+      "recipient": "amina.bello@abu.edu.ng"
     }
   ],
   "certificates": [
     {
-      "id": "NACOS-CERT-2026-1EE4D9A7",
-      "candidateName": "Audited Candidate",
-      "nacosId": "NACOS-VERIFIED-MEMBER",
-      "repoUrl": "https://github.com/WaliMedugu/BuildX-Crown-Chasers",
-      "score": 94,
-      "securityStatus": "Clean - Zero Secrets Exposed",
-      "errorHandlingRating": "Robust Guards",
-      "complexity": "O(N log N) Scalability",
-      "sha256Hash": "SHA256: 1ee4d9a7e69504aca215c9a0",
-      "fullHash": "1ee4d9a7e69504aca215c9a0bb9e16309c4ae53424647bb25157c1ec6e13bdf3",
-      "engineModel": "Claude Haiku 4.5 + Kilikoro AST",
-      "issuedAt": "2026-09-29T20:53:53.338Z",
-      "verified": true,
-      "verificationUrl": "https://kilikoro.vercel.app/?cert=NACOS-CERT-2026-1EE4D9A7",
-      "badgeUrl": "https://kilikoro.vercel.app/api/badge/NACOS-CERT-2026-1EE4D9A7"
-    },
-    {
-      "id": "NACOS-CERT-2026-4FABCBFB",
+      "id": "KILIKORO-CERT-2026-WALI",
       "candidateName": "Wali Medugu",
-      "nacosId": "NACOS-VERIFIED-MEMBER",
-      "repoUrl": "https://github.com/WaliMedugu/kilikoro-core",
+      "nacosId": "242120036",
+      "repoUrl": "https://github.com/WaliMedugu/first-commit-hacathon-2026",
       "score": 98,
       "securityStatus": "Clean - Zero Secrets Exposed",
       "errorHandlingRating": "Robust Guards",
       "complexity": "O(N log N) Scalability",
       "sha256Hash": "SHA256: 4fabcbfb367170c5e954729b",
       "fullHash": "4fabcbfb367170c5e954729bffc9a558abdbaf33f352eb126cd5b7cd26f004d4",
-      "engineModel": "Claude Haiku 4.5 + Kilikoro AST",
-      "issuedAt": "2026-09-29T16:05:15.446Z",
+      "engineModel": "Kilikoro Neural Oracle + AST Engine",
+      "issuedAt": "2026-10-02T01:35:00.000Z",
       "verified": true,
-      "verificationUrl": "https://kilikoro.vercel.app/?cert=NACOS-CERT-2026-4FABCBFB",
-      "badgeUrl": "https://kilikoro.vercel.app/api/badge/NACOS-CERT-2026-4FABCBFB"
+      "verificationUrl": "https://kilikoro.vercel.app/?cert=KILIKORO-CERT-2026-WALI",
+      "badgeUrl": "https://kilikoro.vercel.app/api/badge/KILIKORO-CERT-2026-WALI"
     },
     {
-      "id": "NACOS-CERT-2026-10F660F2",
-      "candidateName": "Wali Medugu",
-      "nacosId": "NACOS-VERIFIED-MEMBER",
-      "repoUrl": "https://github.com/WaliMedugu/kilikoro-core",
-      "score": 98,
+      "id": "KILIKORO-CERT-2026-AMINA",
+      "candidateName": "Amina Bello",
+      "nacosId": "ABU-CS-2026-1184",
+      "repoUrl": "https://github.com/amina-ml-dev/distributed-ast",
+      "score": 95,
       "securityStatus": "Clean - Zero Secrets Exposed",
       "errorHandlingRating": "Robust Guards",
-      "complexity": "O(N log N) Scalability",
-      "sha256Hash": "SHA256: 10f660f2eaea55af85a2e70f",
-      "fullHash": "10f660f2eaea55af85a2e70f11a744eba569591fc3d388607dfbc1dd9ded87de",
-      "engineModel": "Claude Haiku 4.5 + Kilikoro AST",
-      "issuedAt": "2026-09-29T16:02:52.668Z",
+      "complexity": "O(N) Scalability",
+      "sha256Hash": "SHA256: 8a1e2f4c9901bc32",
+      "fullHash": "8a1e2f4c9901bc32e91244fa1205bcd9912048aa124ef1209bca11204ef91102",
+      "engineModel": "Kilikoro Neural Oracle + AST Engine",
+      "issuedAt": "2026-10-01T22:50:00.000Z",
       "verified": true,
-      "verificationUrl": "https://kilikoro.vercel.app/?cert=NACOS-CERT-2026-10F660F2",
-      "badgeUrl": "https://kilikoro.vercel.app/api/badge/NACOS-CERT-2026-10F660F2"
+      "verificationUrl": "https://kilikoro.vercel.app/?cert=KILIKORO-CERT-2026-AMINA",
+      "badgeUrl": "https://kilikoro.vercel.app/api/badge/KILIKORO-CERT-2026-AMINA"
     }
   ]
 }

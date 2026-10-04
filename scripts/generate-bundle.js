@@ -14,7 +14,11 @@ const MIME_MAP = {
   ".jpeg": "image/jpeg",
   ".svg": "image/svg+xml",
   ".ico": "image/x-icon",
-  ".webp": "image/webp"
+  ".webp": "image/webp",
+  ".otf": "font/otf",
+  ".ttf": "font/ttf",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2"
 };
 
 function getMime(filePath) {

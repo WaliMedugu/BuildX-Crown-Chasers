@@ -141,6 +141,40 @@ class BmoniClient {
   }
 
   /**
+   * 6. Link BMONI Account via Official BMONI API
+   */
+  async linkAccount({ phoneOrTag, email, referralCode = "NACOS" }) {
+    return await this._request("/accounts/link", "POST", {
+      phoneOrTag,
+      email,
+      referralCode,
+      clientProtocol: "Kilikoro-NACOS-Node",
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  /**
+   * 7. Fund / Deposit into BMONI Account via 9PSB / Bank Rails / Card
+   */
+  async fundWallet({ accountId, amountUSDC, amountNGN, paymentMethod = "NIP_BANK_TRANSFER" }) {
+    return await this._request("/accounts/fund", "POST", {
+      accountId: accountId || "default",
+      amountUSDC: amountUSDC || (amountNGN ? amountNGN / this.exchangeRate : 10),
+      amountNGN: amountNGN || (amountUSDC ? amountUSDC * this.exchangeRate : 16000),
+      paymentMethod,
+      currency: "USDC",
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  /**
+   * 8. Fetch Real-time USDC / cNGN Exchange Rate
+   */
+  async getExchangeRate() {
+    return await this._request("/rates/usdc-ngn", "GET");
+  }
+
+  /**
    * Offline / Sandbox fallback simulator for live hackathon demos
    */
   _fallbackHandler(endpoint, method, body) {
@@ -182,6 +216,48 @@ class BmoniClient {
       };
     }
 
+    if (endpoint.includes("/cards/") && endpoint.includes("/freeze")) {
+      return {
+        status: "SUCCESS",
+        frozen: body?.freeze || false,
+        timestamp
+      };
+    }
+
+    if (endpoint.includes("/cards/") && endpoint.includes("/balance")) {
+      return {
+        status: "SUCCESS",
+        balanceUSDC: 150.00,
+        balanceNGN: 240000.00,
+        currency: "USDC",
+        timestamp
+      };
+    }
+
+    if (endpoint.includes("/accounts/fund")) {
+      const amtUsdc = body?.amountUSDC || 10;
+      const amtNgn = body?.amountNGN || amtUsdc * this.exchangeRate;
+      return {
+        status: "SUCCESS",
+        transactionHash: mockTx,
+        fundedAmountUSDC: amtUsdc,
+        fundedAmountNGN: amtNgn,
+        paymentRail: "BMONI_9PSB_NIP",
+        state: "COMPLETED",
+        timestamp
+      };
+    }
+
+    if (endpoint.includes("/rates/usdc-ngn")) {
+      return {
+        pair: "USDC/cNGN",
+        rate: this.exchangeRate,
+        bid: 1598,
+        ask: 1602,
+        timestamp
+      };
+    }
+
     if (endpoint.includes("/banks")) {
       return [
         { code: "058", name: "Guaranty Trust Bank (GTBank)" },
@@ -193,6 +269,18 @@ class BmoniClient {
         { code: "100004", name: "OPay Digital Services" },
         { code: "100033", name: "PalmPay" }
       ];
+    }
+
+    if (endpoint.includes("/accounts/link")) {
+      return {
+        status: "SUCCESS",
+        accountTag: body?.phoneOrTag?.includes(".bmoni") ? body.phoneOrTag : `${(body?.phoneOrTag || "user").toLowerCase().replace(/\s+/g, "")}.bmoni`,
+        phone: body?.phoneOrTag || "+234 810 000 0000",
+        referral: body?.referralCode || "NACOS",
+        rails: "NIP & Virtual Mastercard",
+        active: true,
+        timestamp
+      };
     }
 
     if (endpoint.includes("/accounts/resolve")) {
