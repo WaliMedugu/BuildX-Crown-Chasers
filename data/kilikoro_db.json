@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": "wali-medugu-solo-builder",
+      "id": "wali-medugu-team-lead",
       "name": "Wali Medugu",
       "email": "blueparticlestudios@gmail.com",
       "role": "personal",
@@ -328,12 +328,12 @@
   ],
   "audits": [
     {
-      "repo": "https://github.com/WaliMedugu/first-commit-hacathon-2026",
+      "repo": "https://github.com/WaliMedugu/BuildX-Crown-Chasers",
       "score": 98,
       "securityStatus": "Clean - Zero Secrets Exposed",
       "productionReadiness": "Production Ready",
       "errorHandlingRating": "Robust (Try/Catch & Bounded Complexity)",
-      "summary": "Repository 'https://github.com/WaliMedugu/first-commit-hacathon-2026' demonstrates immaculate architectural separation, zero exposed secrets, sub-millisecond execution times, and comprehensive error handling.",
+      "summary": "Repository 'https://github.com/WaliMedugu/BuildX-Crown-Chasers' demonstrates immaculate architectural separation, zero exposed secrets, sub-millisecond execution times, and comprehensive error handling.",
       "strengths": [
         "Zero heavyweight framework bloat (Pure high-performance Vanilla JS)",
         "Deterministic memory allocation in AST algorithmic sandbox",
@@ -405,7 +405,7 @@
       "id": "KILIKORO-CERT-2026-WALI",
       "candidateName": "Wali Medugu",
       "nacosId": "242120036",
-      "repoUrl": "https://github.com/WaliMedugu/first-commit-hacathon-2026",
+      "repoUrl": "https://github.com/WaliMedugu/BuildX-Crown-Chasers",
       "score": 98,
       "securityStatus": "Clean - Zero Secrets Exposed",
       "errorHandlingRating": "Robust Guards",

@@ -2284,7 +2284,7 @@ function cacheResolver(entries, threshold) {
       const certId = document.getElementById("certId")?.textContent?.trim() || this.currentCertId;
       const candidateName = document.getElementById("certCandidateName")?.textContent?.trim() || "Wali Medugu";
       const candidateDid = document.getElementById("certCandidateDid")?.textContent?.trim() || "242120036";
-      const repoUrl = document.getElementById("certRepoUrl")?.textContent?.trim() || "https://github.com/WaliMedugu/first-commit-hacathon-2026";
+      const repoUrl = document.getElementById("certRepoUrl")?.textContent?.trim() || "https://github.com/WaliMedugu/BuildX-Crown-Chasers";
       const engineModel = document.getElementById("certEngineModel")?.textContent?.trim() || "Kilikoro Neural Oracle + AST Engine";
       const timestamp = document.getElementById("certTimestamp")?.textContent?.trim() || "Issued: October 2, 2026";
       const sha256 = document.getElementById("certSha256")?.textContent?.trim() || "SHA256: 4fabcbfb367170c5e954729bffc9a558abdbaf33f352eb126cd5b7cd26f004d4";

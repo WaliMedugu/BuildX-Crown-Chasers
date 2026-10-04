@@ -94,7 +94,7 @@
           <div class="judge-demo-selector" style="display: inline-flex; align-items: center; gap: 0.35rem; background: var(--bg-secondary); border: 1px solid var(--border-medium); border-radius: 6px; padding: 0.25rem 0.6rem;">
             <span style="font-size: 0.72rem; color: var(--accent-terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Demo User:</span>
             <select id="judgeAccountSelector" onchange="app.switchDemoPersona(this.value)" style="background: transparent; border: none; color: var(--text-primary); font-size: 0.78rem; cursor: pointer; outline: none;">
-              <option value="wali-medugu-solo-builder" selected>Wali Medugu (Lead Solo Builder - $150)</option>
+              <option value="wali-medugu-team-lead" selected>Wali Medugu (Crown Chasers Team Lead - $150)</option>
               <option value="amina-bello-ai-builder">Amina Bello (Student AI Builder - $420)</option>
               <option value="chidi-okonkwo-systems">Chidi Okonkwo (Student Systems - $850)</option>
               <option value="starlight-labs-sponsor">Starlight FinTech Labs (Sponsor Org - $25,000)</option>
@@ -1666,23 +1666,27 @@ threshold = 20</pre>
   <!-- MODAL: WELCOME PITCH & TEAM PRESENTATION (FIRST VISIT POPUP)              -->
   <!-- ========================================================================= -->
   <div class="modal-overlay" id="welcomePitchModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 1100; align-items: center; justify-content: center; padding: 1.25rem;">
-    <div style="background: var(--bg-primary); border: 1.5px solid var(--border-medium); border-radius: 14px; width: 100%; max-width: 460px; overflow: hidden; box-shadow: var(--shadow-lg); animation: fadeUp 250ms ease;">
-      <!-- Hero Display Image (Fits Whole Thumbnail) -->
-      <div style="width: 100%; aspect-ratio: 16/9; max-height: 250px; background: #141110; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+    <div style="background: var(--bg-primary); border: 1.5px solid var(--border-medium); border-radius: 14px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeUp 250ms ease;">
+      <!-- Hero Display Image (Exact 16:9 full aspect fit) -->
+      <div style="width: 100%; aspect-ratio: 16 / 9; background: #F8F5EE; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border-medium);">
         <img src="assets/welcome-hero.png" alt="Kilikoro Autonomous Protocol" style="width: 100%; height: 100%; object-fit: contain; display: block;">
-        <div style="position: absolute; top: 0.6rem; right: 0.6rem; z-index: 10;">
-          <button onclick="app.closeWelcomePitchModal()" style="background: rgba(0,0,0,0.65); border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; width: 28px; height: 28px; color: #FAF6F0; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">✕</button>
-        </div>
+        <button onclick="app.closeWelcomePitchModal()" style="position: absolute; top: 10px; right: 10px; background: rgba(30,26,24,0.72); border: none; border-radius: 50%; width: 28px; height: 28px; color: #FAF6F0; cursor: pointer; font-size: 0.88rem; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); z-index: 2;">✕</button>
       </div>
 
       <!-- Pitch Statements -->
       <div style="padding: 1rem 1.15rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <h2 style="font-family: var(--font-editorial); font-size: 1.35rem; color: var(--text-primary); margin: 0;">
-            Kilikoro Protocol
-          </h2>
-          <span class="status-badge" style="background: var(--accent-terracotta); color: #FAF6F0; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.04em;">
-            CROWN CHASERS • NACOS 2026
+        <!-- Header Banner below logo -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+          <div>
+            <span class="status-badge" style="background: var(--accent-terracotta); color: #FAF6F0; font-weight: 700; font-size: 0.68rem; letter-spacing: 0.05em; padding: 0.2rem 0.5rem; border-radius: 4px;">
+              TEAM CROWN CHASERS • BUILDX 2026
+            </span>
+            <h2 style="font-family: var(--font-editorial); font-size: 1.35rem; color: var(--text-primary); margin: 0.35rem 0 0 0;">
+              Kilikoro Protocol
+            </h2>
+          </div>
+          <span style="font-size: 0.72rem; color: var(--text-muted); background: var(--bg-secondary); border: 1px solid var(--border-medium); border-radius: 12px; padding: 0.2rem 0.55rem;">
+            NACOS National
           </span>
         </div>
         <!-- Two Liner: Problem -->
