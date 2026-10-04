@@ -1235,7 +1235,7 @@ async function handleRequest(req, res) {
   if (asset) {
     res.writeHead(200, {
       "Content-Type": asset.mimeType,
-      "Cache-Control": "public, max-age=3600"
+      "Cache-Control": "no-cache, no-store, must-revalidate"
     });
     const payload = asset.isBinary ? Buffer.from(asset.content, "base64") : asset.content;
     return res.end(payload);
@@ -1259,7 +1259,7 @@ async function handleRequest(req, res) {
         const mime = MIME_TYPES[fileExt] || "application/octet-stream";
         res.writeHead(200, {
           "Content-Type": mime,
-          "Cache-Control": "public, max-age=3600"
+          "Cache-Control": "no-cache, no-store, must-revalidate"
         });
         return fs.createReadStream(candidate).pipe(res);
       }
