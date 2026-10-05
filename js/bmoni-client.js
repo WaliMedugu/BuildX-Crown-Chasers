@@ -17,6 +17,30 @@ class BmoniClient {
    * Helper for authenticated HTTP requests
    */
   async _request(endpoint, method = "GET", body = null) {
+    // 1. In browser environments, attempt local server proxy if available
+    if (typeof window !== "undefined") {
+      try {
+        const cleanPath = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+        const proxyUrl = `/api/bmoni${cleanPath.split("?")[0]}`;
+        const options = {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": this.apiKey,
+            "X-Protocol-Client": "Kilikoro-NACOS/1.0"
+          }
+        };
+        if (body) options.body = JSON.stringify(body);
+        const res = await fetch(proxyUrl, options);
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (proxyErr) {
+        // Fall through to direct gateway or simulator
+      }
+    }
+
+    // 2. Direct BMONI gateway call
     try {
       const headers = {
         "Content-Type": "application/json",
@@ -193,9 +217,10 @@ class BmoniClient {
     }
 
     if (endpoint.includes("/escrow/release")) {
+      const settled = body?.amountUSDC || body?.settledAmountUSDC || 150;
       return {
         status: "SETTLED",
-        settledAmountUSDC: 150,
+        settledAmountUSDC: settled,
         settlementSpeed: "1.4s",
         transactionHash: mockTx,
         targetCard: "5399 •••• •••• 4892",

@@ -255,5 +255,14 @@
       }
     }
   ],
-  "settlements": []
+  "settlements": [
+    {
+      "id": "e5bc28ce-1ecc-4c0b-a954-fd8bfd8035f5",
+      "contractId": "BMONI-FUND-ACCOUNT",
+      "amount": 500,
+      "transactionHash": "0xbmoni_16e8d406a755",
+      "description": "BMONI 9PSB Rails Deposit (+₦800,000)",
+      "timestamp": "2026-10-05T14:37:51.860Z"
+    }
+  ]
 }
