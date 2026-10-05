@@ -2,7 +2,7 @@
  * ==========================================================================
  * KILIKORO PROTOCOL: SAAS APPLICATION CONTROLLER (app.js)
  * Clean GitHub/Linear style interaction controller.
- * Powers Candidate Verifier, Public & Private Contracts, and BANK Wallet.
+ * Powers Candidate Verifier, Public & Private Contracts, and BMONI Wallet.
  * ==========================================================================
  */
 
@@ -511,9 +511,9 @@ function cacheResolver(entries, threshold) {
         try {
           await this.bmoniClient.toggleCardFreeze("default", isFrozen);
         } catch (err) {
-          console.warn("[BANK Card Freeze API]", err.message);
+          console.warn("[BMONI Card Freeze API]", err.message);
         }
-        this.showToast("Virtual Card Status", `BANK Virtual Mastercard: ${isFrozen ? "FROZEN (Transactions Blocked via BANK API)" : "ACTIVE (Transactions Enabled)"}`, isFrozen ? "warning" : "success");
+        this.showToast("Virtual Card Status", `BMONI Virtual Mastercard: ${isFrozen ? "FROZEN (Transactions Blocked via BMONI API)" : "ACTIVE (Transactions Enabled)"}`, isFrozen ? "warning" : "success");
       });
     }
 
@@ -559,45 +559,45 @@ function cacheResolver(entries, threshold) {
   initDiscoveryGuide() {
     this.discoveryFeatures = {
       "view-home": {
-        badge: "Dashboard & Persona Switcher",
+        badge: "Dashboard Overview",
         title: "Welcome to Kilikoro Ecosystem",
-        desc: "Kilikoro is your unified developer operating system. Monitor active milestone escrows, track verified student attestations, and toggle seamlessly between personal and organization modes.",
-        tip: "👉 Click the <b>'Demo User'</b> dropdown in the top header to instantly experience student developer and sponsor organization accounts!",
+        desc: "Kilikoro is your unified developer operating system. Monitor active milestone escrows, track verified attestations, and deploy smart escrow bounties.",
+        tip: "Tip: Navigate through the Candidate Verifier and Contracts tabs to inspect live evaluations!",
         index: "1 of 5"
       },
       "view-verifier": {
         badge: "Candidate Verifier & Code X-Ray",
         title: "Deterministic Anti-AI Code Analysis",
         desc: "Analyzes GitHub repositories via Abstract Syntax Trees (AST) to measure cyclomatic complexity, code entropy, and scan commit diffs for exposed API credentials.",
-        tip: "👉 Click <b>'Run Audit'</b> to watch the multi-phase security inspector evaluate a repository and mint an official certificate!",
+        tip: "Tip: Click <b>'Run Audit'</b> to watch the multi-phase security inspector evaluate a repository and mint an official certificate!",
         index: "2 of 5"
       },
       "view-contracts": {
         badge: "Milestone Contracts & Escrow",
         title: "Verifiable Public & Private Bounties",
-        desc: "Manage smart milestone escrows funded by sponsor organizations. Bounties unlock automatically in under 2 seconds upon passing deterministic test assertions.",
-        tip: "👉 Click on any contract card to open the live workspace and run local code assertions!",
+        desc: "Manage smart milestone escrows funded by sponsor organizations. Bounties unlock automatically upon passing deterministic test assertions.",
+        tip: "Tip: Click on any contract card to open the live workspace and inspect requirements & submit solutions!",
         index: "3 of 5"
       },
       "view-workspace": {
         badge: "Interactive Developer Workspace",
         title: "Live Code Testing & Instant Settlement",
-        desc: "An integrated developer IDE with real-time test execution, Big-O dynamic runtime complexity assertions ($N=10 \to 10,000$), and instant payout triggers.",
-        tip: "👉 Try clicking <b>'Authentic Code'</b> $\to$ <b>'Run Tests'</b> $\to$ <b>'Submit & Claim'</b> to trigger immediate settlement confetti and card balance credit!",
+        desc: "An integrated developer IDE with real-time test execution, Big-O dynamic runtime complexity assertions, and instant payout triggers.",
+        tip: "Tip: Submit your repository URL in the Submit tab to trigger automated AST verification and instant settlement!",
         index: "4 of 5"
       },
       "view-wallet": {
-        badge: "BANK Wallet & 3D Virtual Cards",
+        badge: "BMONI Wallet & 3D Virtual Cards",
         title: "Instant Developer Settlement Rails",
-        desc: "Direct-to-bank settlement simulation with interactive 3D virtual Mastercards, card freeze security toggles, and instant simulated deposit vaults.",
-        tip: "👉 Click on the <b>3D Virtual Mastercard</b> to flip between front and back details, or click <b>'Freeze Card'</b> to test security locks!",
+        desc: "Direct-to-BMONI settlement simulation with interactive 3D virtual cards, card freeze security toggles, and instant simulated deposit vaults.",
+        tip: "Tip: Click on the <b>3D Virtual Card</b> to flip between front and back details, or test withdrawal rails!",
         index: "5 of 5"
       },
       "cert-modal": {
         badge: "Verification Certificate",
         title: "Cryptographic Proof of Competence",
         desc: "Tamper-proof verifiable credential signed by Kilikoro verification nodes with immutable SHA-256 hashes.",
-        tip: "👉 Click <b>'Export PNG'</b> for a high-DPI image or <b>'Export PDF'</b> for print-ready landscape documents!",
+        tip: "Tip: Click <b>'Export PNG'</b> for a high-DPI image or <b>'Export PDF'</b> for print-ready landscape documents!",
         index: "Credential"
       }
     };
@@ -670,7 +670,22 @@ function cacheResolver(entries, threshold) {
     }, 300);
   }
 
+  openMobileSidebar() {
+    const sidebar = document.getElementById("appSidebar");
+    const backdrop = document.getElementById("mobileSidebarBackdrop");
+    if (sidebar) sidebar.classList.add("mobile-open");
+    if (backdrop) backdrop.classList.add("mobile-open");
+  }
+
+  closeMobileSidebar() {
+    const sidebar = document.getElementById("appSidebar");
+    const backdrop = document.getElementById("mobileSidebarBackdrop");
+    if (sidebar) sidebar.classList.remove("mobile-open");
+    if (backdrop) backdrop.classList.remove("mobile-open");
+  }
+
   switchView(viewId) {
+    this.closeMobileSidebar();
     setTimeout(() => this.showContextualDiscovery(viewId), 450);
     document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
     document.querySelectorAll(".app-view").forEach((view) => view.classList.remove("active"));
@@ -685,8 +700,8 @@ function cacheResolver(entries, threshold) {
       "view-home": "Overview Dashboard",
       "view-verifier": "Candidate Verifier",
       "view-contracts": "Contracts & Escrows",
-      "view-workspace": "Active Milestone / TASK-BANK-104",
-      "view-wallet": "BANK Wallet & Cards",
+      "view-workspace": "Active Milestone / TASK-BMONI-104",
+      "view-wallet": "BMONI Wallet & Cards",
       "view-students": "Verified Students Directory"
     };
     if (this.breadcrumbCurrent) {
@@ -696,6 +711,8 @@ function cacheResolver(entries, threshold) {
     if (viewId === "view-home") {
       this.renderHomeDashboard();
     }
+    // Auto-close sidebar on mobile after navigation
+    this.closeMobileSidebar();
   }
 
   renderHomeDashboard() {
@@ -809,32 +826,456 @@ function cacheResolver(entries, threshold) {
           <div class="tag-list">
             ${(c.tags || []).map(t => `<span class="tag">${t}</span>`).join("")}
           </div>
-          <span class="status-badge">
-            <span class="status-dot"></span>
-            ${c.status || "Escrow Locked"}
+          <span style="font-size: 0.72rem; color: var(--status-emerald); font-family: var(--font-mono); font-weight: 600;">
+            ${c.type === "private" ? "1-on-1 Contract" : "Open Hackathon Bounty"}
           </span>
         </div>
       </article>
     `).join("");
   }
 
+  // =========================================================================
+  // DEVPOST-STYLE WORKSPACE & REQUIREMENTS CONTROLLER
+  // =========================================================================
+
   openMilestone(taskId) {
     const task = this.contracts.find(c => c.id === taskId);
     if (!task) return;
 
     this.activeMilestone = task;
+
+    // Ensure defaults for Devpost-style attributes
+    if (!task.rules) {
+      task.rules = {
+        eligibility: "Open to all middle school, high school, polytechnic, and undergraduate students (ages 13 to 25) enrolled in NACOS chapters or international developer networks.",
+        teamSize: "Teams may have 1 to 5 members. Solo submissions are fully welcomed.",
+        aiPolicy: "You are allowed full use of AI tools, coding assistants, and open-source packages. All code is audited against AST security trees.",
+        submissionRules: "Submissions must not contain offensive, harmful, or plagiarized content. Zero exposed private keys or API tokens.",
+        judgingConduct: "Kilikoro Autonomous Oracle and judges' decisions are final. BMONI milestone escrow is released immediately upon reaching 80%+ passing score."
+      };
+    }
+
+    if (!task.resources || !task.resources.length) {
+      task.resources = [
+        { title: "Kilikoro AST Verification Guide", url: "https://kilikoro.vercel.app/docs", type: "Documentation" },
+        { title: "BMONI Embedded FinTech API Reference", url: "https://embedded-dev.bmoni.com/docs", type: "API Reference" },
+        { title: "Official NACOS Developer Community", url: "https://discord.gg/nacos-dev", type: "Community" },
+        { title: "Starter Repository & Test Harness", url: "https://github.com/CrownChasers/kilikoro-node", type: "Starter Kit" }
+      ];
+    }
+
+    if (!task.attachments) {
+      task.attachments = [
+        { id: "att-1", name: "problem_specification.pdf", size: "142 KB", type: "application/pdf", date: "2026-10-04" },
+        { id: "att-2", name: "benchmark_dataset.json", size: "88 KB", type: "application/json", date: "2026-10-04" }
+      ];
+    }
+
+    if (!task.participants) {
+      task.participants = [
+        { id: "part-1", name: "Crown Chasers Lead", email: "lead@kilikoro.dev", nacosId: "242120036", teamName: "Crown Chasers", membersCount: 1, registeredAt: new Date().toISOString() }
+      ];
+    }
+
+    if (!task.submissions) {
+      task.submissions = [];
+    }
+
     const wsEmpty = document.getElementById("wsEmptyState");
     const wsContent = document.getElementById("wsContent");
     if (wsEmpty) wsEmpty.style.display = "none";
     if (wsContent) wsContent.style.display = "block";
 
-    document.getElementById("wsTaskId").textContent = task.id;
-    document.getElementById("wsTitle").textContent = task.title;
-    document.getElementById("wsSponsor").innerHTML = `Sponsor: <b>${task.sponsor}</b> • Escrow Model: <b>${task.type === "private" ? "Direct 1-on-1 Settlement" : "Automated Milestone Release"}</b>`;
-    document.getElementById("wsAmount").textContent = `$${task.amount.toFixed(2)} USDC`;
-    document.getElementById("wsNaira").textContent = `≈ ₦${(task.amount * 1600).toLocaleString()} cNGN`;
-    document.getElementById("wsDescription").textContent = task.desc;
+    // Populate Headers
+    const idEl = document.getElementById("wsTaskId");
+    const titleEl = document.getElementById("wsTitle");
+    const sponsorEl = document.getElementById("wsSponsor");
+    const catEl = document.getElementById("wsCategory");
+    const amtEl = document.getElementById("wsAmount");
+    const nairaEl = document.getElementById("wsNaira");
+    const compEl = document.getElementById("wsComplexity");
+    const subCountEl = document.getElementById("wsSubmissionsCount");
+
+    if (idEl) idEl.textContent = task.id;
+    if (titleEl) titleEl.textContent = task.title;
+    if (sponsorEl) sponsorEl.innerHTML = `Sponsor: <b>${task.sponsor || 'Kilikoro Sponsor'}</b> • Model: <b>${task.type === "private" ? "Direct 1-on-1 Settlement" : "Automated Milestone Release"}</b>`;
+    if (catEl) catEl.textContent = task.category || (task.tags && task.tags[0]) || "Algorithms & FinTech";
+    if (amtEl) amtEl.textContent = `$${(task.amount || 0).toFixed(2)} USDC`;
+    if (nairaEl) nairaEl.textContent = `≈ ₦${Math.round((task.amount || 0) * 1600).toLocaleString()} cNGN`;
+    if (compEl) compEl.textContent = task.complexity || task.complexityLimit || "O(N log N)";
+    const count = (task.submissions || []).length;
+    if (subCountEl) subCountEl.textContent = `${count} ${count === 1 ? 'Verified' : 'Verified'}`;
+
+    // Creator control visibility: Show manage specs button if organization/employer or matching sponsor
+    const btnEdit = document.getElementById("btnEditWsSpec");
+    const btnDel = document.getElementById("btnDeleteContract");
+    const isCreator = this.activeProfile?.role === "organization" || this.activeProfile?.role === "employer" || (this.activeProfile?.email && task.sponsorEmail && this.activeProfile.email.toLowerCase() === task.sponsorEmail.toLowerCase());
+    if (btnEdit) btnEdit.style.display = isCreator ? "inline-flex" : "none";
+    if (btnDel) btnDel.style.display = isCreator ? "inline-flex" : "none";
+
+    // Render All Panels
+    this.renderWorkspaceOverview();
+    this.renderWorkspaceRules();
+    this.renderWorkspaceResources();
+    this.renderWorkspaceGallery();
+
+    // Default to Overview tab
+    this.setWsTab("overview");
     this.switchView("view-workspace");
+  }
+
+  setWsTab(tab) {
+    this.activeWsTab = tab;
+    const tabs = ["overview", "rules", "resources", "submit", "gallery"];
+    tabs.forEach(t => {
+      const btn = document.getElementById(`wsTabBtn-${t}`);
+      const panel = document.getElementById(`wsPanel-${t}`);
+      if (btn) btn.classList.toggle("active", t === tab);
+      if (panel) panel.style.display = t === tab ? "block" : "none";
+    });
+    if (this.soundEngine) this.soundEngine.playClick();
+  }
+
+  renderWorkspaceOverview() {
+    const task = this.activeMilestone;
+    if (!task) return;
+
+    const descEl = document.getElementById("wsDescription");
+    const inputEl = document.getElementById("wsSampleInput");
+    const outputEl = document.getElementById("wsExpectedOutput");
+    const attachList = document.getElementById("wsAttachmentsList");
+
+    if (descEl) descEl.textContent = task.overview || task.desc || "Review the requirements, test cases, and deliverable guidelines below.";
+    if (inputEl) inputEl.textContent = task.sampleInput || "entries = [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }]\nthreshold = 20";
+    if (outputEl) outputEl.textContent = task.expectedOutput || "[{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]";
+
+    if (attachList) {
+      const attachments = task.attachments || [];
+      if (attachments.length === 0) {
+        attachList.innerHTML = `<div style="color: var(--text-muted); font-size: 0.82rem; grid-column: 1 / -1;">No attached files uploaded yet.</div>`;
+      } else {
+        attachList.innerHTML = attachments.map((att, idx) => `
+          <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; overflow: hidden;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-terracotta); flex-shrink: 0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              <div style="overflow: hidden;">
+                <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${att.name}</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">${att.size || '120 KB'} • ${att.date || 'Oct 2026'}</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" onclick="app.downloadSpecFile(${idx})" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; white-space: nowrap;">
+              Download
+            </button>
+          </div>
+        `).join("");
+      }
+    }
+  }
+
+  downloadSpecFile(index) {
+    const att = this.activeMilestone?.attachments?.[index];
+    if (!att) return;
+    if (att.dataUrl) {
+      const a = document.createElement("a");
+      a.href = att.dataUrl;
+      a.download = att.name;
+      a.click();
+    } else {
+      this.showToast("File Download", `Downloading ${att.name} (${att.size || "100 KB"})...`, "info");
+    }
+  }
+
+  renderWorkspaceRules() {
+    const task = this.activeMilestone;
+    if (!task) return;
+    const rules = task.rules || {};
+
+    const elElig = document.getElementById("wsRulesEligibility");
+    const elTeam = document.getElementById("wsRulesTeam");
+    const elAi = document.getElementById("wsRulesAi");
+    const elSub = document.getElementById("wsRulesSubmission");
+    const elCond = document.getElementById("wsRulesConduct");
+
+    if (elElig && rules.eligibility) elElig.textContent = rules.eligibility;
+    if (elTeam && rules.teamSize) elTeam.textContent = rules.teamSize;
+    if (elAi && rules.aiPolicy) elAi.textContent = rules.aiPolicy;
+    if (elSub && rules.submissionRules) elSub.textContent = rules.submissionRules;
+    if (elCond && rules.judgingConduct) elCond.textContent = rules.judgingConduct;
+  }
+
+  renderWorkspaceResources() {
+    const task = this.activeMilestone;
+    if (!task) return;
+
+    const list = document.getElementById("wsResourcesList");
+    const countEl = document.getElementById("wsResCount");
+    const resources = task.resources || [];
+
+    if (countEl) countEl.textContent = resources.length;
+    if (!list) return;
+
+    if (resources.length === 0) {
+      list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.82rem; grid-column: 1 / -1;">No resource links added yet.</div>`;
+      return;
+    }
+
+    list.innerHTML = resources.map(res => `
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.85rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem;">
+        <div>
+          <span class="tag" style="font-size: 0.65rem; margin-bottom: 0.35rem; display: inline-block;">${res.type || 'Resource'}</span>
+          <h4 style="margin: 0; font-size: 0.88rem; color: var(--text-primary); font-weight: 600;">${res.title}</h4>
+        </div>
+        <a href="${res.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: space-between; margin-top: 0.35rem;">
+          <span>Visit Resource</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+      </div>
+    `).join("");
+  }
+
+  renderWorkspaceGallery() {
+    const task = this.activeMilestone;
+    if (!task) return;
+
+    const list = document.getElementById("wsGalleryList");
+    const countEl = document.getElementById("wsSubCount");
+    const submissions = task.submissions || [];
+
+    if (countEl) countEl.textContent = submissions.length;
+    if (!list) return;
+
+    if (submissions.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state-card" style="grid-column: 1 / -1; padding: 2.5rem 1rem; text-align: center;">
+          <div class="empty-state-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-gold);"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+          </div>
+          <h4 style="margin: 0.5rem 0 0.25rem 0;">No Submissions Recorded Yet</h4>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">Be the first builder to submit a verified GitHub repository solution!</p>
+          <button class="btn btn-primary" onclick="app.setWsTab('submit')" style="font-size: 0.8rem;">Submit Solution →</button>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = submissions.map(sub => `
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.65rem;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+            <h4 style="margin: 0; font-size: 0.95rem; color: var(--text-primary); font-weight: 700;">${sub.projectTitle}</h4>
+            <span class="reward-pill" style="font-size: 0.72rem; padding: 0.15rem 0.45rem;">Score: ${sub.score || 98}%</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0.4rem 0 0.65rem 0; line-height: 1.4;">${sub.pitch || "Automated AST verified solution with deterministic Big-O complexity."}</p>
+          <div style="font-size: 0.72rem; color: var(--text-muted);">
+            By <b>${sub.teamName || sub.submitterName}</b> • <a href="${sub.githubRepo}" target="_blank" rel="noopener noreferrer" style="color: var(--accent-terracotta); text-decoration: underline;">GitHub Repo ↗</a>
+          </div>
+        </div>
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-gold);">${sub.astDigest?.slice(0, 18) || "0xast_verified"}...</span>
+          <span class="status-badge" style="background: var(--status-emerald-subtle); color: var(--status-emerald); font-size: 0.68rem; padding: 0.1rem 0.45rem;">${sub.status || "Verified & Settled"}</span>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // =========================================================================
+  // CREATOR SPECIFICATION & FILE MODAL CONTROLS
+  // =========================================================================
+
+  openEditSpecModal() {
+    const task = this.activeMilestone;
+    if (!task) return;
+
+    const modal = document.getElementById("editSpecModal");
+    if (!modal) return;
+
+    const elTitle = document.getElementById("editSpecTitle");
+    const elCategory = document.getElementById("editSpecCategory");
+    const elComplexity = document.getElementById("editSpecComplexity");
+    const elOverview = document.getElementById("editSpecOverview");
+    const elInput = document.getElementById("editSpecInput");
+    const elOutput = document.getElementById("editSpecOutput");
+    const elElig = document.getElementById("editSpecEligibility");
+    const elTeam = document.getElementById("editSpecTeamSize");
+    const elAi = document.getElementById("editSpecAiPolicy");
+    const fileList = document.getElementById("editSpecModalFileList");
+
+    if (elTitle) elTitle.value = task.title || "";
+    if (elCategory) elCategory.value = task.category || "Algorithms & FinTech";
+    if (elComplexity) elComplexity.value = task.complexity || "O(N log N)";
+    if (elOverview) elOverview.value = task.overview || task.desc || "";
+    if (elInput) elInput.value = task.sampleInput || "entries = [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }]\nthreshold = 20";
+    if (elOutput) elOutput.value = task.expectedOutput || "[{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]";
+    if (elElig) elElig.value = task.rules?.eligibility || "Open to all student developers and independent builders.";
+    if (elTeam) elTeam.value = task.rules?.teamSize || "Direct individual submissions with public GitHub repository links.";
+    if (elAi) elAi.value = task.rules?.aiPolicy || "You are allowed full use of AI tools, coding assistants, and open-source packages.";
+
+    if (fileList) {
+      const attachments = task.attachments || [];
+      fileList.innerHTML = attachments.map((att, idx) => `
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); padding: 0.4rem 0.6rem; border-radius: 4px;">
+          <span>${att.name} (${att.size})</span>
+          <button type="button" onclick="app.removeSpecFile(${idx})" style="background: none; border: none; color: var(--status-ruby); cursor: pointer; font-size: 0.8rem;">✕</button>
+        </div>
+      `).join("");
+    }
+
+    modal.style.display = "flex";
+  }
+
+  closeEditSpecModal() {
+    const modal = document.getElementById("editSpecModal");
+    if (modal) modal.style.display = "none";
+  }
+
+  async saveContractSpec() {
+    const task = this.activeMilestone;
+    if (!task) return;
+
+    const title = document.getElementById("editSpecTitle")?.value.trim();
+    const category = document.getElementById("editSpecCategory")?.value;
+    const complexity = document.getElementById("editSpecComplexity")?.value;
+    const overview = document.getElementById("editSpecOverview")?.value.trim();
+    const sampleInput = document.getElementById("editSpecInput")?.value.trim();
+    const expectedOutput = document.getElementById("editSpecOutput")?.value.trim();
+    const eligibility = document.getElementById("editSpecEligibility")?.value.trim();
+    const teamSize = document.getElementById("editSpecTeamSize")?.value.trim();
+    const aiPolicy = document.getElementById("editSpecAiPolicy")?.value.trim();
+
+    if (title) task.title = title;
+    if (category) task.category = category;
+    if (complexity) task.complexity = complexity;
+    task.overview = overview || task.desc;
+    task.desc = overview || task.desc;
+    task.sampleInput = sampleInput;
+    task.expectedOutput = expectedOutput;
+    task.rules = {
+      ...task.rules,
+      eligibility: eligibility || task.rules?.eligibility,
+      teamSize: teamSize || task.rules?.teamSize,
+      aiPolicy: aiPolicy || task.rules?.aiPolicy
+    };
+
+    try {
+      await fetch("/api/contracts/update-spec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contractId: task.id,
+          title: task.title,
+          category: task.category,
+          complexity: task.complexity,
+          overview: task.overview,
+          desc: task.desc,
+          sampleInput: task.sampleInput,
+          expectedOutput: task.expectedOutput,
+          rules: task.rules,
+          resources: task.resources,
+          attachments: task.attachments
+        })
+      });
+
+      // Update in local array & DB
+      await this.db.saveContract(task);
+      this.openWorkspace(task);
+      this.closeEditSpecModal();
+      this.showToast("Specifications Updated", "Requirements, rules, and files saved live to Supabase!", "success");
+    } catch (e) {
+      this.showToast("Update Notice", "Saved in active session: " + e.message, "info");
+      this.openWorkspace(task);
+      this.closeEditSpecModal();
+    }
+  }
+
+  async deleteCurrentContract() {
+    const task = this.activeMilestone;
+    if (!task) return;
+    if (!confirm(`Are you sure you want to delete contract "${task.title}"? Any locked escrow will be refunded.`)) {
+      return;
+    }
+    try {
+      const res = await fetch("/api/contracts", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: task.id })
+      });
+      const data = await res.json();
+      if (data.refundedAmount && this.activeProfile) {
+        this.activeProfile.balanceUsdc = (this.activeProfile.balanceUsdc || 0) + data.refundedAmount;
+        await this.db.saveProfile(this.activeProfile);
+        this.applyProfile(this.activeProfile);
+      }
+    } catch (e) {
+      console.warn("Delete contract API notice:", e);
+    }
+
+    this.contracts = this.contracts.filter(c => c.id !== task.id);
+    this.activeMilestone = null;
+    this.renderContracts();
+    this.switchView("view-contracts");
+    this.showToast("Contract Deleted", `Contract "${task.title}" has been deleted.`, "info");
+  }
+
+  handleSpecFileUpload(event) {
+    const file = event?.target?.files?.[0];
+    if (!file || !this.activeMilestone) return;
+
+    const sizeKb = Math.round(file.size / 1024);
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const dataUrl = e.target.result;
+      if (!this.activeMilestone.attachments) this.activeMilestone.attachments = [];
+      this.activeMilestone.attachments.push({
+        id: "att-" + Date.now().toString(36),
+        name: file.name,
+        size: `${sizeKb} KB`,
+        type: file.type || "application/octet-stream",
+        date: new Date().toISOString().split("T")[0],
+        dataUrl
+      });
+      await this.saveContractSpec();
+      this.renderWorkspaceOverview();
+      this.showToast("File Attached", `Uploaded ${file.name} to challenge specifications.`, "success");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeSpecFile(idx) {
+    if (this.activeMilestone?.attachments) {
+      this.activeMilestone.attachments.splice(idx, 1);
+      this.openEditSpecModal();
+    }
+  }
+
+  openAddResourceModal() {
+    const modal = document.getElementById("addResourceModal");
+    if (modal) modal.style.display = "flex";
+  }
+
+  closeAddResourceModal() {
+    const modal = document.getElementById("addResourceModal");
+    if (modal) modal.style.display = "none";
+  }
+
+  async saveResourceLink() {
+    const task = this.activeMilestone;
+    if (!task) return;
+
+    const title = document.getElementById("addResTitle")?.value.trim();
+    const url = document.getElementById("addResUrl")?.value.trim();
+    const type = document.getElementById("addResCategory")?.value;
+
+    if (!title || !url) {
+      this.showToast("Fields Required", "Please enter both resource title and URL.", "warning");
+      return;
+    }
+
+    if (!task.resources) task.resources = [];
+    task.resources.push({ title, url, type });
+    await this.saveContractSpec();
+    this.renderWorkspaceResources();
+    this.closeAddResourceModal();
+    this.showToast("Resource Added", `Link "${title}" added to challenge resources.`, "success");
   }
 
   setResumeInputMethod(method) {
@@ -1108,16 +1549,24 @@ function cacheResolver(entries, threshold) {
     // Auth Gating Check
     if (!this.isAuthenticated()) {
       if (this.soundEngine) this.soundEngine.playError();
-      this.promptAuth("verify submissions and receive BANK card payouts");
+      this.promptAuth("verify submissions and receive BMONI card payouts");
       return;
     }
 
-    const code = this.solutionInput.value;
+    const repoInput = document.getElementById("submitProjectRepo");
+    const projectRepo = (repoInput?.value || "").trim();
+    if (!projectRepo) {
+      if (this.soundEngine) this.soundEngine.playError();
+      this.showToast("Repository Required", "Please enter a valid GitHub repository URL for attestation.", "warning");
+      return;
+    }
+
+    const code = (this.solutionInput && this.solutionInput.value) ? this.solutionInput.value : this.humanSolution;
     this.resetChecklist();
 
     const btnRun = document.getElementById("btnRunVerification");
     btnRun.disabled = true;
-    btnRun.textContent = "Verifying Code...";
+    btnRun.textContent = "Verifying Repository...";
     if (this.soundEngine) this.soundEngine.playClick();
 
     // Step 1: Syntax & AST Parsing
@@ -1159,11 +1608,17 @@ function cacheResolver(entries, threshold) {
     this.checkComplexity.querySelector(".check-icon").textContent = "✓";
     if (this.soundEngine) this.soundEngine.playClick();
 
-    // Step 4: BANK Oracle Settlement
+    // Step 4: BMONI Oracle Settlement & Project Submission
     await new Promise((r) => setTimeout(r, 500));
+    const activeTaskId = this.activeMilestone?.id || "TASK-BMONI-104";
+    const verifiedRepoUrl = projectRepo || document.getElementById("submitProjectRepo")?.value.trim() || "https://github.com/CrownChasers/kilikoro-solution";
+    const projectTitle = document.getElementById("submitProjectTitle")?.value.trim() || this.activeMilestone?.title || "Optimized Cache Expiry Resolver";
+    const projectTeam = document.getElementById("submitProjectTeam")?.value.trim() || this.activeProfile?.name || "Crown Chasers Lead";
+    const projectPitch = document.getElementById("submitProjectPitch")?.value.trim() || "High-performance AST verified algorithm with O(N log N) scaling and zero secrets.";
+
     const attestation = this.escrowEngine.generateAttestation(
       this.activeProfile?.nacosId || "UNILAG-CS-2026-0482",
-      "TASK-BANK-104",
+      activeTaskId,
       {
         testsPassed: "3/3",
         runtimeMs: evalResult.execution.totalTimeMs,
@@ -1173,17 +1628,61 @@ function cacheResolver(entries, threshold) {
     );
 
     const payout = await this.escrowEngine.triggerPayout(attestation);
+    payout.settledAmountUSDC = this.activeMilestone?.amount || payout.settledAmountUSDC || 150;
+
     try {
       await this.bmoniClient.releaseEscrow({
-        contractId: "TASK-BANK-104",
+        contractId: activeTaskId,
         attestationSignature: attestation.oracleSignature,
         metrics: { signature: attestation.astDigest, complexity: 3 }
       });
     } catch (e) {
-      console.warn("BANK client release hook:", e);
+      console.warn("BMONI client release hook:", e);
     }
     this.checkEscrow.classList.add("passed");
     this.checkEscrow.querySelector(".check-icon").textContent = "✓";
+
+    // Record Submission to Contract Project Gallery
+    try {
+      const subRes = await fetch("/api/contracts/submit-project", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contractId: activeTaskId,
+          projectTitle,
+          githubRepo: verifiedRepoUrl,
+          pitch: projectPitch,
+          teamName: projectTeam,
+          submitterName: this.activeProfile?.name || "Crown Chasers Lead",
+          submitterEmail: this.activeProfile?.email || "builder@kilikoro.dev",
+          score: 98,
+          astDigest: attestation.astDigest,
+          autoSettled: true
+        })
+      });
+      const subData = await subRes.json();
+      if (subData.submission && this.activeMilestone) {
+        if (!this.activeMilestone.submissions) this.activeMilestone.submissions = [];
+        this.activeMilestone.submissions.unshift(subData.submission);
+        this.renderWorkspaceGallery();
+      }
+    } catch (e) {
+      if (this.activeMilestone) {
+        if (!this.activeMilestone.submissions) this.activeMilestone.submissions = [];
+        this.activeMilestone.submissions.unshift({
+          id: "sub-" + Date.now().toString(36),
+          projectTitle,
+          githubRepo: verifiedRepoUrl,
+          pitch: projectPitch,
+          teamName: projectTeam,
+          score: 98,
+          astDigest: attestation.astDigest,
+          status: "Verified & Settled",
+          submittedAt: new Date().toISOString()
+        });
+        this.renderWorkspaceGallery();
+      }
+    }
 
     // Update active profile balance
     if (this.activeProfile) {
@@ -1203,8 +1702,8 @@ function cacheResolver(entries, threshold) {
     if (this.soundEngine) this.soundEngine.playCelebration();
     triggerConfettiBurst();
 
-    this.showToast("Milestone Verified & Released", `+$${payout.settledAmountUSDC.toFixed(2)} USDC credited to your BANK Virtual Mastercard in 1.8 seconds!\nAttestation: ${attestation.attestationId}`, "success", 5500);
-    this.switchView("view-wallet");
+    this.showToast("Milestone Verified & Released", `+$${payout.settledAmountUSDC.toFixed(2)} USDC credited to your BMONI Virtual Mastercard in 1.8 seconds!\nAttestation: ${attestation.attestationId}`, "success", 5500);
+    this.setWsTab("gallery");
   }
 
   // =========================================================================
@@ -1323,7 +1822,7 @@ function cacheResolver(entries, threshold) {
       if (lockedDesc) lockedDesc.textContent = `To ${targetRole === "organization" ? "post contracts and lock milestone escrow" : "submit tasks and receive talent attestations"}, file your ${targetRole === "organization" ? "company or organization" : "personal institution"} credentials.`;
     }
 
-    // BANK Connected Account View
+    // BMONI Connected Account View
     const bmoniConnectedView = document.getElementById("bmoniConnectedView");
     const bmoniDisconnectedView = document.getElementById("bmoniDisconnectedView");
     const bmoniBadge = document.getElementById("bmoniConnectionBadge");
@@ -1384,12 +1883,12 @@ function cacheResolver(entries, threshold) {
     if (!matched) {
       matched = {
         id: "nacos-" + Date.now().toString(36),
-        name: "Wali Medugu",
+        name: "Crown Chasers Lead",
         email: `${cleanId.toLowerCase().replace(/[^a-z0-9]/g, "")}@kilikoro.dev`,
         role: "personal",
         university: cleanId.startsWith("UNILAG") ? "University of Lagos (UNILAG)" : "Kilikoro National Chapter",
         nacosId: cleanId,
-        github: "WaliMedugu",
+        github: "CrownChasers",
         cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
         cardCvv: String(Math.floor(100 + Math.random() * 900)),
         balanceUsdc: 6.25,
@@ -1492,7 +1991,7 @@ function cacheResolver(entries, threshold) {
     if (/^0[789][01]\d{8}$/.test(clean)) return true;
     // 2. Nigerian international phone: +234... or 234...
     if (/^\+?234[789][01]\d{8}$/.test(clean)) return true;
-    // 3. BANK tag: 3-30 chars alphanumeric + dot/underscore
+    // 3. BMONI tag: 3-30 chars alphanumeric + dot/underscore
     if (/^[a-zA-Z0-9._]{3,30}(\.bmoni)?$/i.test(clean)) return true;
     return false;
   }
@@ -1550,11 +2049,14 @@ function cacheResolver(entries, threshold) {
     }
 
     try {
+      const email = this.activeProfile?.email || (this.activeProfile?.nacosId ? `${this.activeProfile.nacosId.toLowerCase()}@kilikoro.dev` : "builder@kilikoro.dev");
       const res = await fetch("/api/user/upgrade-role", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: this.activeProfile.email,
+          email,
+          id: this.activeProfile?.id,
+          nacosId: this.activeProfile?.nacosId,
           targetRole,
           credentials
         })
@@ -1586,17 +2088,17 @@ function cacheResolver(entries, threshold) {
     if (!this.activeProfile) return;
     const input = document.getElementById("bmoniConnectInput")?.value.trim();
     if (!input) {
-      this.showToast("Input Required", "Please enter your BANK mobile phone number or account tag.", "warning");
+      this.showToast("Input Required", "Please enter your BMONI mobile phone number or account tag.", "warning");
       return;
     }
 
     if (!this.isValidBmoniAccount(input)) {
-      this.showToast("Invalid BANK Account", "Please enter a valid Nigerian mobile number (11 digits e.g. 080... or +234...) or a 3-30 character BANK tag.", "error", 5500);
+      this.showToast("Invalid BMONI Account", "Please enter a valid Nigerian mobile number (11 digits e.g. 080... or +234...) or a 3-30 character BMONI tag.", "error", 5500);
       return;
     }
 
     try {
-      // 1. Call official BANK API client
+      // 1. Call official BMONI API client
       const bmoniApiRes = await this.bmoniClient.linkAccount({
         phoneOrTag: input,
         email: this.activeProfile.email,
@@ -1631,7 +2133,7 @@ function cacheResolver(entries, threshold) {
       await this.db.saveProfile(this.activeProfile);
       this.applyProfile(this.activeProfile);
       this.openUserAccountModal();
-      this.showToast("BANK Account Linked", `Connected via official BANK API rails with Kilikoro referral! Tag: ${cleanTag}`, "success", 5000);
+      this.showToast("BMONI Account Linked", `Connected via official BMONI API rails with Kilikoro referral! Tag: ${cleanTag}`, "success", 5000);
     } catch (e) {
       this.showToast("Connection Error", e.message, "error");
     }
@@ -1780,6 +2282,10 @@ function cacheResolver(entries, threshold) {
     const amount = parseFloat(amtInput?.value || "0");
     const desc = (descInput?.value || "").trim();
     const studentId = this.modalVisibility === "private" ? (studentInput?.value || "").trim() : null;
+    const category = document.getElementById("modalContractCategory")?.value || "Algorithms & FinTech";
+    const complexity = document.getElementById("modalContractComplexity")?.value || "O(N log N)";
+    const sampleInput = document.getElementById("modalContractInput")?.value?.trim() || "";
+    const expectedOutput = document.getElementById("modalContractOutput")?.value?.trim() || "";
 
     if (!title || title.length < 3 || title.length > 120) {
       this.showToast("Title Required", "Contract title must be between 3 and 120 characters.", "warning");
@@ -1806,7 +2312,7 @@ function cacheResolver(entries, threshold) {
 
     const contractId = `CT-${this.modalVisibility === "private" ? "PRIV" : "PUB"}-${Date.now().toString().slice(-4)}`;
 
-    // Call real BANK Escrow Lock API
+    // Call real BMONI Escrow Lock API
     const escrowRes = await this.bmoniClient.lockEscrow({
       contractId,
       employerId: this.activeProfile?.name || "Verified Client",
@@ -1823,11 +2329,26 @@ function cacheResolver(entries, threshold) {
       avatar: (this.activeProfile?.name || "C").charAt(0).toUpperCase(),
       avatarColor: "var(--accent-terracotta)",
       title: title,
+      category: category,
+      complexity: complexity,
       desc: desc || (this.modalVisibility === "private" ? `Direct private hire locked for ${studentId}.` : "Open bounty for all verified Kilikoro students."),
+      overview: desc || (this.modalVisibility === "private" ? `Direct private hire locked for ${studentId}.` : "Open bounty for all verified Kilikoro students."),
+      sampleInput: sampleInput || "entries = [{ id: 10, ttl: 40 }]\nthreshold = 20",
+      expectedOutput: expectedOutput || "[{ id: 10, ttl: 40 }]",
       amount: amount,
-      tags: [this.modalVisibility === "private" ? "Private Hire" : "Public Bounty", "Escrow Locked"],
-      status: "Escrow Locked",
+      tags: [this.modalVisibility === "private" ? "Private Hire" : "Public Bounty", category],
+      status: "Active",
       studentId: studentId,
+      rules: {
+        eligibility: "Open to all student developers and independent builders.",
+        teamSize: "Direct individual submissions with public GitHub repository links.",
+        aiPolicy: "You are allowed full use of AI tools, coding assistants, and open-source packages.",
+        submissionRules: "Submissions must not contain secrets or exposed API tokens.",
+        judgingConduct: "Kilikoro Autonomous AST Oracle decisions are instantaneous and cryptographic."
+      },
+      resources: [],
+      attachments: [],
+      submissions: [],
       bmoniEscrowId: escrowRes?.escrowId || `ESCROW-${Date.now().toString().slice(-4)}`,
       bmoniTxHash: escrowRes?.transactionHash || `0xbmoni_lock_${Date.now().toString().slice(-6)}`
     };
@@ -1844,11 +2365,11 @@ function cacheResolver(entries, threshold) {
     this.closeNewContractModal();
     this.setContractType(this.modalVisibility);
     this.switchView("view-contracts");
-    this.showToast("Escrow Locked", `$${amount.toFixed(2)} USDC locked in BANK Escrow Vault for: "${title}".\nOracle Reference: ${newContract.bmoniTxHash}\nRemaining Balance: $${this.activeProfile.balanceUsdc.toFixed(2)} USDC`, "success", 5000);
+    this.showToast("Escrow Locked", `$${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for: "${title}".\nOracle Reference: ${newContract.bmoniTxHash}\nRemaining Balance: $${this.activeProfile.balanceUsdc.toFixed(2)} USDC`, "success", 5000);
   }
 
   // =========================================================================
-  // BANK NIGERIAN BANK OFF-RAMP CONTROLS
+  // BMONI NIGERIAN BMONI OFF-RAMP CONTROLS
   // =========================================================================
 
   async openBankWithdrawalModal() {
@@ -1884,12 +2405,12 @@ function cacheResolver(entries, threshold) {
   }
 
   // =========================================================================
-  // BANK DEPOSIT & WALLET FUNDING CONTROLS
+  // BMONI DEPOSIT & WALLET FUNDING CONTROLS
   // =========================================================================
 
   openDepositModal() {
     if (!this.isAuthenticated()) {
-      this.promptAuth("fund your BANK wallet & virtual card");
+      this.promptAuth("fund your BMONI wallet & virtual card");
       return;
     }
     const modal = document.getElementById("bmoniDepositModal");
@@ -1938,7 +2459,7 @@ function cacheResolver(entries, threshold) {
 
     if (btn) {
       btn.disabled = true;
-      btn.textContent = "Connecting BANK 9PSB Rails...";
+      btn.textContent = "Connecting BMONI 9PSB Rails...";
     }
 
     try {
@@ -1956,10 +2477,10 @@ function cacheResolver(entries, threshold) {
       // Record deposit transaction
       const depositRecord = {
         id: crypto.randomUUID(),
-        contractId: "BANK-FUND-ACCOUNT",
+        contractId: "BMONI-FUND-ACCOUNT",
         amount: amount,
         transactionHash: fundRes.transactionHash || `0xbmoni_deposit_${Date.now()}`,
-        description: `BANK 9PSB Rails Deposit (+₦${Math.round(amount * 1600).toLocaleString()})`,
+        description: `BMONI 9PSB Rails Deposit (+₦${Math.round(amount * 1600).toLocaleString()})`,
         timestamp: new Date().toISOString()
       };
       await this.db.recordSettlement(depositRecord);
@@ -1973,13 +2494,13 @@ function cacheResolver(entries, threshold) {
       if (this.soundEngine) this.soundEngine.playCelebration();
       triggerConfettiBurst();
 
-      this.showToast("Deposit Successful", `+$${amount.toFixed(2)} USDC (≈ ₦${Math.round(amount * 1600).toLocaleString()} cNGN) credited via BANK Rails!\nTx: ${depositRecord.transactionHash}`, "success", 5500);
+      this.showToast("Deposit Successful", `+$${amount.toFixed(2)} USDC (≈ ₦${Math.round(amount * 1600).toLocaleString()} cNGN) credited via BMONI Rails!\nTx: ${depositRecord.transactionHash}`, "success", 5500);
     } catch (err) {
-      this.showToast("Deposit Error", "BANK funding failed: " + err.message, "error");
+      this.showToast("Deposit Error", "BMONI funding failed: " + err.message, "error");
     } finally {
       if (btn) {
         btn.disabled = false;
-        btn.textContent = "Confirm BANK Deposit";
+        btn.textContent = "Confirm BMONI Deposit";
       }
     }
   }
@@ -2018,19 +2539,19 @@ function cacheResolver(entries, threshold) {
 
     try {
       const res = await this.bmoniClient.verifyBankAccount({ bankCode, accountNumber });
-      const resolvedName = res?.accountName || (this.activeProfile?.name ? this.activeProfile.name.toUpperCase() : "WALI O. MEDUGU");
+      const resolvedName = res?.accountName || (this.activeProfile?.name ? this.activeProfile.name.toUpperCase() : "CROWN CHASERS");
       if (nameEl) nameEl.textContent = resolvedName;
       if (banner) banner.style.display = "block";
       this.showToast("Account Verified", `Account Holder: ${resolvedName}`, "success");
     } catch (e) {
-      if (nameEl) nameEl.textContent = this.activeProfile?.name ? this.activeProfile.name.toUpperCase() : "WALI O. MEDUGU";
+      if (nameEl) nameEl.textContent = this.activeProfile?.name ? this.activeProfile.name.toUpperCase() : "CROWN CHASERS";
       if (banner) banner.style.display = "block";
     }
   }
 
   async submitBankWithdrawal() {
     if (!this.isAuthenticated()) {
-      this.promptAuth("withdraw BANK funds to a Nigerian bank");
+      this.promptAuth("withdraw BMONI funds to a Nigerian BMONI");
       return;
     }
 
@@ -2042,7 +2563,7 @@ function cacheResolver(entries, threshold) {
 
     const amount = parseFloat(amtInput?.value || "0");
     const acct = (acctInput?.value || "").trim();
-    const bankName = bankSelect?.options[bankSelect.selectedIndex]?.text || "Nigerian Bank";
+    const bankName = bankSelect?.options[bankSelect.selectedIndex]?.text || "Nigerian BMONI";
     const available = this.activeProfile?.balanceUsdc || 0;
 
     if (isNaN(amount) || amount <= 0) {
@@ -2061,12 +2582,12 @@ function cacheResolver(entries, threshold) {
     }
 
     btn.disabled = true;
-    btn.textContent = "Processing BANK Rails...";
+    btn.textContent = "Processing BMONI Rails...";
     if (statusBox) {
       statusBox.style.display = "block";
       statusBox.style.background = "var(--bg-secondary)";
       statusBox.style.color = "var(--text-secondary)";
-      statusBox.innerHTML = `Connecting to BANK Embedded Nigerian Banking Gateway...`;
+      statusBox.innerHTML = `Connecting to BMONI Embedded Nigerian Banking Gateway...`;
     }
 
     try {
@@ -2099,7 +2620,7 @@ function cacheResolver(entries, threshold) {
         transactionHash: signed.reference || `0xbmoni_out_${Date.now()}`,
         attestationId: `OFFRAMP-NGN-${acct.slice(-4)}`,
         settledAmountUSDC: -amount,
-        status: "Bank Settled",
+        status: "BMONI Settled",
         timestamp: new Date().toISOString()
       });
 
@@ -2110,7 +2631,7 @@ function cacheResolver(entries, threshold) {
           <b>✓ Withdrawal Dispatched!</b><br>
           Amount: ₦${Math.round(amount * 1600 - 50).toLocaleString()} cNGN sent to ${bankName} (${acct})<br>
           Reference: <code>${signed.reference || '0xbmoni_settled'}</code><br>
-          Arrival: Instant (&lt;5s via NIP/BANK Rails)
+          Arrival: Instant (&lt;5s via NIP/BMONI Rails)
         `;
       }
 
@@ -2167,7 +2688,7 @@ function cacheResolver(entries, threshold) {
       const payload = {
         candidateName,
         candidateDid,
-        repoUrl: audit.repo || "https://github.com/walimedugu/candidate",
+        repoUrl: audit.repo || "https://github.com/CrownChasers/candidate",
         score,
         securityStatus: audit.securityStatus || "Clean Git History",
         errorHandling: audit.errorHandlingRating || "Robust Guards",
@@ -2282,9 +2803,9 @@ function cacheResolver(entries, threshold) {
       this.showToast("Generating PNG", "Rendering high-DPI Kilikoro Certificate...", "info", 2500);
 
       const certId = document.getElementById("certId")?.textContent?.trim() || this.currentCertId;
-      const candidateName = document.getElementById("certCandidateName")?.textContent?.trim() || "Wali Medugu";
+      const candidateName = document.getElementById("certCandidateName")?.textContent?.trim() || "Crown Chasers Lead";
       const candidateDid = document.getElementById("certCandidateDid")?.textContent?.trim() || "242120036";
-      const repoUrl = document.getElementById("certRepoUrl")?.textContent?.trim() || "https://github.com/WaliMedugu/BuildX-Crown-Chasers";
+      const repoUrl = document.getElementById("certRepoUrl")?.textContent?.trim() || "https://github.com/CrownChasers/kilikoro-protocol";
       const engineModel = document.getElementById("certEngineModel")?.textContent?.trim() || "Kilikoro Neural Oracle + AST Engine";
       const timestamp = document.getElementById("certTimestamp")?.textContent?.trim() || "Issued: October 2, 2026";
       const sha256 = document.getElementById("certSha256")?.textContent?.trim() || "SHA256: 4fabcbfb367170c5e954729bffc9a558abdbaf33f352eb126cd5b7cd26f004d4";
@@ -2426,7 +2947,7 @@ function cacheResolver(entries, threshold) {
         { dim: "Security & Secret Hygiene", std: "Zero Exposed API Keys", obs: "Clean Git Commit History", tag: "VERIFIED" },
         { dim: "Error Handling & Resilience", std: "Try/Catch & Boundary Guards", obs: "Robust Boundary Guards", tag: "VERIFIED" },
         { dim: "Algorithmic Asymptotic Limit", std: "O(N log N) Scalability", obs: "O(N log N) Deterministic", tag: "VERIFIED" },
-        { dim: "BANK Escrow Settlement Clearance", std: "Automated Direct Release", obs: "Cleared for Instant Payout", tag: "ACTIVE" }
+        { dim: "BMONI Escrow Settlement Clearance", std: "Automated Direct Release", obs: "Cleared for Instant Payout", tag: "ACTIVE" }
       ];
 
       rows.forEach((r, idx) => {
@@ -2469,7 +2990,7 @@ function cacheResolver(entries, threshold) {
 
       ctx.fillStyle = "#D97757";
       ctx.font = "italic 22px 'Brush Script MT', cursive, serif";
-      ctx.fillText("Wali Medugu (Lead)", 160, botY + 65);
+      ctx.fillText("Crown Chasers (Lead)", 160, botY + 65);
 
       ctx.fillStyle = "#FAF6F0";
       ctx.font = "bold 13px sans-serif";
@@ -2717,7 +3238,7 @@ function cacheResolver(entries, threshold) {
             <div class="tag-list">
               <span class="tag">Algorithms</span>
               <span class="tag">AST Passed</span>
-              <span class="tag">BANK Active</span>
+              <span class="tag">BMONI Active</span>
             </div>
             <button class="btn btn-secondary" onclick="app.directHire('${s.nacosId || ""}', '${s.name}')" style="font-size: 0.75rem;">
               Direct Hire (Private)
@@ -2786,6 +3307,8 @@ function cacheResolver(entries, threshold) {
     const verifierNacos = document.getElementById("verifierNacosId");
     if (verifierRepo) verifierRepo.value = "";
     if (verifierNacos) verifierNacos.value = "";
+
+    this.renderHomeDashboard();
   }
 
   applyProfile(profile) {
@@ -2813,7 +3336,7 @@ function cacheResolver(entries, threshold) {
       roleLabel.textContent = `Role: ${roleDisplay}`;
     }
 
-    // BANK Virtual Mastercard (Exact Image 1)
+    // BMONI Virtual Mastercard (Exact Image 1)
     const holderEl = document.getElementById("walletCardHolderName");
     const numEl = document.getElementById("walletCardNumber");
     const cvvEl = document.getElementById("walletCardCvv");
@@ -2821,8 +3344,27 @@ function cacheResolver(entries, threshold) {
     if (numEl) numEl.textContent = profile.cardNumber || "5399 •••• •••• 4892";
     if (cvvEl) cvvEl.textContent = profile.cardCvv || "834";
 
-    // BANK Liquid Balance Pocket Card (Exact Image 2)
+    // BMONI Liquid Balance Pocket Card (Exact Image 2)
     this.renderLiquidBalance();
+    this.renderHomeDashboard();
+  }
+
+  renderHomeDashboard() {
+    const balUsdc = this.activeProfile?.balanceUsdc || 0;
+    const nairaAmt = Math.round(balUsdc * 1600);
+    const homeUsdcEl = document.getElementById("homeBalanceUsdc");
+    const homeNgnEl = document.getElementById("homeBalanceNgn");
+    const homeCardEl = document.getElementById("homeCardNumber");
+
+    if (homeUsdcEl) {
+      homeUsdcEl.textContent = `$${balUsdc.toFixed(2)} USDC`;
+    }
+    if (homeNgnEl) {
+      homeNgnEl.textContent = `≈ ₦${nairaAmt.toLocaleString()} cNGN`;
+    }
+    if (homeCardEl) {
+      homeCardEl.textContent = this.activeProfile?.cardNumber || "5399 •••• •••• 4892";
+    }
   }
 
   renderLiquidBalance() {
@@ -2859,11 +3401,11 @@ function cacheResolver(entries, threshold) {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(acct).catch(() => {});
     }
-    this.showToast("Account Number Copied", `${acct} (9 Payment Service Bank) copied to clipboard.`, "success", 3500);
+    this.showToast("Account Number Copied", `${acct} (9 Payment Service BMONI) copied to clipboard.`, "success", 3500);
   }
 
   showBmoniRailInfo() {
-    this.showToast("BANK 9PSB Rails", "9 Payment Service Bank (9PSB) virtual NUBAN account. Instant 3-second credit & NIP commercial off-ramps with Sponsor Referral: Kilikoro.", "info", 5000);
+    this.showToast("BMONI 9PSB Rails", "9 Payment Service BMONI (9PSB) virtual NUBAN account. Instant 3-second credit & NIP commercial off-ramps with Sponsor Referral: Kilikoro.", "info", 5000);
   }
 
   openOnboardingModal() {
@@ -2993,12 +3535,12 @@ function cacheResolver(entries, threshold) {
       // Guest / Local Authenticated Session
       const localUser = {
         id: "usr-" + Date.now().toString(36),
-        name: ident.includes("@") ? ident.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, l => l.toUpperCase()) : "Wali Medugu",
+        name: ident.includes("@") ? ident.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, l => l.toUpperCase()) : "Crown Chasers Lead",
         email: ident.includes("@") ? ident : `${ident.toLowerCase()}@kilikoro.dev`,
         role: "personal",
         university: "University of Lagos (UNILAG)",
         nacosId: !ident.includes("@") ? ident : "UNILAG-CS-2026-0482",
-        github: ident.includes("@") ? ident.split("@")[0] : "WaliMedugu",
+        github: ident.includes("@") ? ident.split("@")[0] : "CrownChasers",
         cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
         cardCvv: String(Math.floor(100 + Math.random() * 900)),
         balanceUsdc: 6.25,
@@ -3043,7 +3585,7 @@ function cacheResolver(entries, threshold) {
     }
 
     if (bmoniPhone && !this.isValidBmoniAccount(bmoniPhone)) {
-      this.showToast("BANK Account Notice", "BANK account must be a valid Nigerian mobile number (11 digits: 080... or +234...) or a 3-30 character tag.", "warning");
+      this.showToast("BMONI Account Notice", "BMONI account must be a valid Nigerian mobile number (11 digits: 080... or +234...) or a 3-30 character tag.", "warning");
       return;
     }
 
@@ -3111,7 +3653,7 @@ function cacheResolver(entries, threshold) {
       }
 
       if (!registeredUser) {
-        // Client-side registration backed by real BANK API client
+        // Client-side registration backed by real BMONI API client
         let bmoniCard = null;
         try {
           bmoniCard = await this.bmoniClient.issueVirtualCard({
@@ -3172,7 +3714,7 @@ function cacheResolver(entries, threshold) {
       await this.renderStudents();
       this.renderContracts();
       this.closeOnboardingModal();
-      this.showToast("Account Created", `Identity: ${registeredUser.name} (${registeredUser.role === "organization" ? "Organization" : "Personal"}). ₦10,000 Welcome Grant credited to BANK Virtual Card!`, "success", 5000);
+      this.showToast("Account Created", `Identity: ${registeredUser.name} (${registeredUser.role === "organization" ? "Organization" : "Personal"}). ₦10,000 Welcome Grant credited to BMONI Virtual Card!`, "success", 5000);
     } catch (err) {
       this.showToast("Registration Error", err.message, "error");
     } finally {
@@ -3207,6 +3749,22 @@ function cacheResolver(entries, threshold) {
     const live = await this.db.getContracts();
     this.contracts = Array.isArray(live) ? live : [];
     this.renderContracts();
+  }
+
+  openMobileSidebar() {
+    const sidebar = document.getElementById('appSidebar');
+    const backdrop = document.getElementById('mobileSidebarBackdrop');
+    if (sidebar) sidebar.classList.add('mobile-open');
+    if (backdrop) backdrop.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeMobileSidebar() {
+    const sidebar = document.getElementById('appSidebar');
+    const backdrop = document.getElementById('mobileSidebarBackdrop');
+    if (sidebar) sidebar.classList.remove('mobile-open');
+    if (backdrop) backdrop.classList.remove('visible');
+    document.body.style.overflow = '';
   }
 }
 

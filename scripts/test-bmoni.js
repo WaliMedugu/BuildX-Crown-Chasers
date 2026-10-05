@@ -47,13 +47,13 @@ async function runBmoniTest() {
   console.log("\n[3/3] Testing NACOS Virtual Mastercard Issuance (POST /cards/issue)...");
   try {
     const card = await client.issueVirtualCard({
-      studentName: "Wali Medugu",
+      studentName: "Crown Chasers Lead",
       nacosId: "UNILAG-CS-2026-0482",
       university: "University of Lagos"
     });
     console.log(`  ✓ Card Status : ${card.status || "ACTIVE"}`);
     console.log(`  ✓ Card Number : ${card.cardNumber || "5399 •••• •••• 4892"}`);
-    console.log(`  ✓ Cardholder  : ${card.cardHolder || "WALI MEDUGU"}`);
+    console.log(`  ✓ Cardholder  : ${card.cardHolder || "CROWN CHASERS"}`);
   } catch (err) {
     console.log(`  ! Notice: ${err.message}`);
   }

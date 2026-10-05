@@ -3,24 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kilikoro — Developer Verification & BANK Milestone Escrow</title>
+  <title>Kilikoro — Developer Verification & BMONI Milestone Escrow</title>
   <link rel="stylesheet" href="css/claude-theme.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop" onclick="app.closeMobileSidebar()" aria-hidden="true"></div>
 
   <div class="saas-layout">
 
     <!-- ========================================================================= -->
     <!-- LEFT SIDEBAR NAVIGATION (Linear / GitHub Style)                           -->
     <!-- ========================================================================= -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="appSidebar">
       <div class="sidebar-top">
         <!-- Brand -->
         <a href="#" class="sidebar-brand" onclick="app.switchView('view-home')" style="display: flex; align-items: center; gap: 0.6rem;">
           <img src="assets/kilikoro-logo-terracotta.png" alt="Kilikoro Logo" style="height: 32px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(217, 119, 87, 0.3));">
           <span class="brand-title">Kilikoro</span>
-          <span class="brand-tag">Wali Medugu</span>
+          <span class="brand-tag">BuildX 2026</span>
         </a>
 
         <!-- Main Nav List -->
@@ -54,7 +57,7 @@
 
           <a class="nav-item" data-view="view-wallet" id="navItemWallet" onclick="app.switchView('view-wallet')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-            <span>BANK Wallet & Cards</span>
+            <span>BMONI Wallet & Cards</span>
           </a>
 
           <a class="nav-item" data-view="view-students" id="navItemStudents" onclick="app.switchView('view-students')">
@@ -64,13 +67,18 @@
         </nav>
       </div>
 
+      <!-- Mobile Close Sidebar Button -->
+      <button class="sidebar-mobile-close" onclick="app.closeMobileSidebar()" aria-label="Close menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+
       <!-- User Profile Badge -->
       <div class="sidebar-bottom">
         <div class="user-profile-badge" id="userProfileBadge" onclick="app.handleAuthClick()" title="Click to view/edit your profile" style="cursor: pointer;">
-          <div class="user-avatar" id="sidebarAvatar">WM</div>
+          <div class="user-avatar" id="sidebarAvatar">CC</div>
           <div class="user-info">
-            <span class="user-name" id="sidebarUserName">Wali Medugu</span>
-            <span class="user-sub" id="sidebarUserSub">UNILAG CS '26 • Kilikoro Node</span>
+            <span class="user-name" id="sidebarUserName">Crown Chasers</span>
+            <span class="user-sub" id="sidebarUserSub">BuildX 2026 • Kilikoro Node</span>
           </div>
         </div>
       </div>
@@ -83,6 +91,10 @@
 
       <!-- Top Header Bar -->
       <header class="top-header">
+        <!-- Mobile Hamburger -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="app.openMobileSidebar()" aria-label="Open menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
         <div class="breadcrumbs" id="breadcrumbTrail">
           <a href="#" onclick="app.switchView('view-home')">Kilikoro</a>
           <span class="separator">/</span>
@@ -90,26 +102,9 @@
         </div>
 
         <div class="header-actions">
-          <!-- Interactive Judge Demo Switcher -->
-          <div class="judge-demo-selector" style="display: inline-flex; align-items: center; gap: 0.35rem; background: var(--bg-secondary); border: 1px solid var(--border-medium); border-radius: 6px; padding: 0.25rem 0.6rem;">
-            <span style="font-size: 0.72rem; color: var(--accent-terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Demo User:</span>
-            <select id="judgeAccountSelector" onchange="app.switchDemoPersona(this.value)" style="background: transparent; border: none; color: var(--text-primary); font-size: 0.78rem; cursor: pointer; outline: none;">
-              <option value="wali-medugu-team-lead" selected>Wali Medugu (Crown Chasers Team Lead - $150)</option>
-              <option value="amina-bello-ai-builder">Amina Bello (Student AI Builder - $420)</option>
-              <option value="chidi-okonkwo-systems">Chidi Okonkwo (Student Systems - $850)</option>
-              <option value="starlight-labs-sponsor">Starlight FinTech Labs (Sponsor Org - $25,000)</option>
-              <option value="zainab-alhassan-ui">Zainab Al-Hassan (Frontend Builder - $310)</option>
-              <option value="david-mensah-sec">David Mensah (Security Specialist - $600)</option>
-            </select>
-          </div>
           <button class="btn btn-secondary" onclick="app.replayDiscoveryGuide()" style="font-size: 0.78rem; padding: 0.25rem 0.55rem; display: inline-flex; align-items: center; gap: 0.35rem;" title="Interactive Discovery Guide">
-            <span style="color: var(--accent-gold);">💡</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-gold);"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path></svg>
             <span>Guide</span>
-          </button>
-          <button class="btn btn-secondary" id="btnRoleSwitcher" onclick="app.toggleRole()" style="font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.4rem;" title="Switch between Personal and Organization views">
-            <span class="status-dot" style="background: var(--accent-terracotta);"></span>
-            <span id="headerRoleLabel">Role: Personal</span>
-            <span style="opacity: 0.65; font-size: 0.72rem; text-decoration: none;">⇄ Switch</span>
           </button>
           <button class="btn btn-secondary" id="btnUserAuth" onclick="app.handleAuthClick()" style="font-size: 0.82rem;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -139,7 +134,7 @@
               <div style="flex: 1; min-width: 280px;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                   <span class="status-badge" style="background: var(--accent-terracotta-subtle); color: var(--accent-terracotta); font-weight: 600;">
-                    Wali Medugu • 2026
+                    Crown Chasers • 2026
                   </span>
                   <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">KILIKORO PROTOCOL v2.4</span>
                 </div>
@@ -147,7 +142,7 @@
                   Autonomous Code Proof & Escrow Rails
                 </h1>
                 <p class="subheadline" style="max-width: 650px; margin-bottom: 1.25rem;">
-                  Cross-verify developer competence directly against GitHub source code, AST security trees, and settle milestone escrows with automated Nigerian bank and BANK card rails.
+                  Cross-verify developer competence directly against GitHub source code, AST security trees, and settle milestone escrows with automated Nigerian bank and BMONI card rails.
                 </p>
                 <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                   <button class="btn btn-primary" onclick="app.switchView('view-verifier')">
@@ -182,7 +177,7 @@
                 </div>
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
                   <button class="btn btn-primary" onclick="app.openDepositModal()" style="flex: 1; justify-content: center; font-size: 0.78rem; padding: 0.45rem;">
-                    + Fund (BANK)
+                    + Fund (BMONI)
                   </button>
                   <button class="btn btn-secondary" onclick="app.switchView('view-wallet')" style="flex: 1; justify-content: center; font-size: 0.78rem; padding: 0.45rem;">
                     Wallet & Cards →
@@ -214,7 +209,7 @@
               <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(212,163,115,0.15); display: flex; align-items: center; justify-content: center; color: #b47d3c; margin-bottom: 0.75rem;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
               </div>
-              <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem;">BANK Payouts</h3>
+              <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem;">BMONI Payouts</h3>
               <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">Instant settlement to any Nigerian bank (NUBAN) or spend with virtual card.</p>
             </div>
 
@@ -350,28 +345,28 @@
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.6rem;" id="deepResearchSourcesGrid">
               <div class="stat-box" style="padding: 0.65rem 0.85rem; display: flex; align-items: center; gap: 0.6rem;" id="sourceGithub">
-                <span style="font-size: 1.1rem;">🐙</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-terracotta); flex-shrink: 0;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
                 <div>
                   <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-primary);">GitHub AST Engine</div>
                   <div style="font-size: 0.68rem; color: var(--text-muted);" id="sourceGithubStatus">Fetching commits & tree...</div>
                 </div>
               </div>
               <div class="stat-box" style="padding: 0.65rem 0.85rem; display: flex; align-items: center; gap: 0.6rem;" id="sourceNpm">
-                <span style="font-size: 1.1rem;">📦</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-gold); flex-shrink: 0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                 <div>
                   <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-primary);">NPM Dependency Audit</div>
                   <div style="font-size: 0.68rem; color: var(--text-muted);" id="sourceNpmStatus">Scanning vulnerabilities...</div>
                 </div>
               </div>
               <div class="stat-box" style="padding: 0.65rem 0.85rem; display: flex; align-items: center; gap: 0.6rem;" id="sourceCve">
-                <span style="font-size: 1.1rem;">🛡️</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--status-emerald); flex-shrink: 0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                 <div>
                   <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-primary);">National CVE Database</div>
                   <div style="font-size: 0.68rem; color: var(--text-muted);" id="sourceCveStatus">Auditing secret leaks...</div>
                 </div>
               </div>
               <div class="stat-box" style="padding: 0.65rem 0.85rem; display: flex; align-items: center; gap: 0.6rem;" id="sourceClaims">
-                <span style="font-size: 1.1rem;">🔍</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-terracotta); flex-shrink: 0;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <div>
                   <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-primary);">Resume Cross-Check</div>
                   <div style="font-size: 0.68rem; color: var(--text-muted);" id="sourceClaimsStatus">Matching code claims...</div>
@@ -517,7 +512,7 @@
           <div class="marketplace-header">
             <h1 class="headline-large">Contracts & Milestone Escrows</h1>
             <p class="subheadline">
-              Direct private 1-on-1 contracts and open public bounties secured by BANK stablecoin escrows with 3-second payouts.
+              Direct private 1-on-1 contracts and open public bounties secured by BMONI stablecoin escrows with 3-second payouts.
             </p>
           </div>
 
@@ -565,14 +560,26 @@
             <!-- Milestone Header -->
             <div class="milestone-banner">
               <div style="flex: 1;">
-                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
-                  <span class="brand-pill" id="wsTaskId">TASK-BANK-104</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                  <span class="brand-pill" id="wsTaskId">TASK-BMONI-104</span>
                   <span class="tag" id="wsCategory">Algorithms & FinTech</span>
+                  <span class="tag" style="background: var(--status-emerald-subtle); color: var(--status-emerald);" id="wsStatusBadge">Active Challenge</span>
                 </div>
                 <h1 class="headline-large" style="font-size: 2rem;" id="wsTitle">High-Throughput Cache Expiry Resolver</h1>
                 <p class="subheadline" style="margin-top: 0.5rem;" id="wsSponsor">
-                  Sponsor: <b>Kilikoro Labs</b> • Escrow Model: <b>Automated Milestone Release</b>
+                  Sponsor: <b>Kilikoro Labs</b> • Model: <b>Automated Milestone Release</b>
                 </p>
+                
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                  <button class="btn btn-secondary" id="btnEditWsSpec" onclick="app.openEditSpecModal()" style="font-size: 0.82rem; padding: 0.35rem 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>Manage Specifications & Rules</span>
+                  </button>
+                  <button class="btn btn-secondary" id="btnDeleteContract" onclick="app.deleteCurrentContract()" style="font-size: 0.82rem; padding: 0.35rem 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem; color: var(--status-ruby);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Delete Contract</span>
+                  </button>
+                </div>
               </div>
 
               <div class="milestone-meta-box">
@@ -586,116 +593,290 @@
                 </div>
                 <div class="meta-row">
                   <span class="meta-label">Complexity Limit</span>
-                  <span class="meta-val">O(N log N)</span>
+                  <span class="meta-val" id="wsComplexity">O(N log N)</span>
                 </div>
                 <div class="meta-row">
-                  <span class="meta-label">Escrow Status</span>
-                  <span class="meta-val" style="color: var(--status-emerald);">Vault Locked ✓</span>
+                  <span class="meta-label">Submissions</span>
+                  <span class="meta-val" id="wsSubmissionsCount">0 Verified</span>
                 </div>
               </div>
             </div>
 
-            <!-- Contract Deliverables Spec -->
-            <div class="submission-card">
-              <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">Requirements & Specifications</h2>
-              <p style="color: var(--text-secondary); line-height: 1.6;" id="wsDescription">
-                High-frequency payment systems face microsecond cache bottlenecks when thousands of transaction auth tokens expire concurrently. You must implement the function <code>cacheResolver(entries, threshold)</code> to filter out expired items and return remaining entries sorted by priority.
-              </p>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
-                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Sample Input:</span>
-                  <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--accent-terracotta);">entries = [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }]
-threshold = 20</pre>
-                </div>
-
-                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Expected Output:</span>
-                  <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--status-emerald);">[{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]</pre>
-                </div>
-              </div>
-            </div>
-
-            <!-- Code Submission & Checklist -->
-            <div class="submission-card">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">Submit Code Implementation</h2>
-                <div style="display: flex; gap: 0.5rem;">
-                  <button class="btn btn-secondary" id="btnPresetHuman" style="font-size: 0.78rem;">Load Authentic Code</button>
-                  <button class="btn btn-secondary" id="btnPresetAi" style="font-size: 0.78rem; color: var(--status-ruby);">Load AI Trap Code</button>
-                </div>
-              </div>
-
-              <!-- Code Box -->
-              <textarea class="code-box-editor" id="solutionInput" spellcheck="false"></textarea>
-
-              <!-- 4-Step Verification Checklist -->
-              <div class="verification-progress-card">
-                <span class="panel-title">Automated Verification & Payout Pipeline</span>
-                <div class="check-item" id="checkSyntax">
-                  <span class="check-icon">1</span>
-                  <span>Syntax & AST Parse Tree Validation</span>
-                </div>
-                <div class="check-item" id="checkEntropy">
-                  <span class="check-icon">2</span>
-                  <span>Anti-AI Boilerplate Entropy & Plagiarism Scan</span>
-                </div>
-                <div class="check-item" id="checkComplexity">
-                  <span class="check-icon">3</span>
-                  <span>Input Scaling & Asymptotic Big-O Verification (N=10..5,000)</span>
-                </div>
-                <div class="check-item" id="checkEscrow">
-                  <span class="check-icon">4</span>
-                  <span>BANK Oracle Cryptographic Settlement Trigger</span>
-                </div>
-              </div>
-
-              <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.75rem;">
-                <button class="btn btn-secondary" onclick="app.switchView('view-contracts')">Back to Contracts</button>
-                <button class="btn btn-emerald" id="btnRunVerification" style="padding: 0.65rem 1.5rem; font-size: 0.95rem;">
-                  Verify & Release Payout
+            <!-- Devpost-Style Sub-Navigation Tabs -->
+            <div class="filter-toolbar" style="margin-bottom: 1.25rem;">
+              <div style="display: flex; gap: 0.4rem; background: var(--bg-secondary); padding: 0.3rem; border-radius: 8px; border: 1px solid var(--border-subtle); flex-wrap: wrap;">
+                <button class="filter-pill active" id="wsTabBtn-overview" onclick="app.setWsTab('overview')" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <span>Overview</span>
                 </button>
+                <button class="filter-pill" id="wsTabBtn-rules" onclick="app.setWsTab('rules')" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <span>Rules & Eligibility</span>
+                </button>
+                <button class="filter-pill" id="wsTabBtn-resources" onclick="app.setWsTab('resources')" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                  <span>Resources (<span id="wsResCount">4</span>)</span>
+                </button>
+                <button class="filter-pill" id="wsTabBtn-submit" onclick="app.setWsTab('submit')" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m16 16-4-4-4 4"></path></svg>
+                  <span>Submit Project</span>
+                </button>
+                <button class="filter-pill" id="wsTabBtn-gallery" onclick="app.setWsTab('gallery')" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                  <span>Project Gallery (<span id="wsSubCount">0</span>)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 1: OVERVIEW & DELIVERABLES -->
+            <div class="ws-tab-panel" id="wsPanel-overview">
+              <div class="submission-card" style="margin-bottom: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                  <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">Requirements & Specifications</h2>
+                  <button class="btn btn-secondary" onclick="app.openEditSpecModal()" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    <span>Edit Spec</span>
+                  </button>
+                </div>
+                <div style="color: var(--text-secondary); line-height: 1.6; font-size: 0.92rem; white-space: pre-wrap;" id="wsDescription">
+                  High-frequency payment systems face microsecond cache bottlenecks when thousands of transaction auth tokens expire concurrently. You must implement the function cacheResolver(entries, threshold) to filter out expired items and return remaining entries sorted by priority.
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.25rem;">
+                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono); font-weight: 600;">Sample Input:</span>
+                    <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--accent-terracotta); background: var(--bg-primary); padding: 0.6rem; border-radius: 4px; overflow-x: auto;" id="wsSampleInput">entries = [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }]
+threshold = 20</pre>
+                  </div>
+
+                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono); font-weight: 600;">Expected Output:</span>
+                    <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--status-emerald); background: var(--bg-primary); padding: 0.6rem; border-radius: 4px; overflow-x: auto;" id="wsExpectedOutput">[{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]</pre>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Attachments & Files Card -->
+              <div class="submission-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                  <div>
+                    <h3 style="font-family: var(--font-editorial); font-size: 1.25rem; margin: 0;">Attached Requirement Files & Downloads</h3>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Specifications, datasets, architecture diagrams, and problem statements</span>
+                  </div>
+                  <label class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span>Upload File</span>
+                    <input type="file" id="specFileUploadInput" style="display: none;" onchange="app.handleSpecFileUpload(event)">
+                  </label>
+                </div>
+
+                <div id="wsAttachmentsList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem;">
+                  <!-- Dynamically rendered -->
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: RULES & ELIGIBILITY (DEVPOST STANDARD) -->
+            <div class="ws-tab-panel" id="wsPanel-rules" style="display: none;">
+              <div class="submission-card">
+                <h2 style="font-family: var(--font-editorial); font-size: 1.4rem; margin-bottom: 1rem;">Official Challenge Rules</h2>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--accent-terracotta);">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-terracotta);"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                      <h4 style="margin: 0; font-size: 0.92rem; color: var(--text-primary);">Eligibility & Developers</h4>
+                    </div>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;" id="wsRulesEligibility">
+                      Open to all student developers, engineers, and independent builders enrolled in developer communities or working independently.
+                    </p>
+                  </div>
+
+                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--accent-gold);">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-gold);"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                      <h4 style="margin: 0; font-size: 0.92rem; color: var(--text-primary);">Builder Guidelines & Submissions</h4>
+                    </div>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;" id="wsRulesTeam">
+                      Direct individual submissions with public or authorized GitHub repository links. Every submission undergoes autonomous AST verification.
+                    </p>
+                  </div>
+
+                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--status-emerald);">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--status-emerald);"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>
+                      <h4 style="margin: 0; font-size: 0.92rem; color: var(--text-primary);">AI & Tooling Policy</h4>
+                    </div>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;" id="wsRulesAi">
+                      You are allowed full use of AI tools, coding assistants, and open-source packages. All code is audited against AST security trees and anti-hallucination entropy checks.
+                    </p>
+                  </div>
+
+                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--status-ruby);">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--status-ruby);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                      <h4 style="margin: 0; font-size: 0.92rem; color: var(--text-primary);">Code Authenticity & Disqualification</h4>
+                    </div>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;" id="wsRulesSubmission">
+                      Submissions must not contain offensive, harmful, or plagiarized content. Secrets, live private keys, and exposed API tokens will trigger instant AST audit failure.
+                    </p>
+                  </div>
+
+                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--accent-terracotta);">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-terracotta);"><path d="M12 3v18"></path><path d="m3 9 9-6 9 6"></path><path d="M6 10v6"></path><path d="M18 10v6"></path><path d="M3 16h18"></path></svg>
+                      <h4 style="margin: 0; font-size: 0.92rem; color: var(--text-primary);">Autonomous Oracle Judging</h4>
+                    </div>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;" id="wsRulesConduct">
+                      Kilikoro Autonomous AST Oracle decisions are instantaneous and cryptographic. BMONI milestone escrow is automatically released to the verified submitter's balance upon passing.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: RESOURCES & USEFUL LINKS -->
+            <div class="ws-tab-panel" id="wsPanel-resources" style="display: none;">
+              <div class="submission-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                  <div>
+                    <h2 style="font-family: var(--font-editorial); font-size: 1.4rem; margin: 0;">Developer Resources & Guidelines</h2>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Starter kits, APIs, documentation, and community channels</span>
+                  </div>
+                  <button class="btn btn-secondary" onclick="app.openAddResourceModal()" style="font-size: 0.75rem; padding: 0.25rem 0.65rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Add Link</span>
+                  </button>
+                </div>
+
+                <div id="wsResourcesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.85rem;">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: DEVPOST SUBMIT PROJECT & AUTO-JUDGE -->
+            <div class="ws-tab-panel" id="wsPanel-submit" style="display: none;">
+              <div class="submission-card">
+                <h2 style="font-family: var(--font-editorial); font-size: 1.4rem; margin-bottom: 0.35rem;">Submit Project Solution</h2>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                  Provide your public GitHub repository URL and solution details. Kilikoro Autonomous AST Oracle verifies your code and settles the BMONI escrow instantly.
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                  <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">GitHub Repository URL <span style="color: var(--status-ruby);">*</span></label>
+                    <input type="url" id="submitProjectRepo" required placeholder="https://github.com/username/solution-repo" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.88rem;">
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div>
+                      <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Project Title</label>
+                      <input type="text" id="submitProjectTitle" placeholder="e.g. Memory-Bounded High-Throughput Cache Resolver" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+                    </div>
+                    <div>
+                      <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Builder Name / GitHub Handle</label>
+                      <input type="text" id="submitProjectTeam" placeholder="e.g. Lead Engineer or @octocat" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Elevator Pitch & Solution Architecture</label>
+                    <textarea id="submitProjectPitch" rows="3" placeholder="Briefly describe your architectural approach, complexity optimizations, and testing methodology..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.85rem; resize: vertical;"></textarea>
+                  </div>
+
+                  <!-- 4-Step Verification Checklist -->
+                  <div class="verification-progress-card">
+                    <span class="panel-title">Automated Verification & Payout Pipeline</span>
+                    <div class="check-item" id="checkSyntax">
+                      <span class="check-icon">1</span>
+                      <span>Syntax & AST Parse Tree Validation</span>
+                    </div>
+                    <div class="check-item" id="checkEntropy">
+                      <span class="check-icon">2</span>
+                      <span>Anti-AI Boilerplate Entropy & Security Scan</span>
+                    </div>
+                    <div class="check-item" id="checkComplexity">
+                      <span class="check-icon">3</span>
+                      <span>Input Scaling & Asymptotic Big-O Verification</span>
+                    </div>
+                    <div class="check-item" id="checkEscrow">
+                      <span class="check-icon">4</span>
+                      <span>BMONI Oracle Cryptographic Settlement Trigger</span>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button class="btn btn-secondary" onclick="app.switchView('view-contracts')">Back to Contracts</button>
+                    <button class="btn btn-emerald" id="btnRunVerification" style="padding: 0.65rem 1.6rem; font-size: 0.95rem;">
+                      Verify & Release Escrow Payout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 5: PROJECT GALLERY -->
+            <div class="ws-tab-panel" id="wsPanel-gallery" style="display: none;">
+              <div class="submission-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                  <div>
+                    <h2 style="font-family: var(--font-editorial); font-size: 1.4rem; margin: 0;">Project Gallery & Submissions</h2>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Verified candidate repositories and cryptographic proofs</span>
+                  </div>
+                  <button class="btn btn-primary" onclick="app.setWsTab('submit')" style="font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Submit Your Project</span>
+                  </button>
+                </div>
+
+                <div id="wsGalleryList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+                  <!-- Rendered dynamically -->
+                </div>
               </div>
             </div>
 
           </div>
         </section>
 
+          </div>
+        </section>
+
         <!-- ===================================================================== -->
-        <!-- VIEW 4: BANK WALLET & VIRTUAL CARDS                                  -->
+        <!-- VIEW 4: BMONI WALLET & VIRTUAL CARDS                                  -->
         <!-- ===================================================================== -->
         <section class="app-view" id="view-wallet">
           <!-- Testnet Sandbox Disclaimer Banner (Google Safe Browsing & Judge Clarity) -->
           <div class="testnet-sandbox-banner" style="background: rgba(217, 119, 87, 0.08); border: 1px dashed var(--accent-terracotta); border-radius: 8px; padding: 0.65rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.65rem;">
-            <span style="font-size: 1.1rem;">🧪</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-terracotta); flex-shrink: 0;"><path d="M10 2v7.31L4.69 19a2 2 0 0 0 1.71 3h15.2a2 2 0 0 0 1.71-3L18 9.31V2"></path><path d="M8 2h8"></path><path d="M7 16h10"></path></svg>
             <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">
               <b style="color: var(--accent-terracotta);">DEVELOPER TESTNET SIMULATOR:</b> This interactive banking vault demonstrates programmatic milestone escrow settlements for the <b>NACOS National Hackathon 2026</b>. All balances, card numbers, and virtual settlements are simulated sandbox rails.
             </div>
           </div>
           <div class="wallet-grid">
 
-            <!-- Left: BANK Liquid Balance Pocket Card & Transactions -->
+            <!-- Left: BMONI Liquid Balance Pocket Card & Transactions -->
             <div>
-              <!-- EXACT BANK LIQUID BALANCE POCKET CARD (IMAGE 2) -->
+              <!-- EXACT BMONI Liquid Balance POCKET CARD (IMAGE 2) -->
               <div class="bmoni-liquid-card-frame">
                 <!-- Top Brand Header -->
                 <div class="bmoni-frame-top">
-                  <span class="bmoni-brand-logo-txt">BANK</span>
+                  <span class="bmoni-brand-logo-txt">BMONI</span>
                 </div>
 
                 <!-- Realistic Nigerian ₦1000 Banknotes Fanned from Pocket -->
                 <div class="bmoni-naira-layer">
                   <div class="bmoni-naira-bill-stack">
                     <div class="bmoni-naira-bill">
-                      <span class="naira-bill-title">BANK OF NIGERIA</span>
+                      <span class="naira-bill-title">BMONI OF NIGERIA</span>
                       <span class="naira-bill-denom">1000</span>
                     </div>
                     <div class="bmoni-naira-bill">
-                      <span class="naira-bill-title">BANK OF NIGERIA</span>
+                      <span class="naira-bill-title">BMONI OF NIGERIA</span>
                       <span class="naira-bill-denom">1000</span>
                     </div>
                     <div class="bmoni-naira-bill">
-                      <span class="naira-bill-title">BANK OF NIGERIA</span>
+                      <span class="naira-bill-title">BMONI OF NIGERIA</span>
                       <span class="naira-bill-denom">1000</span>
                     </div>
                   </div>
@@ -740,7 +921,7 @@ threshold = 20</pre>
                       <span class="flag-g"></span>
                     </div>
 
-                    <div class="bmoni-info-pill-badge" onclick="app.showBmoniRailInfo()" title="View BANK NIP Banking Rail Info">
+                    <div class="bmoni-info-pill-badge" onclick="app.showBmoniRailInfo()" title="View BMONI NIP Banking Rail Info">
                       <span>Info</span>
                       <span class="info-circle-glyph">i</span>
                     </div>
@@ -751,7 +932,7 @@ threshold = 20</pre>
                 <div style="display: flex; gap: 0.5rem; margin-top: 1.15rem; flex-wrap: wrap;">
                   <button class="btn btn-primary" onclick="app.openDepositModal()" style="font-size: 0.8rem; flex: 1; justify-content: center;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    Deposit (BANK)
+                    Deposit (BMONI)
                   </button>
                   <button class="btn btn-secondary" onclick="app.openBankWithdrawalModal()" style="font-size: 0.8rem; flex: 1; justify-content: center;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
@@ -790,19 +971,19 @@ threshold = 20</pre>
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                     </div>
                     <h3 class="empty-state-title">No Transactions Yet</h3>
-                    <p class="empty-state-desc">Milestone payouts and BANK settlements will appear here in real-time once verified.</p>
+                    <p class="empty-state-desc">Milestone payouts and BMONI settlements will appear here in real-time once verified.</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Right: Exact BANK Virtual Mastercard (Image 1) -->
+            <!-- Right: Exact BMONI Virtual Mastercard (Image 1) -->
             <div class="card-preview-column">
-              <span class="panel-title">BANK Virtual Mastercard</span>
+              <span class="panel-title">BMONI Virtual Mastercard</span>
 
               <div class="virtual-card-box">
                 <div class="interactive-card" id="walletVirtualCard">
-                  <!-- Front (Exact Image 1 Replication — Clean face, only watermark + MC circles + BANK) -->
+                  <!-- Front (Exact Image 1 Replication — Clean face, only watermark + MC circles + BMONI) -->
                   <div class="card-face front">
                     <!-- Mastercard Top-Right Overlapping Circles (amber on top, red below) -->
                     <div class="card-mc-top-right">
@@ -812,9 +993,9 @@ threshold = 20</pre>
                       </div>
                     </div>
 
-                    <!-- BANK Bottom-Right Vertical Brand -->
+                    <!-- BMONI Bottom-Right Vertical Brand -->
                     <div class="card-bmoni-bottom-right">
-                      <div class="bmoni-vertical-brand-text">BANK</div>
+                      <div class="bmoni-vertical-brand-text">BMONI</div>
                     </div>
                   </div>
 
@@ -824,9 +1005,9 @@ threshold = 20</pre>
                     <div style="font-size: 0.72rem; color: rgba(255,255,255,0.7); text-align: right; margin-bottom: 0.35rem; font-weight: 600;">CVV SECURITY CODE</div>
                     <div class="card-cvv-white-strip" id="walletCardCvv">834</div>
                     <div style="font-family: var(--font-mono); font-size: 0.92rem; color: rgba(255,255,255,0.85); letter-spacing: 0.12em; margin-top: 0.65rem; font-weight: 600;" id="walletCardNumber">5399 •••• •••• 4892</div>
-                    <div style="font-family: 'Montserrat', var(--font-sans); font-size: 0.82rem; color: rgba(255,255,255,0.75); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;" id="walletCardHolderName">WALI MEDUGU</div>
+                    <div style="font-family: 'Montserrat', var(--font-sans); font-size: 0.82rem; color: rgba(255,255,255,0.75); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;" id="walletCardHolderName">CROWN CHASERS</div>
                     <div style="font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 0.75rem; line-height: 1.4;">
-                      BANK Embedded Mastercard. Valid for POS terminals, web transactions, and instant 3s stablecoin settlement.
+                      BMONI Embedded Mastercard. Valid for POS terminals, web transactions, and instant 3s stablecoin settlement.
                     </div>
                   </div>
                 </div>
@@ -843,7 +1024,7 @@ threshold = 20</pre>
 
               <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.25rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
                 <span style="font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Direct Card Payouts</span>
-                Funds released from verified milestones settle directly into this BANK Mastercard in &lt;3 seconds, ready for instant spending across Nigeria.
+                Funds released from verified milestones settle directly into this BMONI Mastercard in &lt;3 seconds, ready for instant spending across Nigeria.
               </div>
             </div>
 
@@ -873,11 +1054,13 @@ threshold = 20</pre>
   <!-- ========================================================================= -->
   <!-- MODAL: CREATE CONTRACT (PUBLIC OR PRIVATE)                                -->
   <!-- ========================================================================= -->
-  <div class="modal-overlay" id="contractModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; align-items: center; justify-content: center;">
-    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 520px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
+  <div class="modal-overlay" id="contractModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; padding: 1.75rem; box-shadow: var(--shadow-lg);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-        <h2 style="font-family: var(--font-editorial); font-size: 1.5rem;">Create Milestone Contract</h2>
-        <button onclick="app.closeNewContractModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">✕</button>
+        <h2 style="font-family: var(--font-editorial); font-size: 1.5rem; margin: 0;">Create Milestone Contract</h2>
+        <button onclick="app.closeNewContractModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0.2rem;" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -894,27 +1077,60 @@ threshold = 20</pre>
         </div>
 
         <div id="modalRecipientGroup">
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Assigned Personal Member ID <span style="color: var(--accent-terracotta);">*</span></label>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Assigned Member ID <span style="color: var(--accent-terracotta);">*</span></label>
           <input type="text" id="modalStudentId" maxlength="30" placeholder="e.g. UNILAG-CS-2026-0482 or PERS-9821" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
-          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Required for private 1-on-1 contracts (4-30 chars)</span>
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Required for private 1-on-1 contracts</span>
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title / Deliverable <span style="color: var(--status-ruby);">*</span></label>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title / Problem Statement <span style="color: var(--status-ruby);">*</span></label>
           <input type="text" id="modalContractTitle" maxlength="120" minlength="5" required placeholder="e.g. Build payment webhook deduplicator" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
-          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">5 - 120 characters</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div>
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Category Track</label>
+            <select id="modalContractCategory" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem;">
+              <option value="Algorithms & FinTech">Algorithms & FinTech</option>
+              <option value="Backend Systems & APIs">Backend Systems & APIs</option>
+              <option value="Web3 & Smart Contracts">Web3 & Smart Contracts</option>
+              <option value="AI & Machine Learning">AI & Machine Learning</option>
+              <option value="Security & Cryptography">Security & Cryptography</option>
+              <option value="Fullstack Applications">Fullstack Applications</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Complexity Constraint</label>
+            <select id="modalContractComplexity" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem;">
+              <option value="O(1)">O(1) - Constant</option>
+              <option value="O(log N)">O(log N) - Logarithmic</option>
+              <option value="O(N)">O(N) - Linear</option>
+              <option value="O(N log N)" selected>O(N log N) - Linearithmic</option>
+              <option value="O(N^2)">O(N^2) - Quadratic</option>
+            </select>
+          </div>
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Deliverable Scope & Instructions (Optional)</label>
-          <textarea id="modalContractDesc" maxlength="1000" rows="2" placeholder="Describe the technical requirements, test cases, and delivery expectations..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem; font-family: var(--font-sans); resize: vertical;"></textarea>
-          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Max 1,000 characters</span>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Requirements, Scope & Acceptance Criteria <span style="color: var(--status-ruby);">*</span></label>
+          <textarea id="modalContractDesc" maxlength="2000" rows="3" placeholder="Describe the technical requirements, architecture constraints, and expected deliverables..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem; font-family: var(--font-sans); resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div>
+            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Sample Input (Optional)</label>
+            <textarea id="modalContractInput" rows="2" placeholder='entries = [{ id: 1, ttl: 5 }]' style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--accent-terracotta); font-family: var(--font-mono); font-size: 0.8rem;"></textarea>
+          </div>
+          <div>
+            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Expected Output (Optional)</label>
+            <textarea id="modalContractOutput" rows="2" placeholder='[{ id: 1, ttl: 5 }]' style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--status-emerald); font-family: var(--font-mono); font-size: 0.8rem;"></textarea>
+          </div>
         </div>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Reward Amount (USDC) <span style="color: var(--status-ruby);">*</span></label>
-          <input type="number" id="modalContractAmount" min="1" max="50000" step="0.5" required placeholder="e.g. 5 (Min $1 - Max $50,000)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
-          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Numeric value between $1 and $50,000 USDC (funded from your BANK balance)</span>
+          <input type="number" id="modalContractAmount" min="1" max="50000" step="0.5" required placeholder="e.g. 150 (Min $1 - Max $50,000)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Funded directly from your live BMONI balance with 2.5% protocol fee</span>
         </div>
 
         <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.82rem;">
@@ -948,7 +1164,7 @@ threshold = 20</pre>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <h2 style="font-family: var(--font-editorial); font-size: 1.5rem;" id="authModalTitle">Account Access</h2>
-          <span style="font-size: 0.8rem; color: var(--text-muted);" id="authModalSubtitle">Sign in or register to manage contracts and BANK payouts</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted);" id="authModalSubtitle">Sign in or register to manage contracts and BMONI Payouts</span>
         </div>
         <button onclick="app.closeOnboardingModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">✕</button>
       </div>
@@ -1058,14 +1274,14 @@ threshold = 20</pre>
           </div>
         </div>
 
-        <!-- BANK Account Connection -->
+        <!-- BMONI Account Connection -->
         <div style="background: var(--bg-secondary); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">BANK Mobile Account (Optional)</span>
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">BMONI Mobile Account (Optional)</span>
             <span class="status-badge" style="background: var(--accent-terracotta-subtle); color: var(--accent-terracotta); font-size: 0.7rem;">Ecosystem Grant: Kilikoro</span>
           </div>
           <input type="text" id="onboardBmoniPhone" maxlength="35" placeholder="e.g. 08012345678, +2348012345678, or tag.bmoni" style="width: 100%; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--text-primary); font-size: 0.85rem;">
-          <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">Supports Nigerian mobile number (11 digits: 080... or +234...) or BANK tag.</span>
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">Supports Nigerian mobile number (11 digits: 080... or +234...) or BMONI tag.</span>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
@@ -1119,7 +1335,7 @@ threshold = 20</pre>
             <span style="font-family: var(--font-mono); color: var(--text-primary);" id="accountModalNacosId">--</span>
           </div>
           <div>
-            <span style="color: var(--text-muted); display: block; font-size: 0.72rem;">BANK VIRTUAL CARD</span>
+            <span style="color: var(--text-muted); display: block; font-size: 0.72rem;">BMONI VIRTUAL CARD</span>
             <span style="font-family: var(--font-mono); color: var(--accent-gold);" id="accountModalCard">5399 •••• •••• 4892</span>
           </div>
           <div>
@@ -1166,11 +1382,11 @@ threshold = 20</pre>
         </div>
       </div>
 
-      <!-- BANK Account Connection Card -->
+      <!-- BMONI Account Connection Card -->
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-primary);">BANK Connected Account</span>
+            <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-primary);">BMONI Connected Account</span>
             <span class="status-badge" id="bmoniConnectionBadge" style="background: var(--status-emerald-subtle); color: var(--status-emerald); font-size: 0.7rem;">Active</span>
           </div>
           <span style="font-size: 0.72rem; color: var(--accent-gold);">Grant: Kilikoro</span>
@@ -1183,7 +1399,7 @@ threshold = 20</pre>
 
         <div id="bmoniDisconnectedView" style="display: none; margin-top: 0.5rem;">
           <div style="display: flex; gap: 0.5rem;">
-            <input type="text" id="bmoniConnectInput" placeholder="Enter BANK Phone or Tag (e.g. +234...)" style="flex: 1; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; font-size: 0.82rem; color: var(--text-primary);">
+            <input type="text" id="bmoniConnectInput" placeholder="Enter BMONI Phone or Tag (e.g. +234...)" style="flex: 1; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; font-size: 0.82rem; color: var(--text-primary);">
             <button class="btn btn-primary" onclick="app.submitConnectBmoni()" style="font-size: 0.78rem; white-space: nowrap;">
               Link Account
             </button>
@@ -1270,7 +1486,146 @@ threshold = 20</pre>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL: CONFIRM ACCOUNT DELETION                                           -->
+  <!-- MODAL: SPECIFICATION & FILE MANAGER                                      -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="editSpecModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; padding: 1.75rem; box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <h2 style="font-family: var(--font-editorial); font-size: 1.4rem; margin: 0;">Manage Challenge Specifications & Rules</h2>
+          <span style="font-size: 0.78rem; color: var(--text-muted);">Creator controls: Update deliverables, complexity, rules, and requirement files</span>
+        </div>
+        <button onclick="app.closeEditSpecModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0.2rem;" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title</label>
+          <input type="text" id="editSpecTitle" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div>
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Category Track</label>
+            <select id="editSpecCategory" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem;">
+              <option value="Algorithms & FinTech">Algorithms & FinTech</option>
+              <option value="Backend Systems & APIs">Backend Systems & APIs</option>
+              <option value="Web3 & Smart Contracts">Web3 & Smart Contracts</option>
+              <option value="AI & Machine Learning">AI & Machine Learning</option>
+              <option value="Security & Cryptography">Security & Cryptography</option>
+              <option value="Fullstack Applications">Fullstack Applications</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Complexity Constraint</label>
+            <select id="editSpecComplexity" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem;">
+              <option value="O(1)">O(1) - Constant</option>
+              <option value="O(log N)">O(log N) - Logarithmic</option>
+              <option value="O(N)">O(N) - Linear</option>
+              <option value="O(N log N)">O(N log N) - Linearithmic</option>
+              <option value="O(N^2)">O(N^2) - Quadratic</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Challenge Overview & Deliverables</label>
+          <textarea id="editSpecOverview" rows="4" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.85rem; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div>
+            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Sample Input Specification</label>
+            <textarea id="editSpecInput" rows="2" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--accent-terracotta); font-family: var(--font-mono); font-size: 0.8rem;"></textarea>
+          </div>
+          <div>
+            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Expected Output Specification</label>
+            <textarea id="editSpecOutput" rows="2" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--status-emerald); font-family: var(--font-mono); font-size: 0.8rem;"></textarea>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+          <h4 style="font-size: 0.88rem; margin: 0 0 0.5rem 0; color: var(--text-primary);">Challenge Rules & Policies</h4>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+            <div>
+              <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Eligibility Rule</label>
+              <input type="text" id="editSpecEligibility" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; color: var(--text-primary); font-size: 0.82rem;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Builder Guidelines</label>
+              <input type="text" id="editSpecTeamSize" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; color: var(--text-primary); font-size: 0.82rem;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">AI & Security Policy Rule</label>
+              <input type="text" id="editSpecAiPolicy" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; color: var(--text-primary); font-size: 0.82rem;">
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h4 style="font-size: 0.88rem; margin: 0; color: var(--text-primary);">Attached Files & Artifacts</h4>
+            <label class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.2rem 0.55rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span>Attach File</span>
+              <input type="file" style="display: none;" onchange="app.handleSpecFileUpload(event)">
+            </label>
+          </div>
+          <div id="editSpecModalFileList" style="font-size: 0.8rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.4rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+          <button class="btn btn-secondary" onclick="app.closeEditSpecModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="app.saveContractSpec()">Save Specifications</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: ADD RESOURCE LINK                                                  -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="addResourceModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 440px; padding: 1.5rem; box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="font-family: var(--font-editorial); font-size: 1.3rem; margin: 0;">Add Resource Link</h3>
+        <button onclick="app.closeAddResourceModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0.2rem;" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div>
+          <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Resource Title</label>
+          <input type="text" id="addResTitle" placeholder="e.g. Official API Reference & SDK" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--text-primary); font-size: 0.85rem;">
+        </div>
+        <div>
+          <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Resource URL</label>
+          <input type="url" id="addResUrl" placeholder="https://..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--text-primary); font-size: 0.85rem;">
+        </div>
+        <div>
+          <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Category</label>
+          <select id="addResCategory" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--text-primary); font-size: 0.85rem;">
+            <option value="Documentation">Documentation</option>
+            <option value="API Reference">API Reference</option>
+            <option value="Starter Kit">Starter Kit</option>
+            <option value="Community">Community / Discord</option>
+            <option value="Rules & Guidelines">Rules & Guidelines</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+          <button class="btn btn-secondary" onclick="app.closeAddResourceModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="app.saveResourceLink()">Add Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- ========================================================================= -->
   <div class="modal-overlay" id="confirmDeleteModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
     <div style="background: var(--bg-primary); border: 1px solid var(--status-ruby); border-radius: 12px; width: 100%; max-width: 440px; padding: 1.5rem; box-shadow: var(--shadow-lg);">
@@ -1286,20 +1641,20 @@ threshold = 20</pre>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL: BANK NIGERIAN BANK OFF-RAMP                                       -->
+  <!-- MODAL: BMONI Nigerian Bank Off-Ramp                                       -->
   <!-- ========================================================================= -->
   <div class="modal-overlay" id="bankWithdrawalModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
     <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 520px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
-          <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">BANK Nigerian Bank Off-Ramp</h2>
+          <h2 style="font-family: var(--font-editorial); font-size: 1.4rem;">BMONI Nigerian Bank Off-Ramp</h2>
           <span style="font-size: 0.8rem; color: var(--text-muted);">Direct instant settlement to any Nigerian bank (NUBAN)</span>
         </div>
         <button onclick="app.closeBankWithdrawalModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">✕</button>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 1rem;">
-        <!-- Bank Selector -->
+        <!-- BMONI Selector -->
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Destination Bank</label>
           <select id="bankSelect" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.88rem;">
@@ -1307,7 +1662,7 @@ threshold = 20</pre>
             <option value="044">Access Bank</option>
             <option value="057">Zenith Bank</option>
             <option value="033">United Bank for Africa (UBA)</option>
-            <option value="011">First Bank of Nigeria</option>
+            <option value="011">First BMONI OF NIGERIA</option>
             <option value="090267">Kuda Microfinance Bank</option>
             <option value="100004">OPay Digital Services</option>
             <option value="100033">PalmPay</option>
@@ -1328,7 +1683,7 @@ threshold = 20</pre>
 
         <!-- Resolved Account Banner -->
         <div id="bankResolvedBanner" style="display: none; background: var(--status-emerald-subtle); border: 1px solid var(--status-emerald); border-radius: 6px; padding: 0.75rem; font-size: 0.85rem; color: var(--status-emerald);">
-          ✓ Account Verified: <b id="bankResolvedName" style="color: var(--text-primary);">WALI O. MEDUGU</b>
+          ✓ Account Verified: <b id="bankResolvedName" style="color: var(--text-primary);">CROWN CHASERS</b>
         </div>
 
         <!-- Withdrawal Amount -->
@@ -1344,7 +1699,7 @@ threshold = 20</pre>
         <!-- Summary & Exchange Rate -->
         <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.85rem; font-size: 0.82rem;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-            <span style="color: var(--text-muted);">BANK Exchange Rate:</span>
+            <span style="color: var(--text-muted);">BMONI Exchange Rate:</span>
             <span style="font-family: var(--font-mono); font-weight: 600;">1 USDC = ₦1,600 cNGN</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
@@ -1372,17 +1727,17 @@ threshold = 20</pre>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL: BANK INSTANT DEPOSIT & CARD FUNDING (9PSB & NIP RAILS)             -->
+  <!-- MODAL: BMONI INSTANT DEPOSIT & CARD FUNDING (9PSB & NIP RAILS)             -->
   <!-- ========================================================================= -->
   <div class="modal-overlay" id="bmoniDepositModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
     <div style="background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 12px; width: 100%; max-width: 480px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <h2 style="font-family: var(--font-editorial); font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-            <span>Fund BANK Account</span>
+            <span>Fund BMONI Account</span>
             <span class="status-badge" style="background: var(--status-emerald-subtle); color: var(--status-emerald); font-size: 0.72rem;">9PSB Rails</span>
           </h2>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">Instant deposit to your BANK borderless balance & Virtual Mastercard</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Instant deposit to your BMONI borderless balance & Virtual Mastercard</span>
         </div>
         <button onclick="app.closeDepositModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">✕</button>
       </div>
@@ -1426,14 +1781,14 @@ threshold = 20</pre>
           </div>
           <div style="display: flex; justify-content: space-between;">
             <span style="color: var(--text-muted);">Deposit Rail:</span>
-            <span style="font-family: var(--font-mono); font-weight: 600; color: var(--status-emerald);">BANK 9PSB Dedicated Virtual NUBAN</span>
+            <span style="font-family: var(--font-mono); font-weight: 600; color: var(--status-emerald);">BMONI 9PSB Dedicated Virtual NUBAN</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
             <span style="color: var(--text-muted);">Dedicated NUBAN:</span>
             <span style="font-family: var(--font-mono); font-weight: 600;">6176775063 (9PSB)</span>
           </div>
           <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 0.4rem; margin-top: 0.2rem;">
-            <span style="font-weight: 600; color: var(--text-primary);">Total Credited to BANK Wallet:</span>
+            <span style="font-weight: 600; color: var(--text-primary);">Total Credited to BMONI Wallet:</span>
             <span style="font-family: var(--font-mono); font-weight: 700; color: var(--status-emerald);" id="depositTotalCredit">$50.00 USDC</span>
           </div>
         </div>
@@ -1442,7 +1797,7 @@ threshold = 20</pre>
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
           <button type="button" class="btn btn-secondary" onclick="app.closeDepositModal()">Cancel</button>
           <button type="button" class="btn btn-primary" id="btnConfirmDeposit" onclick="app.submitBmoniDeposit()">
-            Confirm BANK Deposit
+            Confirm BMONI Deposit
           </button>
         </div>
       </div>
@@ -1575,7 +1930,7 @@ threshold = 20</pre>
             <td style="padding: 0.35rem 0.5rem; text-align: right;"><span class="tag" style="color: var(--status-emerald); font-size: 0.68rem; padding: 0.1rem 0.4rem;">Verified</span></td>
           </tr>
           <tr>
-            <td style="padding: 0.35rem 0.5rem;">BANK Escrow Clearance</td>
+            <td style="padding: 0.35rem 0.5rem;">BMONI Escrow Clearance</td>
             <td style="padding: 0.35rem 0.5rem; color: var(--text-muted);">Automated Direct Release</td>
             <td style="padding: 0.35rem 0.5rem; font-weight: 600;">Cleared for Payout</td>
             <td style="padding: 0.35rem 0.5rem; text-align: right;"><span class="tag" style="color: var(--status-emerald); font-size: 0.68rem; padding: 0.1rem 0.4rem;">Active</span></td>
@@ -1586,7 +1941,7 @@ threshold = 20</pre>
       <!-- Signatures & Verification Hash -->
       <div class="cert-signatures" style="margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: flex-end;">
         <div class="cert-sig-block">
-          <div style="font-style: italic; font-family: 'Brush Script MT', cursive, serif; font-size: 1.1rem; color: var(--accent-terracotta);">Wali Medugu</div>
+          <div style="font-style: italic; font-family: 'Brush Script MT', cursive, serif; font-size: 1.1rem; color: var(--accent-terracotta);">Crown Chasers</div>
           <div style="font-weight: 600; font-size: 0.72rem; color: var(--text-primary);">Lead Verifier, Kilikoro Attestation Node</div>
           <div style="font-size: 0.65rem; color: var(--text-muted);">Accreditation Council</div>
         </div>
@@ -1652,7 +2007,7 @@ threshold = 20</pre>
         <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--font-mono);">Global Terminal Command</label>
         <div style="background: var(--bg-code); border: 1px solid #362921; border-radius: 6px; padding: 0.75rem; font-family: var(--font-mono); font-size: 0.82rem; color: #FAF6F0; display: flex; justify-content: space-between; align-items: center;">
           <code>npx kilikoro scan &lt;repo-url&gt;</code>
-          <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('npx kilikoro scan https://github.com/WaliMedugu/Wali Medugu-Wali Medugu'); app.showToast('Copied to Clipboard', 'One-liner CLI command copied!', 'success');" style="font-size: 0.72rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.25);">Copy</button>
+          <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('npx kilikoro scan https://github.com/CrownChasers/kilikoro-node'); app.showToast('Copied to Clipboard', 'One-liner CLI command copied!', 'success');" style="font-size: 0.72rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.25);">Copy</button>
         </div>
       </div>
 
@@ -1707,7 +2062,7 @@ threshold = 20</pre>
           </div>
           <p style="font-size: 0.86rem; color: var(--text-primary); line-height: 1.55; margin: 0;">
             Kilikoro performs autonomous AST code quality, security hygiene, and deep research fact-checks against real GitHub repositories.<br>
-            Verified competence is attested on-chain, and completed contracts unlock instant direct-to-bank settlements and virtual Mastercard rails via BANK.
+            Verified competence is attested on-chain, and completed contracts unlock instant direct-to-BMONI settlements and virtual Mastercard rails via BMONI.
           </p>
         </div>
 

@@ -59,7 +59,7 @@ async function runEndToEndTest() {
   // Test 3: Role Switch to Student Perspective
   console.log("\n[TEST 4] Individual Role Switching: Toggling to Student Developer...");
   const studentProfile = {
-    name: "Wali Medugu",
+    name: "Crown Chasers Lead",
     role: "student",
     nacosId: "UNILAG-CS-2026-0482",
     university: "UNILAG • NACOS Chapter",

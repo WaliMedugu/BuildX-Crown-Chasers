@@ -56,7 +56,8 @@ const INITIAL_DB = {
 function readDb() {
   try {
     if (fs.existsSync(DB_FILE)) {
-      return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+      const raw = fs.readFileSync(DB_FILE, "utf8").replace(/^\uFEFF/, "");
+      return JSON.parse(raw);
     }
   } catch (e) {
     console.error("DB Read Error:", e);
@@ -65,7 +66,8 @@ function readDb() {
   const bundledFile = path.join(__dirname, "data", "kilikoro_db.json");
   if (fs.existsSync(bundledFile)) {
     try {
-      const data = JSON.parse(fs.readFileSync(bundledFile, "utf8"));
+      const raw = fs.readFileSync(bundledFile, "utf8").replace(/^\uFEFF/, "");
+      const data = JSON.parse(raw);
       writeDb(data);
       return data;
     } catch (e) {}
@@ -136,7 +138,7 @@ function isValidBmoniAccount(acc) {
   // 2. International Nigerian Phone: +23480... or +23470...
   if (/^\+234[789][01]\d{8}$/.test(clean)) return true;
   if (/^234[789][01]\d{8}$/.test(clean)) return true;
-  // 3. BANK Tag / Handle: 3-30 chars
+  // 3. BMONI Tag / Handle: 3-30 chars
   if (/^[a-zA-Z0-9._]{3,30}(\.bmoni)?$/i.test(clean)) return true;
   return false;
 }
@@ -258,7 +260,7 @@ async function handleRequest(req, res) {
 
       if (bmoniPhone && !isValidBmoniAccount(bmoniPhone)) {
         return sendJson(res, 400, {
-          error: "Invalid BANK Account: Please provide a valid 11-digit Nigerian mobile number (e.g. 08012345678), international format (+2348012345678), or a BANK handle (e.g. handle.bmoni)."
+          error: "Invalid BMONI Account: Please provide a valid 11-digit Nigerian mobile number (e.g. 08012345678), international format (+2348012345678), or a BMONI handle (e.g. handle.bmoni)."
         });
       }
 
@@ -268,7 +270,7 @@ async function handleRequest(req, res) {
         return sendJson(res, 400, { error: "An account with this email already exists. Please sign in." });
       }
 
-      // Issue Virtual Card via official BANK API
+      // Issue Virtual Card via official BMONI API
       let bmoniCard = { cardNumber: null, cvv: null };
       try {
         bmoniCard = await bmoniClient.issueVirtualCard({
@@ -277,7 +279,7 @@ async function handleRequest(req, res) {
           university: (isPersonal ? university : company).trim()
         });
       } catch (e) {
-        console.warn("[BANK Signup Card] Fallback card generated:", e.message);
+        console.warn("[BMONI Signup Card] Fallback card generated:", e.message);
       }
 
       if (bmoniPhone) {
@@ -288,7 +290,7 @@ async function handleRequest(req, res) {
             referralCode: "KILIKORO"
           });
         } catch (e) {
-          console.warn("[BANK Signup Link] Fallback account linked:", e.message);
+          console.warn("[BMONI Signup Link] Fallback account linked:", e.message);
         }
       }
 
@@ -609,16 +611,40 @@ async function handleRequest(req, res) {
   if (pathname === "/api/user/upgrade-role" && req.method === "POST") {
     try {
       const payload = await parseJsonBody(req);
-      const { email, targetRole, credentials } = payload;
+      const { email, id, nacosId, targetRole, credentials } = payload;
 
-      if (!email || !targetRole || !credentials) {
+      if ((!email && !id && !nacosId) || !targetRole || !credentials) {
         return sendJson(res, 400, { error: "Missing required fields for role upgrade." });
       }
 
       const db = readDb();
-      const user = db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      let user = db.users.find(u =>
+        (email && u.email && u.email.toLowerCase() === email.toLowerCase()) ||
+        (id && u.id === id) ||
+        (nacosId && u.nacosId && u.nacosId.toLowerCase() === nacosId.toLowerCase())
+      );
+
       if (!user) {
-        return sendJson(res, 404, { error: "User not found." });
+        const cleanEmail = email || `user_${Date.now().toString(36)}@kilikoro.dev`;
+        user = {
+          id: id || "usr-" + Date.now().toString(36),
+          name: credentials.company || credentials.name || "Crown Chasers Member",
+          email: cleanEmail,
+          role: targetRole,
+          hasPersonalProfile: targetRole === "personal",
+          hasStudentProfile: targetRole === "personal",
+          hasOrganizationProfile: targetRole === "organization" || targetRole === "employer",
+          hasEmployerProfile: targetRole === "organization" || targetRole === "employer",
+          cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
+          cardCvv: String(Math.floor(100 + Math.random() * 900)),
+          balanceUsdc: 6.25,
+          bmoniConnected: true,
+          bmoniPhone: "+234 810 482 9102",
+          bmoniTag: `${(credentials.company || "builder").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15)}.bmoni`,
+          createdAt: new Date().toISOString(),
+          employerBonusCredited: true
+        };
+        db.users.push(user);
       }
 
       const isTargetOrg = targetRole === "organization" || targetRole === "employer";
@@ -711,25 +737,36 @@ async function handleRequest(req, res) {
     }
   }
 
-  // 5. CONNECT BANK ACCOUNT
+  // 5. CONNECT BMONI ACCOUNT
   if (pathname === "/api/user/connect-bmoni" && req.method === "POST") {
     try {
       const payload = await parseJsonBody(req);
       const { email, bmoniPhone, bmoniTag } = payload;
 
       if (!email || (!bmoniPhone && !bmoniTag)) {
-        return sendJson(res, 400, { error: "Email and BANK Phone/Tag required." });
+        return sendJson(res, 400, { error: "Email and BMONI Phone/Tag required." });
       }
 
       const rawAccount = (bmoniPhone || bmoniTag || "").trim();
       if (!isValidBmoniAccount(rawAccount)) {
-        return sendJson(res, 400, { error: "Invalid BANK account. Enter a valid Nigerian phone number (080... / +234...) or BANK tag (3-30 chars)." });
+        return sendJson(res, 400, { error: "Invalid BMONI account. Enter a valid Nigerian phone number (080... / +234...) or BMONI tag (3-30 chars)." });
       }
 
       const db = readDb();
-      const user = db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      let user = db.users.find(u => (email && u.email && u.email.toLowerCase() === email.toLowerCase()));
       if (!user) {
-        return sendJson(res, 404, { error: "User not found." });
+        user = {
+          id: "usr-" + Date.now().toString(36),
+          name: "Crown Chasers Member",
+          email: email.trim(),
+          role: "personal",
+          hasPersonalProfile: true,
+          cardNumber: `5399 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`,
+          cardCvv: String(Math.floor(100 + Math.random() * 900)),
+          balanceUsdc: 6.25,
+          createdAt: new Date().toISOString()
+        };
+        db.users.push(user);
       }
 
       user.bmoniConnected = true;
@@ -761,7 +798,7 @@ async function handleRequest(req, res) {
 
       return sendJson(res, 200, { success: true, user });
     } catch (err) {
-      return sendJson(res, 500, { error: "Connecting BANK failed: " + err.message });
+      return sendJson(res, 500, { error: "Connecting BMONI failed: " + err.message });
     }
   }
 
@@ -770,6 +807,49 @@ async function handleRequest(req, res) {
     const db = readDb();
     if (req.method === "GET") {
       return sendJson(res, 200, db.contracts);
+    }
+    if (req.method === "DELETE") {
+      try {
+        const payload = await parseJsonBody(req);
+        const contractId = payload.id || payload.contractId;
+        if (!contractId) {
+          return sendJson(res, 400, { error: "Contract ID is required for deletion." });
+        }
+        const contractIdx = db.contracts.findIndex(c => c.id === contractId);
+        if (contractIdx === -1) {
+          return sendJson(res, 404, { error: "Contract not found." });
+        }
+        const contract = db.contracts[contractIdx];
+        
+        // Refund sponsor if contract was active/locked
+        const sponsorEmail = contract.sponsorEmail || "";
+        const sponsorName = contract.sponsor || "";
+        const employer = db.users.find(u => 
+          (sponsorEmail && u.email.toLowerCase() === sponsorEmail.toLowerCase()) ||
+          (sponsorName && u.name.toLowerCase() === sponsorName.toLowerCase())
+        );
+        if (employer && (contract.status === "Active" || contract.status === "Escrow Locked" || contract.status === "Open")) {
+          employer.balanceUsdc = (employer.balanceUsdc || 0) + (contract.amount || 0);
+        }
+
+        db.contracts.splice(contractIdx, 1);
+        writeDb(db);
+
+        // Delete from Supabase if connected
+        try {
+          await fetch(`${SUPABASE_URL}/rest/v1/contracts?contract_id=eq.${contractId}`, {
+            method: "DELETE",
+            headers: {
+              "apikey": SUPABASE_SERVICE_KEY,
+              "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`
+            }
+          });
+        } catch (e) {}
+
+        return sendJson(res, 200, { success: true, message: `Contract ${contractId} deleted and escrow refunded.`, refundedAmount: contract.amount });
+      } catch (err) {
+        return sendJson(res, 500, { error: "Failed to delete contract: " + err.message });
+      }
     }
     if (req.method === "POST") {
       try {
@@ -796,7 +876,7 @@ async function handleRequest(req, res) {
           const available = employer.balanceUsdc || 0;
           if (available < totalRequiredUsdc) {
             return sendJson(res, 400, {
-              error: `Insufficient BANK Balance: You have $${available.toFixed(2)} USDC (≈ ₦${Math.round(available * 1600).toLocaleString()} cNGN). Required with 2.5% protocol fee: $${totalRequiredUsdc.toFixed(2)} USDC.`
+              error: `Insufficient BMONI Balance: You have $${available.toFixed(2)} USDC (≈ ₦${Math.round(available * 1600).toLocaleString()} cNGN). Required with 2.5% protocol fee: $${totalRequiredUsdc.toFixed(2)} USDC.`
             });
           }
           // Deduct escrow amount + fee from employer's balance
@@ -805,12 +885,21 @@ async function handleRequest(req, res) {
 
         contract.title = contract.title.trim();
         contract.amount = parsedAmount;
-        contract.desc = (contract.desc && typeof contract.desc === "string") ? contract.desc.trim().slice(0, 1000) : "";
+        contract.category = contract.category || "Algorithms & FinTech";
+        contract.complexity = contract.complexity || "O(N log N)";
+        contract.desc = (contract.desc && typeof contract.desc === "string") ? contract.desc.trim().slice(0, 2000) : "";
+        contract.overview = contract.overview || contract.desc;
+        contract.sampleInput = contract.sampleInput || "";
+        contract.expectedOutput = contract.expectedOutput || "";
+        contract.rules = contract.rules || [];
+        contract.resources = contract.resources || [];
+        contract.attachments = contract.attachments || [];
+        contract.submissions = [];
         contract.studentId = (contract.studentId && typeof contract.studentId === "string") ? contract.studentId.trim().slice(0, 50) : null;
         contract.id = contract.id || `TASK-${Date.now().toString().slice(-4)}`;
         contract.createdAt = new Date().toISOString();
 
-        // Lock Escrow on official BANK API rails
+        // Lock Escrow on official BMONI API rails
         try {
           const escrowRes = await bmoniClient.lockEscrow({
             contractId: contract.id,
@@ -855,6 +944,107 @@ async function handleRequest(req, res) {
       } catch (err) {
         return sendJson(res, 500, { error: "Failed to save contract: " + err.message });
       }
+    }
+  }
+
+  // 6B. UPDATE CONTRACT SPECIFICATIONS & DEVPOST REQUIREMENTS
+  if (pathname === "/api/contracts/update-spec" && req.method === "POST") {
+    try {
+      const payload = await parseJsonBody(req);
+      const { contractId, title, category, complexity, overview, desc, sampleInput, expectedOutput, rules, resources, attachments } = payload;
+      if (!contractId) {
+        return sendJson(res, 400, { error: "contractId is required." });
+      }
+      const db = readDb();
+      const contract = db.contracts.find(c => c.id === contractId);
+      if (!contract) {
+        return sendJson(res, 404, { error: "Contract not found." });
+      }
+      if (title !== undefined && title.trim()) contract.title = title.trim();
+      if (category !== undefined) contract.category = category;
+      if (complexity !== undefined) contract.complexity = complexity;
+      if (overview !== undefined) contract.overview = overview;
+      if (desc !== undefined) contract.desc = desc;
+      if (sampleInput !== undefined) contract.sampleInput = sampleInput;
+      if (expectedOutput !== undefined) contract.expectedOutput = expectedOutput;
+      if (rules !== undefined) contract.rules = rules;
+      if (resources !== undefined) contract.resources = resources;
+      if (attachments !== undefined) contract.attachments = attachments;
+      writeDb(db);
+      return sendJson(res, 200, { success: true, contract });
+    } catch (err) {
+      return sendJson(res, 500, { error: "Failed to update specifications: " + err.message });
+    }
+  }
+
+  // 6C. REGISTER PARTICIPANT / TEAM (DEVPOST STYLE)
+  if (pathname === "/api/contracts/register-participant" && req.method === "POST") {
+    try {
+      const payload = await parseJsonBody(req);
+      const { contractId, name, email, nacosId, teamName, membersCount, membersList } = payload;
+      if (!contractId || !name) {
+        return sendJson(res, 400, { error: "Contract ID and Participant name are required." });
+      }
+      const db = readDb();
+      const contract = db.contracts.find(c => c.id === contractId);
+      if (!contract) {
+        return sendJson(res, 404, { error: "Contract not found." });
+      }
+      if (!contract.participants) contract.participants = [];
+      const newParticipant = {
+        id: "part-" + Date.now().toString(36),
+        name: name.trim(),
+        email: (email || "").trim(),
+        nacosId: (nacosId || "").trim(),
+        teamName: (teamName || `${name.trim()}'s Team`).trim(),
+        membersCount: Math.min(5, Math.max(1, parseInt(membersCount) || 1)),
+        membersList: Array.isArray(membersList) ? membersList : [name.trim()],
+        registeredAt: new Date().toISOString()
+      };
+      contract.participants.push(newParticipant);
+      writeDb(db);
+      return sendJson(res, 200, { success: true, participant: newParticipant, contract });
+    } catch (err) {
+      return sendJson(res, 500, { error: "Failed to register participant: " + err.message });
+    }
+  }
+
+  // 6D. SUBMIT PROJECT (DEVPOST STYLE REPO SUBMISSION & AUTO-JUDGE)
+  if (pathname === "/api/contracts/submit-project" && req.method === "POST") {
+    try {
+      const payload = await parseJsonBody(req);
+      const { contractId, projectTitle, githubRepo, pitch, demoUrl, teamName, submitterName, submitterEmail, score, astDigest, autoSettled } = payload;
+      if (!contractId || !githubRepo) {
+        return sendJson(res, 400, { error: "Contract ID and GitHub Repository URL are required." });
+      }
+      const db = readDb();
+      const contract = db.contracts.find(c => c.id === contractId);
+      if (!contract) {
+        return sendJson(res, 404, { error: "Contract not found." });
+      }
+      if (!contract.submissions) contract.submissions = [];
+      const submission = {
+        id: "sub-" + Date.now().toString(36),
+        projectTitle: (projectTitle || contract.title).trim(),
+        githubRepo: githubRepo.trim(),
+        pitch: (pitch || "").trim(),
+        demoUrl: (demoUrl || "").trim(),
+        teamName: (teamName || submitterName || "Solo Builder").trim(),
+        submitterName: (submitterName || "Crown Chasers Builder").trim(),
+        submitterEmail: (submitterEmail || "").trim(),
+        score: typeof score === "number" ? score : 96,
+        astDigest: astDigest || `0xast_${Date.now().toString(16)}`,
+        status: autoSettled ? "Verified & Settled" : "Submitted for Attestation",
+        submittedAt: new Date().toISOString()
+      };
+      contract.submissions.unshift(submission);
+      if (autoSettled && contract.type === "private") {
+        contract.status = "Completed & Settled";
+      }
+      writeDb(db);
+      return sendJson(res, 200, { success: true, submission, contract });
+    } catch (err) {
+      return sendJson(res, 500, { error: "Failed to submit project: " + err.message });
     }
   }
 
@@ -966,10 +1156,10 @@ async function handleRequest(req, res) {
         settlement.id = crypto.randomUUID();
         settlement.timestamp = new Date().toISOString();
 
-        // Release Escrow via official BANK API rails
+        // Release Escrow via official BMONI API rails
         try {
           const releaseRes = await bmoniClient.releaseEscrow({
-            contractId: settlement.contractId || "TASK-BANK-104",
+            contractId: settlement.contractId || "TASK-BMONI-104",
             attestationSignature: settlement.attestationId || "0xoracle_sig",
             metrics: { signature: settlement.astDigest, complexity: settlement.complexity || 3 }
           });
@@ -987,7 +1177,7 @@ async function handleRequest(req, res) {
     }
   }
 
-  // 10. DEDICATED BANK FINTECH & EMBEDDED BANKING API ENDPOINTS
+  // 10. DEDICATED BMONI FINTECH & EMBEDDED BANKING API ENDPOINTS
   if (pathname.startsWith("/api/bmoni/")) {
     try {
       if (pathname === "/api/bmoni/banks" && req.method === "GET") {
@@ -1044,10 +1234,10 @@ async function handleRequest(req, res) {
             user.balanceUsdc = (user.balanceUsdc || 0) + addedUsdc;
             db.settlements.unshift({
               id: crypto.randomUUID(),
-              contractId: "BANK-FUND-ACCOUNT",
+              contractId: "BMONI-FUND-ACCOUNT",
               amount: addedUsdc,
               transactionHash: fundRes.transactionHash || `0xbmoni_fund_${Date.now()}`,
-              description: `BANK 9PSB Rails Deposit (+₦${(addedUsdc * 1600).toLocaleString()})`,
+              description: `BMONI 9PSB Rails Deposit (+₦${(addedUsdc * 1600).toLocaleString()})`,
               timestamp: new Date().toISOString()
             });
             writeDb(db);
@@ -1062,7 +1252,7 @@ async function handleRequest(req, res) {
         return sendJson(res, 200, rate);
       }
     } catch (bmoniErr) {
-      return sendJson(res, 500, { error: "BANK API Error: " + bmoniErr.message });
+      return sendJson(res, 500, { error: "BMONI API Error: " + bmoniErr.message });
     }
   }
 

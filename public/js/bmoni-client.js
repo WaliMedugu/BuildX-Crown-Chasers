@@ -286,7 +286,7 @@ class BmoniClient {
     if (endpoint.includes("/accounts/resolve")) {
       return {
         status: "SUCCESS",
-        accountName: "WALI O. MEDUGU",
+        accountName: "CROWN CHASERS",
         accountNumber: body?.accountNumber || "0123456789",
         bankCode: body?.bankCode || "058"
       };
@@ -296,7 +296,7 @@ class BmoniClient {
       return {
         status: "SUCCESS",
         recipientId: `rcp_bmoni_${Date.now().toString().slice(-6)}`,
-        accountName: body?.name || "WALI O. MEDUGU",
+        accountName: body?.name || "CROWN CHASERS",
         accountNumber: body?.accountNumber || "0123456789",
         bankCode: body?.bankCode || "058",
         bankName: body?.bankName || "GTBank"
