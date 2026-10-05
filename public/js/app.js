@@ -999,13 +999,9 @@ function cacheResolver(entries, threshold) {
     if (!task) return;
 
     const descEl = document.getElementById("wsDescription");
-    const inputEl = document.getElementById("wsSampleInput");
-    const outputEl = document.getElementById("wsExpectedOutput");
     const attachList = document.getElementById("wsAttachmentsList");
 
     if (descEl) descEl.textContent = task.overview || task.desc || "No specification overview provided yet. Click 'Manage Specs & Files' to add requirements.";
-    if (inputEl) inputEl.textContent = task.sampleInput || "No sample input defined yet. Click 'Manage Specs & Files' to define test cases.";
-    if (outputEl) outputEl.textContent = task.expectedOutput || "No expected output defined yet. Click 'Manage Specs & Files' to define test cases.";
 
     if (attachList) {
       const attachments = task.attachments || [];
@@ -1173,8 +1169,6 @@ function cacheResolver(entries, threshold) {
     const elCategory = document.getElementById("editSpecCategory");
     const elComplexity = document.getElementById("editSpecComplexity");
     const elOverview = document.getElementById("editSpecOverview");
-    const elInput = document.getElementById("editSpecInput");
-    const elOutput = document.getElementById("editSpecOutput");
     const elElig = document.getElementById("editSpecEligibility");
     const elTeam = document.getElementById("editSpecTeamSize");
     const elAi = document.getElementById("editSpecAiPolicy");
@@ -1184,8 +1178,6 @@ function cacheResolver(entries, threshold) {
     if (elCategory) elCategory.value = task.category || "Algorithms & FinTech";
     if (elComplexity) elComplexity.value = task.complexity || "O(N log N)";
     if (elOverview) elOverview.value = task.overview || task.desc || "";
-    if (elInput) elInput.value = task.sampleInput || "";
-    if (elOutput) elOutput.value = task.expectedOutput || "";
     if (elElig) elElig.value = task.rules?.eligibility || "";
     if (elTeam) elTeam.value = task.rules?.teamSize || "";
     if (elAi) elAi.value = task.rules?.aiPolicy || "";
@@ -1220,8 +1212,6 @@ function cacheResolver(entries, threshold) {
     const category = document.getElementById("editSpecCategory")?.value;
     const complexity = document.getElementById("editSpecComplexity")?.value;
     const overview = document.getElementById("editSpecOverview")?.value.trim();
-    const sampleInput = document.getElementById("editSpecInput")?.value.trim();
-    const expectedOutput = document.getElementById("editSpecOutput")?.value.trim();
     const eligibility = document.getElementById("editSpecEligibility")?.value.trim();
     const teamSize = document.getElementById("editSpecTeamSize")?.value.trim();
     const aiPolicy = document.getElementById("editSpecAiPolicy")?.value.trim();
@@ -1231,8 +1221,6 @@ function cacheResolver(entries, threshold) {
     if (complexity) task.complexity = complexity;
     task.overview = overview || task.desc;
     task.desc = overview || task.desc;
-    task.sampleInput = sampleInput;
-    task.expectedOutput = expectedOutput;
     task.rules = {
       ...task.rules,
       eligibility: eligibility || task.rules?.eligibility,
@@ -1251,8 +1239,6 @@ function cacheResolver(entries, threshold) {
           complexity: task.complexity,
           overview: task.overview,
           desc: task.desc,
-          sampleInput: task.sampleInput,
-          expectedOutput: task.expectedOutput,
           rules: task.rules,
           resources: task.resources,
           attachments: task.attachments
@@ -2415,8 +2401,6 @@ function cacheResolver(entries, threshold) {
       complexity: "O(N log N)",
       desc: "",
       overview: "",
-      sampleInput: "",
-      expectedOutput: "",
       amount: amount,
       tags: [this.modalVisibility === "private" ? "Private Hire" : "Public Bounty", category],
       status: "Active",

@@ -660,19 +660,6 @@
                 <div style="color: var(--text-secondary); line-height: 1.6; font-size: 0.92rem; white-space: pre-wrap;" id="wsDescription">
                   High-frequency payment systems face microsecond cache bottlenecks when thousands of transaction auth tokens expire concurrently. You must implement the function cacheResolver(entries, threshold) to filter out expired items and return remaining entries sorted by priority.
                 </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.25rem;">
-                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono); font-weight: 600;">Sample Input:</span>
-                    <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--accent-terracotta); background: var(--bg-primary); padding: 0.6rem; border-radius: 4px; overflow-x: auto;" id="wsSampleInput">entries = [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }]
-threshold = 20</pre>
-                  </div>
-
-                  <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono); font-weight: 600;">Expected Output:</span>
-                    <pre style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; color: var(--status-emerald); background: var(--bg-primary); padding: 0.6rem; border-radius: 4px; overflow-x: auto;" id="wsExpectedOutput">[{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]</pre>
-                  </div>
-                </div>
               </div>
 
               <!-- Attachments & Files Card -->
@@ -1537,18 +1524,7 @@ threshold = 20</pre>
 
         <div>
           <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Challenge Overview & Deliverables</label>
-          <textarea id="editSpecOverview" rows="4" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.85rem; resize: vertical;"></textarea>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-          <div>
-            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Sample Input Specification</label>
-            <textarea id="editSpecInput" rows="2" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--accent-terracotta); font-family: var(--font-mono); font-size: 0.8rem;"></textarea>
-          </div>
-          <div>
-            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Expected Output Specification</label>
-            <textarea id="editSpecOutput" rows="2" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--status-emerald); font-family: var(--font-mono); font-size: 0.8rem;"></textarea>
-          </div>
+          <textarea id="editSpecOverview" rows="4" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.65rem; color: var(--text-primary); font-size: 0.85rem; resize: vertical;" placeholder="Describe technical requirements, architecture constraints, and deliverable guidelines..."></textarea>
         </div>
 
         <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
