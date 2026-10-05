@@ -533,6 +533,25 @@
             </div>
           </div>
 
+          <!-- Category Track Filter Strip -->
+          <div class="category-filter-strip" id="bountyCategoryFilterStrip" style="display: flex; gap: 0.4rem; overflow-x: auto; padding: 0.35rem 0 0.85rem 0; margin-bottom: 0.75rem; scrollbar-width: thin;">
+            <button class="filter-pill active" onclick="app.setBountyCategoryFilter('all')" data-cat="all">All Tracks</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('Algorithms & FinTech')" data-cat="Algorithms & FinTech">Algorithms & FinTech</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('AI & Machine Learning')" data-cat="AI & Machine Learning">AI & Machine Learning</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('Web3 & Cryptography')" data-cat="Web3 & Cryptography">Web3 & Cryptography</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('Backend Systems & APIs')" data-cat="Backend Systems & APIs">Backend Systems & APIs</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('Fullstack Web & Mobile')" data-cat="Fullstack Web & Mobile">Fullstack Web & Mobile</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('Cloud Infrastructure & DevOps')" data-cat="Cloud Infrastructure & DevOps">Cloud & DevOps</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('Cybersecurity & Audits')" data-cat="Cybersecurity & Audits">Cybersecurity & Audits</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('Open Source & DevTools')" data-cat="Open Source & DevTools">Open Source & DevTools</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('Data Science & Analytics')" data-cat="Data Science & Analytics">Data Science & Analytics</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('IoT & Embedded Systems')" data-cat="IoT & Embedded Systems">IoT & Embedded Systems</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('HealthTech & BioInformatics')" data-cat="HealthTech & BioInformatics">HealthTech & Bio</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('AgriTech & Logistics')" data-cat="AgriTech & Logistics">AgriTech & Logistics</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('EdTech & Competence Proofs')" data-cat="EdTech & Competence Proofs">EdTech & Verification</button>
+            <button class="filter-pill" onclick="app.setBountyCategoryFilter('UI/UX & Design Systems')" data-cat="UI/UX & Design Systems">UI/UX & Design Systems</button>
+          </div>
+
           <!-- Contract Cards Grid -->
           <div class="bounty-grid" id="contractListGrid">
             <!-- Cards rendered dynamically by app.js -->
@@ -1080,48 +1099,29 @@ threshold = 20</pre>
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title / Problem Statement <span style="color: var(--status-ruby);">*</span></label>
-          <input type="text" id="modalContractTitle" maxlength="120" minlength="5" required placeholder="e.g. Build payment webhook deduplicator" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-          <div>
-            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Category Track</label>
-            <select id="modalContractCategory" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem;">
-              <option value="Algorithms & FinTech">Algorithms & FinTech</option>
-              <option value="Backend Systems & APIs">Backend Systems & APIs</option>
-              <option value="Web3 & Smart Contracts">Web3 & Smart Contracts</option>
-              <option value="AI & Machine Learning">AI & Machine Learning</option>
-              <option value="Security & Cryptography">Security & Cryptography</option>
-              <option value="Fullstack Applications">Fullstack Applications</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Complexity Constraint</label>
-            <select id="modalContractComplexity" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem;">
-              <option value="O(1)">O(1) - Constant</option>
-              <option value="O(log N)">O(log N) - Logarithmic</option>
-              <option value="O(N)">O(N) - Linear</option>
-              <option value="O(N log N)" selected>O(N log N) - Linearithmic</option>
-              <option value="O(N^2)">O(N^2) - Quadratic</option>
-            </select>
-          </div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Contract Title / Problem Statement <span style="font-size: 0.72rem; color: var(--text-muted);">(Optional)</span></label>
+          <input type="text" id="modalContractTitle" maxlength="120" placeholder="e.g. Build payment webhook deduplicator (or set in workspace)" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.88rem;">
+          <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Optional during setup. You can fully configure or edit title, requirements, complexity, and test cases in the bounty workspace.</span>
         </div>
 
         <div>
-          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Requirements, Scope & Acceptance Criteria <span style="color: var(--status-ruby);">*</span></label>
-          <textarea id="modalContractDesc" maxlength="2000" rows="3" placeholder="Describe the technical requirements, architecture constraints, and expected deliverables..." style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem; font-family: var(--font-sans); resize: vertical;"></textarea>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-          <div>
-            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Sample Input (Optional)</label>
-            <textarea id="modalContractInput" rows="2" placeholder='entries = [{ id: 1, ttl: 5 }]' style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--accent-terracotta); font-family: var(--font-mono); font-size: 0.8rem;"></textarea>
-          </div>
-          <div>
-            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Expected Output (Optional)</label>
-            <textarea id="modalContractOutput" rows="2" placeholder='[{ id: 1, ttl: 5 }]' style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.55rem; color: var(--status-emerald); font-family: var(--font-mono); font-size: 0.8rem;"></textarea>
-          </div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Category Track</label>
+          <select id="modalContractCategory" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem;">
+            <option value="Algorithms & FinTech">Algorithms & FinTech</option>
+            <option value="AI & Machine Learning">AI & Machine Learning</option>
+            <option value="Web3 & Cryptography">Web3 & Cryptography</option>
+            <option value="Backend Systems & APIs">Backend Systems & APIs</option>
+            <option value="Fullstack Web & Mobile">Fullstack Web & Mobile</option>
+            <option value="Cloud Infrastructure & DevOps">Cloud Infrastructure & DevOps</option>
+            <option value="Cybersecurity & Audits">Cybersecurity & Audits</option>
+            <option value="Open Source & DevTools">Open Source & DevTools</option>
+            <option value="Data Science & Analytics">Data Science & Analytics</option>
+            <option value="IoT & Embedded Systems">IoT & Embedded Systems</option>
+            <option value="HealthTech & BioInformatics">HealthTech & BioInformatics</option>
+            <option value="AgriTech & Logistics">AgriTech & Logistics</option>
+            <option value="EdTech & Competence Proofs">EdTech & Competence Proofs</option>
+            <option value="UI/UX & Design Systems">UI/UX & Design Systems</option>
+          </select>
         </div>
 
         <div>
@@ -1508,11 +1508,19 @@ threshold = 20</pre>
             <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Category Track</label>
             <select id="editSpecCategory" style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; color: var(--text-primary); font-size: 0.85rem;">
               <option value="Algorithms & FinTech">Algorithms & FinTech</option>
-              <option value="Backend Systems & APIs">Backend Systems & APIs</option>
-              <option value="Web3 & Smart Contracts">Web3 & Smart Contracts</option>
               <option value="AI & Machine Learning">AI & Machine Learning</option>
-              <option value="Security & Cryptography">Security & Cryptography</option>
-              <option value="Fullstack Applications">Fullstack Applications</option>
+              <option value="Web3 & Cryptography">Web3 & Cryptography</option>
+              <option value="Backend Systems & APIs">Backend Systems & APIs</option>
+              <option value="Fullstack Web & Mobile">Fullstack Web & Mobile</option>
+              <option value="Cloud Infrastructure & DevOps">Cloud Infrastructure & DevOps</option>
+              <option value="Cybersecurity & Audits">Cybersecurity & Audits</option>
+              <option value="Open Source & DevTools">Open Source & DevTools</option>
+              <option value="Data Science & Analytics">Data Science & Analytics</option>
+              <option value="IoT & Embedded Systems">IoT & Embedded Systems</option>
+              <option value="HealthTech & BioInformatics">HealthTech & BioInformatics</option>
+              <option value="AgriTech & Logistics">AgriTech & Logistics</option>
+              <option value="EdTech & Competence Proofs">EdTech & Competence Proofs</option>
+              <option value="UI/UX & Design Systems">UI/UX & Design Systems</option>
             </select>
           </div>
           <div>

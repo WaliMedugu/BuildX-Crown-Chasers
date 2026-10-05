@@ -255,8 +255,9 @@ class KilikoroSaaSApp {
     this.claudeService = new KilikoroClaudeService();
     this.db = new KilikoroDatabase();
 
-    // Contract Visibility State ('public' or 'private')
+    // Contract Visibility & Category State
     this.currentContractTab = "public";
+    this.currentBountyCategoryFilter = "all";
     this.modalVisibility = "private";
 
     // Repository of Contracts (Loaded dynamically from database)
@@ -774,6 +775,22 @@ function cacheResolver(entries, threshold) {
     this.renderContracts();
   }
 
+  setBountyCategoryFilter(category) {
+    this.currentBountyCategoryFilter = category;
+    const strip = document.getElementById("bountyCategoryFilterStrip");
+    if (strip) {
+      const pills = strip.querySelectorAll(".filter-pill");
+      pills.forEach(p => {
+        if (p.getAttribute("data-cat") === category) {
+          p.classList.add("active");
+        } else {
+          p.classList.remove("active");
+        }
+      });
+    }
+    this.renderContracts();
+  }
+
   renderContracts() {
     const grid = document.getElementById("contractListGrid");
     const pubCountEl = document.getElementById("pubCount");
@@ -787,7 +804,29 @@ function cacheResolver(entries, threshold) {
 
     if (!grid) return;
 
-    const filtered = this.currentContractTab === "public" ? pubContracts : privContracts;
+    let filtered = this.currentContractTab === "public" ? pubContracts : privContracts;
+
+    // Filter by Category Track
+    if (this.currentBountyCategoryFilter && this.currentBountyCategoryFilter !== "all") {
+      const target = this.currentBountyCategoryFilter.toLowerCase();
+      filtered = filtered.filter(c => {
+        const cat = (c.category || "").toLowerCase();
+        const tags = (c.tags || []).map(t => t.toLowerCase());
+        return cat === target || tags.includes(target);
+      });
+    }
+
+    // Filter by search query
+    const searchInput = document.getElementById("contractSearchInput");
+    const searchVal = searchInput ? searchInput.value.trim().toLowerCase() : "";
+    if (searchVal) {
+      filtered = filtered.filter(c =>
+        (c.title || "").toLowerCase().includes(searchVal) ||
+        (c.desc || "").toLowerCase().includes(searchVal) ||
+        (c.sponsor || "").toLowerCase().includes(searchVal) ||
+        (c.category || "").toLowerCase().includes(searchVal)
+      );
+    }
 
     if (filtered.length === 0) {
       grid.innerHTML = `
@@ -795,11 +834,13 @@ function cacheResolver(entries, threshold) {
           <div class="empty-state-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
           </div>
-          <h3 class="empty-state-title">No ${this.currentContractTab === "public" ? "Public Bounties" : "Private Contracts"} Active</h3>
+          <h3 class="empty-state-title">No ${this.currentContractTab === "public" ? "Public Bounties" : "Private Contracts"} Found</h3>
           <p class="empty-state-desc" style="max-width: 460px; margin: 0.5rem auto 1.25rem auto;">
-            ${this.currentContractTab === "public" 
-              ? "No open bounty challenges exist currently. Click '+ New Contract' to deposit funds and launch a challenge." 
-              : "No direct 1-on-1 private contracts assigned. Click '+ New Contract' to hire a verified student directly."}
+            ${this.currentBountyCategoryFilter !== "all" 
+              ? `No bounties match category "${this.currentBountyCategoryFilter}". Try selecting "All Tracks" or creating a new bounty in this track.`
+              : (this.currentContractTab === "public" 
+                ? "No open bounty challenges exist currently. Click '+ New Contract' to deposit funds and launch a challenge." 
+                : "No direct 1-on-1 private contracts assigned. Click '+ New Contract' to hire a verified student directly.")}
           </p>
           <button class="btn btn-primary" onclick="app.openNewContractModal()">+ Create Milestone Contract</button>
         </div>
@@ -814,7 +855,7 @@ function cacheResolver(entries, threshold) {
             <div class="company-avatar" style="background: ${c.avatarColor || 'var(--accent-terracotta)'}; color: white;">${c.avatar || 'C'}</div>
             <div>
               <div class="company-name">${c.sponsor || 'Client'}</div>
-              <span style="font-size: 0.7rem; color: var(--text-muted);">${c.type === "private" ? "Direct Private Hire (" + (c.studentId || "Candidate") + ")" : "Verified Sponsor"}</span>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">${c.type === "private" ? "Direct Private Hire (" + (c.studentId || "Candidate") + ")" : (c.category || "Verified Sponsor")}</span>
             </div>
           </div>
           <div class="reward-pill">$${(c.amount || 0).toFixed(2)} USDC</div>
@@ -822,12 +863,12 @@ function cacheResolver(entries, threshold) {
 
         <div>
           <h2 class="bounty-card-title">${c.title}</h2>
-          <p class="bounty-card-desc">${c.desc}</p>
+          <p class="bounty-card-desc">${c.desc || (c.overview || 'Click to view technical specifications, test harnesses, and requirements.')}</p>
         </div>
 
         <div class="bounty-card-footer">
           <div class="tag-list">
-            ${(c.tags || []).map(t => `<span class="tag">${t}</span>`).join("")}
+            ${(c.tags || [c.category || "General"]).map(t => `<span class="tag">${t}</span>`).join("")}
           </div>
           <span style="font-size: 0.72rem; color: var(--status-emerald); font-family: var(--font-mono); font-weight: 600;">
             ${c.type === "private" ? "1-on-1 Contract" : "Open Hackathon Bounty"}
@@ -847,37 +888,47 @@ function cacheResolver(entries, threshold) {
 
     this.activeMilestone = task;
 
-    // Ensure defaults for Devpost-style attributes
-    if (!task.rules) {
-      task.rules = {
-        eligibility: "Open to all middle school, high school, polytechnic, and undergraduate students (ages 13 to 25) enrolled in NACOS chapters or international developer networks.",
-        teamSize: "Teams may have 1 to 5 members. Solo submissions are fully welcomed.",
-        aiPolicy: "You are allowed full use of AI tools, coding assistants, and open-source packages. All code is audited against AST security trees.",
-        submissionRules: "Submissions must not contain offensive, harmful, or plagiarized content. Zero exposed private keys or API tokens.",
-        judgingConduct: "Kilikoro Autonomous Oracle and judges' decisions are final. BMONI milestone escrow is released immediately upon reaching 80%+ passing score."
-      };
-    }
+    // Ensure defaults for Devpost-style attributes ONLY for seed showcase task
+    if (task.id === "TASK-BMONI-104") {
+      if (!task.rules) {
+        task.rules = {
+          eligibility: "Open to all middle school, high school, polytechnic, and undergraduate students (ages 13 to 25) enrolled in NACOS chapters or international developer networks.",
+          teamSize: "Teams may have 1 to 5 members. Solo submissions are fully welcomed.",
+          aiPolicy: "You are allowed full use of AI tools, coding assistants, and open-source packages. All code is audited against AST security trees.",
+          submissionRules: "Submissions must not contain offensive, harmful, or plagiarized content. Zero exposed private keys or API tokens.",
+          judgingConduct: "Kilikoro Autonomous Oracle and judges' decisions are final. BMONI milestone escrow is released immediately upon reaching 80%+ passing score."
+        };
+      }
 
-    if (!task.resources || !task.resources.length) {
-      task.resources = [
-        { title: "Kilikoro AST Verification Guide", url: "https://kilikoro.vercel.app/docs", type: "Documentation" },
-        { title: "BMONI Embedded FinTech API Reference", url: "https://embedded-dev.bmoni.com/docs", type: "API Reference" },
-        { title: "Official NACOS Developer Community", url: "https://discord.gg/nacos-dev", type: "Community" },
-        { title: "Starter Repository & Test Harness", url: "https://github.com/CrownChasers/kilikoro-node", type: "Starter Kit" }
-      ];
-    }
+      if (!task.resources || !task.resources.length) {
+        task.resources = [
+          { title: "Kilikoro AST Verification Guide", url: "https://kilikoro.vercel.app/docs", type: "Documentation" },
+          { title: "BMONI Embedded FinTech API Reference", url: "https://embedded-dev.bmoni.com/docs", type: "API Reference" },
+          { title: "Official NACOS Developer Community", url: "https://discord.gg/nacos-dev", type: "Community" },
+          { title: "Starter Repository & Test Harness", url: "https://github.com/CrownChasers/kilikoro-node", type: "Starter Kit" }
+        ];
+      }
 
-    if (!task.attachments) {
-      task.attachments = [
-        { id: "att-1", name: "problem_specification.pdf", size: "142 KB", type: "application/pdf", date: "2026-10-04" },
-        { id: "att-2", name: "benchmark_dataset.json", size: "88 KB", type: "application/json", date: "2026-10-04" }
-      ];
-    }
-
-    if (!task.participants) {
-      task.participants = [
-        { id: "part-1", name: "Crown Chasers Lead", email: "lead@kilikoro.dev", nacosId: "242120036", teamName: "Crown Chasers", membersCount: 1, registeredAt: new Date().toISOString() }
-      ];
+      if (!task.attachments) {
+        task.attachments = [
+          { id: "att-1", name: "problem_specification.pdf", size: "142 KB", type: "application/pdf", date: "2026-10-04" },
+          { id: "att-2", name: "benchmark_dataset.json", size: "88 KB", type: "application/json", date: "2026-10-04" }
+        ];
+      }
+    } else {
+      // User created bounties have NO mock data
+      if (!task.rules) {
+        task.rules = {
+          eligibility: "",
+          teamSize: "",
+          aiPolicy: "",
+          submissionRules: "",
+          judgingConduct: ""
+        };
+      }
+      if (!task.resources) task.resources = [];
+      if (!task.attachments) task.attachments = [];
+      if (!task.participants) task.participants = [];
     }
 
     if (!task.submissions) {
@@ -909,10 +960,14 @@ function cacheResolver(entries, threshold) {
     const count = (task.submissions || []).length;
     if (subCountEl) subCountEl.textContent = `${count} ${count === 1 ? 'Verified' : 'Verified'}`;
 
-    // Creator control visibility: Show manage specs button if organization/employer or matching sponsor
+    // Creator control visibility: Show manage specs & delete buttons if role, email, sponsor match, or user-created CT-* contract
     const btnEdit = document.getElementById("btnEditWsSpec");
     const btnDel = document.getElementById("btnDeleteContract");
-    const isCreator = this.activeProfile?.role === "organization" || this.activeProfile?.role === "employer" || (this.activeProfile?.email && task.sponsorEmail && this.activeProfile.email.toLowerCase() === task.sponsorEmail.toLowerCase());
+    const isCreator = this.activeProfile?.role === "organization" || 
+      this.activeProfile?.role === "employer" || 
+      (this.activeProfile?.email && task.sponsorEmail && this.activeProfile.email.toLowerCase() === task.sponsorEmail.toLowerCase()) ||
+      (this.activeProfile?.name && task.sponsor && this.activeProfile.name.toLowerCase() === task.sponsor.toLowerCase()) ||
+      (task.id && task.id.startsWith("CT-"));
     if (btnEdit) btnEdit.style.display = isCreator ? "inline-flex" : "none";
     if (btnDel) btnDel.style.display = isCreator ? "inline-flex" : "none";
 
@@ -948,14 +1003,14 @@ function cacheResolver(entries, threshold) {
     const outputEl = document.getElementById("wsExpectedOutput");
     const attachList = document.getElementById("wsAttachmentsList");
 
-    if (descEl) descEl.textContent = task.overview || task.desc || "Review the requirements, test cases, and deliverable guidelines below.";
-    if (inputEl) inputEl.textContent = task.sampleInput || "entries = [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }]\nthreshold = 20";
-    if (outputEl) outputEl.textContent = task.expectedOutput || "[{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]";
+    if (descEl) descEl.textContent = task.overview || task.desc || "No specification overview provided yet. Click 'Manage Specs & Files' to add requirements.";
+    if (inputEl) inputEl.textContent = task.sampleInput || "No sample input defined yet. Click 'Manage Specs & Files' to define test cases.";
+    if (outputEl) outputEl.textContent = task.expectedOutput || "No expected output defined yet. Click 'Manage Specs & Files' to define test cases.";
 
     if (attachList) {
       const attachments = task.attachments || [];
       if (attachments.length === 0) {
-        attachList.innerHTML = `<div style="color: var(--text-muted); font-size: 0.82rem; grid-column: 1 / -1;">No attached files uploaded yet.</div>`;
+        attachList.innerHTML = `<div style="color: var(--text-muted); font-size: 0.82rem; grid-column: 1 / -1;">No attached files uploaded yet. Click 'Manage Specs & Files' to attach project assets.</div>`;
       } else {
         attachList.innerHTML = attachments.map((att, idx) => `
           <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
@@ -999,11 +1054,11 @@ function cacheResolver(entries, threshold) {
     const elSub = document.getElementById("wsRulesSubmission");
     const elCond = document.getElementById("wsRulesConduct");
 
-    if (elElig && rules.eligibility) elElig.textContent = rules.eligibility;
-    if (elTeam && rules.teamSize) elTeam.textContent = rules.teamSize;
-    if (elAi && rules.aiPolicy) elAi.textContent = rules.aiPolicy;
-    if (elSub && rules.submissionRules) elSub.textContent = rules.submissionRules;
-    if (elCond && rules.judgingConduct) elCond.textContent = rules.judgingConduct;
+    if (elElig) elElig.textContent = rules.eligibility || "Standard NACOS & verified developer eligibility applies.";
+    if (elTeam) elTeam.textContent = rules.teamSize || "Individual or team submissions allowed.";
+    if (elAi) elAi.textContent = rules.aiPolicy || "AI assistants and open-source packages permitted with clean AST provenance.";
+    if (elSub) elSub.textContent = rules.submissionRules || "Clean codebase with deterministic execution.";
+    if (elCond) elCond.textContent = rules.judgingConduct || "Kilikoro Autonomous AST Oracle decisions are instantaneous and cryptographic.";
   }
 
   renderWorkspaceResources() {
@@ -1017,23 +1072,45 @@ function cacheResolver(entries, threshold) {
     if (countEl) countEl.textContent = resources.length;
     if (!list) return;
 
+    const isCreator = this.activeProfile?.role === "organization" || 
+      this.activeProfile?.role === "employer" || 
+      (this.activeProfile?.email && task.sponsorEmail && this.activeProfile.email.toLowerCase() === task.sponsorEmail.toLowerCase()) ||
+      (this.activeProfile?.name && task.sponsor && this.activeProfile.name.toLowerCase() === task.sponsor.toLowerCase()) ||
+      (task.id && task.id.startsWith("CT-"));
+
     if (resources.length === 0) {
-      list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.82rem; grid-column: 1 / -1;">No resource links added yet.</div>`;
+      list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.82rem; grid-column: 1 / -1;">No resource links added yet. ${isCreator ? "Click '+ Add Resource' to add reference links." : ""}</div>`;
       return;
     }
 
-    list.innerHTML = resources.map(res => `
+    list.innerHTML = resources.map((res, idx) => `
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.85rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem;">
         <div>
           <span class="tag" style="font-size: 0.65rem; margin-bottom: 0.35rem; display: inline-block;">${res.type || 'Resource'}</span>
           <h4 style="margin: 0; font-size: 0.88rem; color: var(--text-primary); font-weight: 600;">${res.title}</h4>
         </div>
-        <a href="${res.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: space-between; margin-top: 0.35rem;">
-          <span>Visit Resource</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-        </a>
+        <div style="display: flex; gap: 0.4rem; align-items: center; justify-content: space-between; margin-top: 0.35rem;">
+          <a href="${res.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+            <span>Visit</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+          ${isCreator ? `
+            <button class="btn btn-secondary" onclick="app.deleteResourceLink(${idx})" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; color: var(--status-ruby); border-color: rgba(220, 38, 38, 0.3);">
+              Delete
+            </button>
+          ` : ''}
+        </div>
       </div>
     `).join("");
+  }
+
+  async deleteResourceLink(idx) {
+    if (!this.activeMilestone?.resources) return;
+    if (!confirm("Are you sure you want to remove this resource link?")) return;
+    this.activeMilestone.resources.splice(idx, 1);
+    await this.saveContractSpec();
+    this.renderWorkspaceResources();
+    this.showToast("Resource Removed", "Resource link deleted and synchronized.", "info");
   }
 
   renderWorkspaceGallery() {
@@ -1107,20 +1184,24 @@ function cacheResolver(entries, threshold) {
     if (elCategory) elCategory.value = task.category || "Algorithms & FinTech";
     if (elComplexity) elComplexity.value = task.complexity || "O(N log N)";
     if (elOverview) elOverview.value = task.overview || task.desc || "";
-    if (elInput) elInput.value = task.sampleInput || "entries = [{ id: 10, ttl: 40 }, { id: 2, ttl: 15 }, { id: 8, ttl: 25 }]\nthreshold = 20";
-    if (elOutput) elOutput.value = task.expectedOutput || "[{ id: 8, ttl: 25 }, { id: 10, ttl: 40 }]";
-    if (elElig) elElig.value = task.rules?.eligibility || "Open to all student developers and independent builders.";
-    if (elTeam) elTeam.value = task.rules?.teamSize || "Direct individual submissions with public GitHub repository links.";
-    if (elAi) elAi.value = task.rules?.aiPolicy || "You are allowed full use of AI tools, coding assistants, and open-source packages.";
+    if (elInput) elInput.value = task.sampleInput || "";
+    if (elOutput) elOutput.value = task.expectedOutput || "";
+    if (elElig) elElig.value = task.rules?.eligibility || "";
+    if (elTeam) elTeam.value = task.rules?.teamSize || "";
+    if (elAi) elAi.value = task.rules?.aiPolicy || "";
 
     if (fileList) {
       const attachments = task.attachments || [];
-      fileList.innerHTML = attachments.map((att, idx) => `
-        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); padding: 0.4rem 0.6rem; border-radius: 4px;">
-          <span>${att.name} (${att.size})</span>
-          <button type="button" onclick="app.removeSpecFile(${idx})" style="background: none; border: none; color: var(--status-ruby); cursor: pointer; font-size: 0.8rem;">✕</button>
-        </div>
-      `).join("");
+      if (attachments.length === 0) {
+        fileList.innerHTML = `<div style="color: var(--text-muted); font-size: 0.78rem;">No files uploaded yet.</div>`;
+      } else {
+        fileList.innerHTML = attachments.map((att, idx) => `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); padding: 0.4rem 0.6rem; border-radius: 4px;">
+            <span style="font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">${att.name} (${att.size})</span>
+            <button type="button" onclick="app.removeSpecFile(${idx})" style="background: none; border: none; color: var(--status-ruby); cursor: pointer; font-size: 0.8rem;" title="Remove file">✕</button>
+          </div>
+        `).join("");
+      }
     }
 
     modal.style.display = "flex";
@@ -1180,13 +1261,13 @@ function cacheResolver(entries, threshold) {
 
       // Update in local array & DB
       await this.db.saveContract(task);
-      this.openWorkspace(task);
       this.closeEditSpecModal();
+      this.openMilestone(task.id);
       this.showToast("Specifications Updated", "Requirements, rules, and files saved live to Supabase!", "success");
     } catch (e) {
       this.showToast("Update Notice", "Saved in active session: " + e.message, "info");
-      this.openWorkspace(task);
       this.closeEditSpecModal();
+      this.openMilestone(task.id);
     }
   }
 
@@ -1243,10 +1324,13 @@ function cacheResolver(entries, threshold) {
     reader.readAsDataURL(file);
   }
 
-  removeSpecFile(idx) {
+  async removeSpecFile(idx) {
     if (this.activeMilestone?.attachments) {
-      this.activeMilestone.attachments.splice(idx, 1);
+      const removed = this.activeMilestone.attachments.splice(idx, 1);
+      await this.saveContractSpec();
       this.openEditSpecModal();
+      this.renderWorkspaceOverview();
+      this.showToast("File Removed", `Removed ${removed[0]?.name || 'attachment'} from specifications.`, "info");
     }
   }
 
@@ -2279,21 +2363,12 @@ function cacheResolver(entries, threshold) {
     const titleInput = document.getElementById("modalContractTitle");
     const amtInput = document.getElementById("modalContractAmount");
     const studentInput = document.getElementById("modalStudentId");
-    const descInput = document.getElementById("modalContractDesc");
 
-    const title = (titleInput?.value || "").trim();
+    let title = (titleInput?.value || "").trim();
     const amount = parseFloat(amtInput?.value || "0");
-    const desc = (descInput?.value || "").trim();
     const studentId = this.modalVisibility === "private" ? (studentInput?.value || "").trim() : null;
     const category = document.getElementById("modalContractCategory")?.value || "Algorithms & FinTech";
-    const complexity = document.getElementById("modalContractComplexity")?.value || "O(N log N)";
-    const sampleInput = document.getElementById("modalContractInput")?.value?.trim() || "";
-    const expectedOutput = document.getElementById("modalContractOutput")?.value?.trim() || "";
 
-    if (!title || title.length < 3 || title.length > 120) {
-      this.showToast("Title Required", "Contract title must be between 3 and 120 characters.", "warning");
-      return;
-    }
     if (isNaN(amount) || amount < 1 || amount > 50000) {
       this.showToast("Amount Boundary", "Contract bounty must be between $1 and $50,000 USDC.", "warning");
       return;
@@ -2315,6 +2390,10 @@ function cacheResolver(entries, threshold) {
 
     const contractId = `CT-${this.modalVisibility === "private" ? "PRIV" : "PUB"}-${Date.now().toString().slice(-4)}`;
 
+    if (!title) {
+      title = `${category} Challenge #${contractId.slice(-4)}`;
+    }
+
     // Call real BMONI Escrow Lock API
     const escrowRes = await this.bmoniClient.lockEscrow({
       contractId,
@@ -2333,21 +2412,21 @@ function cacheResolver(entries, threshold) {
       avatarColor: "var(--accent-terracotta)",
       title: title,
       category: category,
-      complexity: complexity,
-      desc: desc || (this.modalVisibility === "private" ? `Direct private hire locked for ${studentId}.` : "Open bounty for all verified Kilikoro students."),
-      overview: desc || (this.modalVisibility === "private" ? `Direct private hire locked for ${studentId}.` : "Open bounty for all verified Kilikoro students."),
-      sampleInput: sampleInput || "entries = [{ id: 10, ttl: 40 }]\nthreshold = 20",
-      expectedOutput: expectedOutput || "[{ id: 10, ttl: 40 }]",
+      complexity: "O(N log N)",
+      desc: "",
+      overview: "",
+      sampleInput: "",
+      expectedOutput: "",
       amount: amount,
       tags: [this.modalVisibility === "private" ? "Private Hire" : "Public Bounty", category],
       status: "Active",
       studentId: studentId,
       rules: {
-        eligibility: "Open to all student developers and independent builders.",
-        teamSize: "Direct individual submissions with public GitHub repository links.",
-        aiPolicy: "You are allowed full use of AI tools, coding assistants, and open-source packages.",
-        submissionRules: "Submissions must not contain secrets or exposed API tokens.",
-        judgingConduct: "Kilikoro Autonomous AST Oracle decisions are instantaneous and cryptographic."
+        eligibility: "",
+        teamSize: "",
+        aiPolicy: "",
+        submissionRules: "",
+        judgingConduct: ""
       },
       resources: [],
       attachments: [],
@@ -2367,8 +2446,13 @@ function cacheResolver(entries, threshold) {
 
     this.closeNewContractModal();
     this.setContractType(this.modalVisibility);
-    this.switchView("view-contracts");
-    this.showToast("Escrow Locked", `$${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for: "${title}".\nOracle Reference: ${newContract.bmoniTxHash}\nRemaining Balance: $${this.activeProfile.balanceUsdc.toFixed(2)} USDC`, "success", 5000);
+    this.renderContracts();
+
+    // Immediately open the workspace for the newly created bounty and open Edit Spec modal so user can configure it!
+    this.openMilestone(newContract.id);
+    this.openEditSpecModal();
+
+    this.showToast("Bounty Escrow Locked", `$${amount.toFixed(2)} USDC locked in BMONI Escrow Vault for "${title}". You can now configure the full technical specification!`, "success", 6000);
   }
 
   // =========================================================================

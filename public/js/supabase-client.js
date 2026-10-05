@@ -127,8 +127,13 @@ class KilikoroDatabase {
    */
   async saveContract(contract) {
     if (typeof localStorage !== "undefined") {
-      const local = JSON.parse(localStorage.getItem("kilikoro_contracts") || "[]");
-      local.unshift(contract);
+      let local = JSON.parse(localStorage.getItem("kilikoro_contracts") || "[]");
+      const existingIdx = local.findIndex(c => c.id === contract.id);
+      if (existingIdx >= 0) {
+        local[existingIdx] = { ...local[existingIdx], ...contract };
+      } else {
+        local.unshift(contract);
+      }
       localStorage.setItem("kilikoro_contracts", JSON.stringify(local));
     }
 
@@ -142,6 +147,28 @@ class KilikoroDatabase {
     } catch (e) {}
 
     return contract;
+  }
+
+  /**
+   * Delete a Contract (Persistent Backend + Supabase)
+   */
+  async deleteContract(contractId) {
+    if (typeof localStorage !== "undefined") {
+      const local = JSON.parse(localStorage.getItem("kilikoro_contracts") || "[]");
+      const updated = local.filter(c => c.id !== contractId);
+      localStorage.setItem("kilikoro_contracts", JSON.stringify(updated));
+    }
+
+    try {
+      const res = await fetch(`${this.apiBase}/api/contracts`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: contractId })
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+
+    return { success: true };
   }
 
   /**

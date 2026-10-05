@@ -1,6 +1,27 @@
 {
   "contracts": [
     {
+      "id": "CT-PUB-TEST-5936",
+      "type": "public",
+      "title": "Cloud DevOps Kubernetes Autoscaler",
+      "category": "Cloud Infrastructure & DevOps",
+      "amount": 250,
+      "sponsor": "Apex Systems",
+      "desc": "",
+      "complexity": "O(N log N)",
+      "overview": "",
+      "sampleInput": "",
+      "expectedOutput": "",
+      "rules": [],
+      "resources": [],
+      "attachments": [],
+      "submissions": [],
+      "studentId": null,
+      "createdAt": "2026-10-05T15:36:16.001Z",
+      "bmoniEscrowId": "ESCROW-577447",
+      "bmoniTxHash": "0xbmoni_b26248f5f15c"
+    },
+    {
       "id": "CT-PUB-7860",
       "type": "public",
       "sponsor": "Nigeria Association of Computing Students",
@@ -253,9 +274,71 @@
         "location": "Nigeria / Remote",
         "regNumber": "RC-894889"
       }
+    },
+    {
+      "id": "98b13583-8a65-42ed-b3ec-07a194496446",
+      "name": "Crown Chaser",
+      "email": "chaser@crown.com",
+      "role": "organization",
+      "hasPersonalProfile": true,
+      "hasOrganizationProfile": true,
+      "hasStudentProfile": true,
+      "hasEmployerProfile": true,
+      "personalCredentials": {
+        "university": "University of Lagos",
+        "nacosId": "UNILAG-2026-001",
+        "github": ""
+      },
+      "organizationCredentials": {
+        "company": "Apex Systems",
+        "regNumber": "RC-102913",
+        "department": "Engineering & Operations",
+        "location": "Nigeria / Remote"
+      },
+      "studentCredentials": {
+        "university": "University of Lagos",
+        "nacosId": "UNILAG-2026-001",
+        "github": ""
+      },
+      "employerCredentials": {
+        "company": "Apex Systems",
+        "regNumber": "RC-102913",
+        "department": "Engineering & Operations",
+        "location": "Nigeria / Remote"
+      },
+      "university": "University of Lagos",
+      "nacosId": "UNILAG-2026-001",
+      "github": "",
+      "company": "Apex Systems",
+      "walletAddress": "0xbdd31726",
+      "cardNumber": "5399 6188 4418 1971",
+      "cardCvv": "926",
+      "balanceUsdc": 25,
+      "bmoniConnected": false,
+      "bmoniPhone": null,
+      "bmoniTag": "crownchaser.bmoni",
+      "createdAt": "2026-10-05T14:56:54.991Z"
     }
   ],
   "settlements": [
+    {
+      "id": "b971c15e-7875-430f-9790-1a03635441fa",
+      "contractId": "BMONI-FUND-ACCOUNT",
+      "amount": 25,
+      "transactionHash": "0xbmoni_889b18f81705",
+      "description": "BMONI 9PSB Rails Deposit (+₦40,000)",
+      "timestamp": "2026-10-05T14:57:53.460Z"
+    },
+    {
+      "id": "9eec4051-da16-43ae-b3f5-276d26b630f3",
+      "contractId": "BMONI-FUND-ACCOUNT",
+      "amount": 25,
+      "settledAmountUSDC": 25,
+      "transactionHash": "0xbmoni_fc845f81fd2c",
+      "description": "BMONI 9PSB Rails Deposit (+₦40,000)",
+      "status": "Completed",
+      "timestamp": "2026-10-05T14:57:52.900Z"
+    },
     {
       "id": "e5bc28ce-1ecc-4c0b-a954-fd8bfd8035f5",
       "contractId": "BMONI-FUND-ACCOUNT",

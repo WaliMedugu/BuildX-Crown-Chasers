@@ -854,8 +854,8 @@ async function handleRequest(req, res) {
     if (req.method === "POST") {
       try {
         const contract = await parseJsonBody(req);
-        if (!contract.title || typeof contract.title !== "string" || contract.title.trim().length < 3 || contract.title.trim().length > 120) {
-          return sendJson(res, 400, { error: "Contract title must be between 3 and 120 characters." });
+        if (!contract.title || typeof contract.title !== "string" || contract.title.trim().length < 2) {
+          contract.title = `Milestone Bounty #${(contract.id || Date.now().toString()).slice(-4)}`;
         }
         const parsedAmount = parseFloat(contract.amount);
         if (isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 1000000) {
@@ -971,6 +971,26 @@ async function handleRequest(req, res) {
       if (resources !== undefined) contract.resources = resources;
       if (attachments !== undefined) contract.attachments = attachments;
       writeDb(db);
+
+      // Mirror specification update to Supabase REST
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/contracts?contract_id=eq.${contractId}`, {
+          method: "PATCH",
+          headers: {
+            "apikey": SUPABASE_SERVICE_KEY,
+            "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            title: contract.title,
+            description: contract.desc || contract.overview || "",
+            status: contract.status || "Escrow Locked"
+          })
+        });
+      } catch (sbErr) {
+        console.warn("[Supabase Spec Sync Notice]", sbErr.message);
+      }
+
       return sendJson(res, 200, { success: true, contract });
     } catch (err) {
       return sendJson(res, 500, { error: "Failed to update specifications: " + err.message });

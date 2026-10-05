@@ -2194,3 +2194,73 @@ GIT DIFF SUMMARY:
 + BuildX-Crown-Chasers/KILIKORO_PITCH_AND_JUDGING_DOSSIER.pdf
 + Kilikoro/KILIKORO_PITCH_AND_JUDGING_DOSSIER.pdf
 ================================================================================
+DATE/TIME: 2026-10-05T16:52:00+01:00
+PROMPT:
+"add more categories
+for seting up a bounty remove [Complexity Constraint. Contract Title / Problem Statement *
+e.g. Build payment webhook deduplicator
+Category Track
+
+Algorithms & FinTech
+Complexity Constraint
+
+O(N log N) - Linearithmic
+Requirements, Scope & Acceptance Criteria *
+Describe the technical requirements, architecture constraints, and expected deliverables...
+
+Sample Input (Optional)
+entries = [{ id: 1, ttl: 5 }]
+
+Expected Output (Optional)
+[{ id: 1, ttl: 5 }]
+]
+
+that info must be available for the user to actually modify or create after they have made the bounty itself
+also, remove all mock data for all new bounties... the user must be able to crud all items for their bounty
+remeber that eeverything must be connected to supabase"
+
+SHORT AGENT RESPONSE:
+1. Expanded category tracks from 1 to 14 domain-specific tracks with interactive filter strip in the contracts view.
+2. Streamlined bounty creation modal by removing heavy technical specification fields (complexity, description, sample input/output); kept only visibility, optional title, category, and reward amount.
+3. Enabled full post-creation specification management where creators immediately enter the active workspace with the Edit Specifications modal open for direct input.
+4. Stripped all mock data injection (rules, test inputs/outputs, attachments, resource links) for all newly created bounties.
+5. Implemented full CRUD capabilities for bounties, resource links, and attachments, all fully synchronized live with Supabase REST and BMONI Escrow Vault.
+
+--------------------------------------------------------------------------------
+DOCUMENTATION, LOGIC & FUNCTIONALITY OF ADDED FEATURES:
+--------------------------------------------------------------------------------
+1. 14 COMPREHENSIVE CATEGORY TRACKS & LIVE FILTER STRIP:
+- Added 14 technical tracks across frontend and backend: Algorithms & FinTech, AI & Machine Learning, Web3 & Cryptography, Backend Systems & APIs, Fullstack Web & Mobile, Cloud Infrastructure & DevOps, Cybersecurity & Audits, Open Source & DevTools, Data Science & Analytics, IoT & Embedded Systems, HealthTech & BioInformatics, AgriTech & Logistics, EdTech & Competence Proofs, UI/UX & Design Systems.
+- Horizontal scrollable filter pill strip (#bountyCategoryFilterStrip) added to Public/Private contracts view. Filtering updates cards dynamically and provides contextual empty states.
+
+2. STREAMLINED BOUNTY SETUP MODAL:
+- Removed heavy technical inputs (modalContractComplexity, modalContractDesc, modalContractInput, modalContractOutput) from contractModal.
+- Setup modal now strictly captures: Visibility (Public Bounty vs Direct Private Hire), Candidate ID (if private), Contract Title (Optional), Category Track dropdown, and Reward Amount (USDC) with dynamic 2.5% protocol fee calculator.
+
+3. POST-CREATION SPECIFICATION & WORKSPACE CONTROLLER:
+- Immediately upon locking escrow, submitNewContract opens the active workspace and launches the Edit Specifications modal (#editSpecModal).
+- User can define or edit at any time: Contract Title, Category Track, Big-O Complexity, Deliverables & Requirements Scope, Sample Input test cases, Expected Output test cases, and NACOS Chapter Rules (Eligibility, Team Size, AI Policy).
+- In saveContractSpec, updates are saved locally and PATCHed live to Supabase REST (PATCH /rest/v1/contracts?contract_id=eq.{id}).
+
+4. COMPLETE REMOVAL OF MOCK DATA FOR NEW BOUNTIES:
+- Guarded seed data injection in openMilestone so only the showcase template (TASK-BMONI-104) retains reference mock rules, resources, and attachments.
+- User-created contracts start with empty test cases, empty scope, clean empty attachments, and empty resources.
+- openEditSpecModal fields load empty strings rather than hardcoded mock strings.
+
+5. FULL USER CRUD ON BOUNTIES, ATTACHMENTS & RESOURCES:
+- Contract CRUD: Create (bounty modal + BMONI lock + Supabase insert), Read (grid + category filters), Update (edit spec modal + Supabase patch), Delete (delete button + BMONI refund + Supabase delete).
+- Resource Links CRUD: Add (+ Add Resource modal), Read (Resources tab cards), Delete (direct delete button on resource cards for creator with live Supabase sync).
+- Attachments CRUD: Upload (file picker converts to Base64 dataUrl + Supabase sync), Download (one-click download), Delete (✕ button in modal removes and updates live).
+- Creator detection upgraded to automatically grant full creator privileges to any contract created by the user (CT-* prefix) or matching sponsor profile.
+
+6. SUPABASE SYNCHRONIZATION:
+- server.js routes (POST /api/contracts, POST /api/contracts/update-spec, DELETE /api/contracts) directly sync with Supabase REST API contracts table.
+- js/supabase-client.js methods (saveContract, deleteContract) persist changes locally and remotely with duplicate avoidance.
+
+GIT DIFF SUMMARY:
+M BuildX-Crown-Chasers/index.html (14 category tracks, filter strip, streamlined creation modal, edit spec options)
+M BuildX-Crown-Chasers/server.js (Supabase REST sync for create, update-spec, and delete endpoints)
+M BuildX-Crown-Chasers/js/supabase-client.js (deleteContract implementation, duplicate prevention in saveContract)
+M BuildX-Crown-Chasers/js/app.js (setBountyCategoryFilter, mock data removal, resource deletion, streamlined submitNewContract)
+M BuildX-Crown-Chasers/static-assets-bundle.js (recompiled bundle with public sync)
+================================================================================

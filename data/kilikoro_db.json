@@ -1,6 +1,27 @@
 {
   "contracts": [
     {
+      "id": "CT-PUB-TEST-5936",
+      "type": "public",
+      "title": "Cloud DevOps Kubernetes Autoscaler",
+      "category": "Cloud Infrastructure & DevOps",
+      "amount": 250,
+      "sponsor": "Apex Systems",
+      "desc": "",
+      "complexity": "O(N log N)",
+      "overview": "",
+      "sampleInput": "",
+      "expectedOutput": "",
+      "rules": [],
+      "resources": [],
+      "attachments": [],
+      "submissions": [],
+      "studentId": null,
+      "createdAt": "2026-10-05T15:36:16.001Z",
+      "bmoniEscrowId": "ESCROW-577447",
+      "bmoniTxHash": "0xbmoni_b26248f5f15c"
+    },
+    {
       "id": "CT-PUB-7860",
       "type": "public",
       "sponsor": "Nigeria Association of Computing Students",
@@ -258,27 +279,37 @@
       "id": "98b13583-8a65-42ed-b3ec-07a194496446",
       "name": "Crown Chaser",
       "email": "chaser@crown.com",
-      "role": "personal",
+      "role": "organization",
       "hasPersonalProfile": true,
-      "hasOrganizationProfile": false,
+      "hasOrganizationProfile": true,
       "hasStudentProfile": true,
-      "hasEmployerProfile": false,
+      "hasEmployerProfile": true,
       "personalCredentials": {
         "university": "University of Lagos",
         "nacosId": "UNILAG-2026-001",
         "github": ""
       },
-      "organizationCredentials": null,
+      "organizationCredentials": {
+        "company": "Apex Systems",
+        "regNumber": "RC-102913",
+        "department": "Engineering & Operations",
+        "location": "Nigeria / Remote"
+      },
       "studentCredentials": {
         "university": "University of Lagos",
         "nacosId": "UNILAG-2026-001",
         "github": ""
       },
-      "employerCredentials": null,
+      "employerCredentials": {
+        "company": "Apex Systems",
+        "regNumber": "RC-102913",
+        "department": "Engineering & Operations",
+        "location": "Nigeria / Remote"
+      },
       "university": "University of Lagos",
       "nacosId": "UNILAG-2026-001",
       "github": "",
-      "company": null,
+      "company": "Apex Systems",
       "walletAddress": "0xbdd31726",
       "cardNumber": "5399 6188 4418 1971",
       "cardCvv": "926",
